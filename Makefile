@@ -9,6 +9,7 @@ clean:
 	rm -fv t
 
 run:
+	make
 	./t
 
 all:
