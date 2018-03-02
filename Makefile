@@ -1,16 +1,18 @@
 
 C=g++
-CFLAGS=`pkg-config gtkmm-3.0 --cflags --libs`
+GTKFLAGS=`pkg-config gtkmm-3.0 --cflags --libs`
+CCFILES=`find -name '*.cc'`
+OFILES=`find -name '*.o'`
 
 make:
-	$(C) -o t main.cpp $(CFLAGS)
+	$(C) -o main $(CCFILES) -I $(GTKFLAGS) 
 
 clean:
-	rm -fv t
+	rm -v main $(OFILES)
 
 run:
 	make
-	./t
+	./main
 
 all:
 	make
