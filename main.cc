@@ -1,7 +1,7 @@
 #include <gtkmm.h>
 
 #include "src/view/canvas.h"
-#include "src/shapes/line.h"
+#include "src/shapes/polygon.h"
 
 int main(int argc, char* argv[]) {
 
@@ -15,11 +15,15 @@ int main(int argc, char* argv[]) {
 	window.add(canvas);
 	window.show_all_children();
 
-	Point a(0, 0);
-	Point b(100, 100);
-	Line line(a, b);
+	// square
+	Shape::Polygon square(std::vector<Point> {
+		Point(10, 10),
+		Point(110, 10),
+		Point(110, 110),
+		Point(10, 110)
+	});
 
-	canvas.queue.push_back(line);
+	canvas.queue.push_back(square);
 
 	return app->run(window);
 }
