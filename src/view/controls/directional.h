@@ -4,9 +4,6 @@
 #include <gtkmm/grid.h>
 #include <gtkmm/button.h>
 
-namespace Components {
-namespace Controls {
-
 class Directional : public Gtk::Grid {
 public:
 	Directional();
@@ -17,8 +14,5 @@ public:
 	Gtk::Button button_left;
 	Gtk::Button button_right;
 };
-
-}  // namespace Controls
-}  // namespace Components
 
 #endif  // DIRECTIONAL_CONTROL_H

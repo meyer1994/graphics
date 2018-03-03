@@ -1,6 +1,6 @@
 #include "directional.h"
 
-Components::Controls::Directional::Directional() :
+Directional::Directional() :
 button_up("Up"),
 button_down("Down"),
 button_left("Left"),
@@ -12,4 +12,4 @@ button_right("Right")
 	attach(button_right, 2, 1, 1, 1);
 }
 
-Components::Controls::Directional::~Directional() {}
+Directional::~Directional() {}
