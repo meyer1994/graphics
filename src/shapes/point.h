@@ -3,8 +3,9 @@
 
 class Point {
 public:
-	Point(float x, float y);
-	~Point();
+	Point(float x, float y) : x_coord(x), y_coord(y) {}
+    
+	~Point() {}
 
 	float x_coord;
 	float y_coord;

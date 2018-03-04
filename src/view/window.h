@@ -10,8 +10,20 @@ namespace View {
 
 class Window : public Gtk::Window {
 public:
-    Window();
-    ~Window();
+    Window() {
+        set_border_width(10);
+
+        box.set_spacing(10);
+        box.set_homogeneous();
+        box.add(controls);
+        box.add(canvas);
+        
+        add(box);
+
+        show_all();
+    }
+
+    ~Window() {}
 
 protected:
     View::Canvas canvas;
