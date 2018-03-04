@@ -7,8 +7,10 @@ namespace Shape {
 
 class Polygon : public Drawable {
 public:
-	Polygon(const std::string name, std::vector<Point> points) :
-        Drawable(name, points) {}
+	Polygon(
+        const std::vector<Coordinate> points,
+        const std::string name = "polygon")
+    : Drawable(points, name) {}
         
 	~Polygon() {}
 };

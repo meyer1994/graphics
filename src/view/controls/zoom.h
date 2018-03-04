@@ -12,7 +12,7 @@ public:
         out("Out")
     {
         grid.attach(in, 0, 0, 1, 1);
-        grid.attach(out, 1, 0, 1, 1);
+        grid.attach(out, 0, 1, 1, 1);
         grid.set_border_width(5);
         grid.set_row_spacing(5);
         grid.set_column_spacing(5);

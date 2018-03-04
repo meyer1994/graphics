@@ -3,12 +3,19 @@
 
 #include "drawable.h"
 
+namespace Shape {
+
 class Line : public Drawable {
 public:
-    Line(const std::string name, const Point& a, const Point& b) :
-        Drawable(name, std::vector<Point> {a, b}) {}
+    Line(
+        const Coordinate& a,
+        const Coordinate& b,
+        const std::string name = "line")
+    : Drawable(std::vector<Coordinate> {a, b}, name) {}
 
-	~Line() {}
+    ~Line() {}
 };
+
+}  // namespace Shape
 
 #endif  // LINE_H

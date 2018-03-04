@@ -1,14 +1,21 @@
 #ifndef POINT_H
 #define POINT_H
 
-class Point {
-public:
-	Point(float x, float y) : x_coord(x), y_coord(y) {}
-    
-	~Point() {}
+#include "drawable.h"
 
-	float x_coord;
-	float y_coord;
+namespace Shape {
+
+class Point : public Drawable {
+public:
+    Point(
+        const double x, 
+        const double y,
+        const std::string name = "point")
+    : Drawable(std::vector<Coordinate> { Coordinate {x, y} }, name) {}
+    
+    ~Point() {}
 };
+
+}  // namespace Shape
 
 #endif  // POINT_H

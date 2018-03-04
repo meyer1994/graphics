@@ -3,18 +3,24 @@
 
 #include <vector>
 #include <string>
-#include "point.h"
+
+typedef struct {
+    double x;
+    double y;
+} Coordinate;
 
 class Drawable {
 public:
-    Drawable(const std::string name, const std::vector<Point>& points) :
-        name(name),
-        points(points) {}
+    Drawable(
+        const std::vector<Coordinate>& points,
+        const std::string name = "draw")
+    : name(name),
+      points(points) {}
         
     ~Drawable() {}
 
     std::string name;
-	std::vector<Point> points;
+	std::vector<Coordinate> points;
 };
 
 #endif  // DRAWABLE_H

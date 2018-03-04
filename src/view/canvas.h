@@ -4,6 +4,9 @@
 #include <vector>
 #include <gtkmm/drawingarea.h>
 #include "../shapes/drawable.h"
+#include "../shapes/point.h"
+#include "../shapes/line.h"
+#include "../shapes/polygon.h"
 
 namespace View {
 
@@ -20,6 +23,19 @@ protected:
 
         cr->set_line_cap(Cairo::LINE_CAP_ROUND);
 
+        Shape::Point p(10.0, 10.0);
+        Shape::Line l(Coordinate {10.0, 20.0}, Coordinate {40.0, 20.0});
+        Shape::Polygon r(std::vector<Coordinate> {
+            Coordinate {10.0, 30.0},
+            Coordinate {40.0, 30.0},
+            Coordinate {40.0, 60.0},
+            Coordinate {10.0, 60.0}
+        });
+
+        queue.push_back(p);
+        queue.push_back(l);
+        queue.push_back(r);
+
         for (Drawable draw : queue) {
             draw_shape(cr, draw);
         }
@@ -33,21 +49,21 @@ private:
         const Cairo::RefPtr<Cairo::Context>& cr,
         const Drawable& draw) {
 
-        std::vector<Point> points = draw.points;
+        std::vector<Coordinate> points = draw.points;
         int total_points = points.size();
 
         // First point
-        Point first_point = points[0];
-        cr->move_to(first_point.x_coord, first_point.y_coord);
+        Coordinate first_point = points[0];
+        cr->move_to(first_point.x, first_point.y);
 
         // Lines to other points
         for (int i = 1; i < total_points; i++) {
-            Point point = points[i];
-            cr->line_to(point.x_coord, point.y_coord);
+            Coordinate point = points[i];
+            cr->line_to(point.x, point.y);
         }
 
         // Line from last point to first point
-        cr->line_to(first_point.x_coord, first_point.y_coord);
+        cr->line_to(first_point.x, first_point.y);
     }
 
 };
