@@ -2,9 +2,10 @@
 #define DIRECTIONAL_CONTROL_H
 
 #include <gtkmm/grid.h>
+#include <gtkmm/frame.h>
 #include <gtkmm/button.h>
 
-class Directional : public Gtk::Grid {
+class Directional : public Gtk::Frame {
 public:
 	Directional();
 	~Directional();
@@ -13,6 +14,7 @@ public:
 	Gtk::Button button_down;
 	Gtk::Button button_left;
 	Gtk::Button button_right;
+    Gtk::Grid grid;
 };
 
 #endif  // DIRECTIONAL_CONTROL_H

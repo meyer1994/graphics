@@ -2,14 +2,16 @@
 #define DRAWABLE_H
 
 #include <vector>
+#include <string>
 
 #include "point.h"
 
 class Drawable {
 public:
-	Drawable(const std::vector<Point>& points);
+	Drawable(const std::string name, const std::vector<Point>& points);
 	~Drawable();
 
+    std::string name;
 	std::vector<Point> points;
 };
 

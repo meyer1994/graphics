@@ -5,7 +5,7 @@
 
 class Line : public Drawable {
 public:
-	Line(const Point& a, const Point& b);
+	Line(const std::string name, const Point& a, const Point& b);
 	~Line();
 };
 
