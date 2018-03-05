@@ -14,7 +14,10 @@ public:
         box.set_spacing(10);
         box.pack_start(controls, false, false, 0);
         box.pack_start(canvas, true, true, 0);
-        
+
+        set_position(Gtk::WIN_POS_CENTER);
+        set_title("Computer Graphics, by J. Meyer & G. Bueno");
+        set_default_size(500, 500);
         set_border_width(10);
         add(box);
         show_all();
