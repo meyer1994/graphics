@@ -18,11 +18,50 @@ public:
         set_border_width(10);
         add(box);
         show_all();
+
+        controls
+            .button_up
+            .signal_clicked()
+            .connect(sigc::mem_fun(*this, &Window::move_up));
+        controls
+            .button_down
+            .signal_clicked()
+            .connect(sigc::mem_fun(*this, &Window::move_down));
+        controls
+            .button_left
+            .signal_clicked()
+            .connect(sigc::mem_fun(*this, &Window::move_left));
+        controls
+            .button_right
+            .signal_clicked()
+            .connect(sigc::mem_fun(*this, &Window::move_right));
     }
 
     View::Canvas canvas;
     View::Controls controls;
     Gtk::Box box;
+
+private:
+    void move_up() {
+        canvas.root.y -= canvas.step_size;
+        canvas.queue_draw();
+    }
+
+    void move_down() {
+        canvas.root.y += canvas.step_size;
+        canvas.queue_draw();
+    }
+
+    void move_left() {
+        canvas.root.x -= canvas.step_size;
+        canvas.queue_draw();
+    }
+
+    void move_right() {
+        canvas.root.x += canvas.step_size;
+        canvas.queue_draw();
+    }
+
 };
 
 }  // namespace View

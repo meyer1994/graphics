@@ -33,7 +33,6 @@ protected:
         Point c1 {0, 0};
         Point c2 {110, 110};
         Shape::Drawable d(std::vector<Point> {c1, c2});
-
         queue.push_back(d);
 
         for (Shape::Drawable draw : queue) {
