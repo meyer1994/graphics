@@ -11,21 +11,15 @@ namespace View {
 class Window : public Gtk::Window {
 public:
     Window() {
-        set_border_width(10);
-
         box.set_spacing(10);
-        box.set_homogeneous();
-        box.add(controls);
-        box.add(canvas);
+        box.pack_start(controls, false, false, 0);
+        box.pack_start(canvas, true, true, 0);
         
+        set_border_width(10);
         add(box);
-
         show_all();
     }
 
-    ~Window() {}
-
-protected:
     View::Canvas canvas;
     View::Controls controls;
     Gtk::Box box;

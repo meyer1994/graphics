@@ -1,4 +1,5 @@
 #include <gtkmm/application.h>
+#include <iostream>
 
 #include "src/view/window.h"
 

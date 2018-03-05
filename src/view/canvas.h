@@ -3,40 +3,40 @@
 
 #include <vector>
 #include <gtkmm/drawingarea.h>
-#include "../shapes/drawable.h"
-#include "../shapes/point.h"
-#include "../shapes/line.h"
-#include "../shapes/polygon.h"
+#include "../mode/drawable.h"
+#include "../mode/point.h"
 
 namespace View {
 
 class Canvas : public Gtk::DrawingArea {
 public:
-	Canvas() {}
-    
-	~Canvas() {}
+    Canvas() : root{0, 0}, step_size(10) {}
 
-	std::vector<Drawable> queue;
+	std::vector<Shape::Drawable> queue;
+    Point root;
+    double step_size;
 
 protected:
-	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override {
 
+        // Configuration for dots to appear when drawn
         cr->set_line_cap(Cairo::LINE_CAP_ROUND);
 
-        Shape::Point p(10.0, 10.0);
-        Shape::Line l(Coordinate {10.0, 20.0}, Coordinate {40.0, 20.0});
-        Shape::Polygon r(std::vector<Coordinate> {
-            Coordinate {10.0, 30.0},
-            Coordinate {40.0, 30.0},
-            Coordinate {40.0, 60.0},
-            Coordinate {10.0, 60.0}
-        });
+        // Paints background in white
+        cr->set_source_rgb(1, 1, 1);
+        cr->paint();
 
-        queue.push_back(p);
-        queue.push_back(l);
-        queue.push_back(r);
+        // Changes color back to black
+        cr->set_source_rgb(0, 0, 0);
 
-        for (Drawable draw : queue) {
+        // Dummy line
+        Point c1 {0, 0};
+        Point c2 {110, 110};
+        Shape::Drawable d(std::vector<Point> {c1, c2});
+
+        queue.push_back(d);
+
+        for (Shape::Drawable draw : queue) {
             draw_shape(cr, draw);
         }
         cr->stroke();
@@ -46,24 +46,27 @@ protected:
 
 private:
 	void draw_shape(
-        const Cairo::RefPtr<Cairo::Context>& cr,
-        const Drawable& draw) {
+        const Cairo::RefPtr<Cairo::Context>& cr, 
+        const Shape::Drawable& draw) {
 
-        std::vector<Coordinate> points = draw.points;
-        int total_points = points.size();
+        int total_points = draw.points.size();
 
         // First point
-        Coordinate first_point = points[0];
-        cr->move_to(first_point.x, first_point.y);
+        Point first_point = draw.points[0];
+        double fx = first_point.x + root.x;
+        double fy = first_point.y + root.y;
+        cr->move_to(fx, fy);
 
         // Lines to other points
         for (int i = 1; i < total_points; i++) {
-            Coordinate point = points[i];
-            cr->line_to(point.x, point.y);
+            Point point = draw.points[i];
+            double px = point.x + root.x;
+            double py = point.y + root.y;
+            cr->line_to(px, py);
         }
 
         // Line from last point to first point
-        cr->line_to(first_point.x, first_point.y);
+        cr->line_to(fx, fy);
     }
 
 };
