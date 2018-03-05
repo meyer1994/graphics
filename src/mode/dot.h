@@ -1,6 +1,8 @@
 #ifndef DOT_H
 #define DOT_H
 
+#include "drawable.h"
+
 namespace Shape {
 
 class Dot : public Drawable {

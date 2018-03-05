@@ -26,8 +26,8 @@ protected:
         cr->set_source_rgb(1, 1, 1);
         cr->paint();
 
-        // Changes color back to black
-        cr->set_source_rgb(0, 0, 0);
+        // Changes color to red
+        cr->set_source_rgb(0.8, 0, 0);
 
         // Dummy line
         Point c1 {0, 0};
@@ -45,7 +45,7 @@ protected:
 
 private:
 	void draw_shape(
-        const Cairo::RefPtr<Cairo::Context>& cr, 
+        const Cairo::RefPtr<Cairo::Context>& cr,
         const Shape::Drawable& draw) {
 
         int total_points = draw.points.size();
