@@ -4,8 +4,6 @@
 #include <vector>
 #include "point.h"
 
-namespace Shape {
-
 class Drawable {
 public:
     Drawable() : points() {}
@@ -13,7 +11,5 @@ public:
 
     std::vector<Point> points;
 };
-
-}  // namespace Shape
 
 #endif  // DRAWABLE_H

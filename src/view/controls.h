@@ -2,10 +2,7 @@
 #define CONTROLS_H
 
 #include <gtkmm/grid.h>
-#include <gtkmm/frame.h>
 #include <gtkmm/button.h>
-
-namespace View {
 
 class Controls : public Gtk::Grid {
 public:
@@ -39,7 +36,5 @@ public:
     Gtk::Button button_out;
 
 };
-
-}  // namesapce View
 
 #endif  // CONTROLS_H
