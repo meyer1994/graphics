@@ -7,8 +7,8 @@
 
 void draw_shape(
     const Cairo::RefPtr<Cairo::Context>& cr,
-    const Drawable& draw,
-    const DisplayFile& df) {
+    Drawable& draw,
+    DisplayFile& df) {
 
     int total_points = draw.points.size();
 
@@ -30,7 +30,7 @@ void draw_shape(
     cr->line_to(fx, fy);
 }
 
-bool draw(const Cairo::RefPtr<Cairo::Context>& cr, const DisplayFile& df) {
+bool draw(const Cairo::RefPtr<Cairo::Context>& cr, DisplayFile& df) {
     // Configuration for dots to appear when drawn
     cr->set_line_cap(Cairo::LINE_CAP_ROUND);
 
