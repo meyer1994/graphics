@@ -14,15 +14,14 @@ void draw_shape(
 
     // First point
     Point first_point = draw.points[0];
-    double fx = first_point.x + df->root_point.x;
-    double fy = first_point.y + df->root_point.y;
+    double fx = first_point.x;
+    double fy = first_point.y;
     cr->move_to(fx, fy);
 
     // Lines to other points
-    for (int i = 1; i < total_points; i++) {
-        Point point = draw.points[i];
-        double px = point.x + df->root_point.x;
-        double py = point.y + df->root_point.y;
+    for (Point& point : draw.points) {
+        double px = point.x;
+        double py = point.y;
         cr->line_to(px, py);
     }
 

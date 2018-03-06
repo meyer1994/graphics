@@ -14,6 +14,8 @@ run:
 	./main
 
 all:
-	make
 	make run
 	make clean
+
+test:
+	$(C) -o test test.cc

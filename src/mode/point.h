@@ -3,10 +3,11 @@
 
 class Point {
 public:
-    Point(double x, double y) : x(x), y(y) {}
+    Point(double x, double y, double w = 1) : x(x), y(y), w(w) {}
     
     double x;
     double y;
+    double w;
 };
 
 #endif  // POINT_H
