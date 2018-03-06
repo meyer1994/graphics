@@ -5,6 +5,7 @@
 #include <gtkmm/drawingarea.h>
 
 #include "src/mode/draw.h"
+#include "src/mode/zoom.h"
 #include "src/mode/movement.h"
 #include "src/mode/display_file.h"
 
@@ -40,6 +41,16 @@ void connect_buttons(Glib::RefPtr<Gtk::Builder>& builder, DisplayFile* df) {
     builder->get_widget("button_right", button_right);
     auto bind_right = sigc::bind(&move_right, df, drawing_area);
     button_right->signal_clicked().connect(bind_right);
+
+    Gtk::Button* button_in = nullptr;
+    builder->get_widget("button_in", button_in);
+    auto bind_in = sigc::bind(&zoom_in, df, drawing_area);
+    button_in->signal_clicked().connect(bind_in);
+
+    Gtk::Button* button_out = nullptr;
+    builder->get_widget("button_out", button_out);
+    auto bind_out = sigc::bind(&zoom_out, df, drawing_area);
+    button_out->signal_clicked().connect(bind_out);
 }
 
 int main(int argc, char* argv[]) {

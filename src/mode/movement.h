@@ -7,11 +7,10 @@
 #include "display_file.h"
 
 void move_up(DisplayFile* df, Gtk::DrawingArea* dr) {
-    for (Drawable d : df->shapes_list) {
-        d.scale(1.5);
-        // Point p = d.get_medium_point();
+    for (Drawable& d : df->shapes_list) {
+        d.translate(0, -10);
     }
-	dr->queue_draw();
+    dr->queue_draw();
 }
 
 void move_down(DisplayFile* df, Gtk::DrawingArea* dr) {
