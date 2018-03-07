@@ -1,17 +1,22 @@
-#include <gtkmm/application.h>
+
 #include <iostream>
+#include <gtkmm/application.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/window.h>
 
 #include "src/control/control.h"
-#include "src/view/view.h"
 
 int main(int argc, char* argv[]) {
 
     auto app = Gtk::Application::create(argc, argv, "org.gtkmm.engine");
-
-    View view;
-    view.window.window_main->show_all();
-    view.window.window_main->set_default_size(350, 500);
-    Control control(view);
+    auto builder = Gtk::Builder::create_from_file("src/view/layout.glade");
     
-	return app->run(*view.window.window_main);
+    Control control(builder);
+
+    Gtk::Window* win = nullptr;
+    builder->get_widget("window_main", win);
+
+	app->run(*win);
+
+	return 0;
 }
