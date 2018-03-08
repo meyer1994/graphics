@@ -6,11 +6,12 @@
 #include <iostream>
 #include <exception>
 
+#include <gtkmm/box.h>
 #include <gtkmm/label.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/button.h>
 #include <gtkmm/dialog.h>
-#include <gtkmm/listbox.h>
+#include <gtkmm/window.h>
 #include <gtkmm/textview.h>
 #include <gtkmm/drawingarea.h>
 
@@ -41,6 +42,14 @@ public:
         for (Gtk::Label* l : shapes_labels) {
             delete l;
         }
+
+        Gtk::Dialog* dialog_input = nullptr;
+        builder->get_widget("dialog_input", dialog_input);
+        delete dialog_input;
+
+        Gtk::Window* window_main = nullptr;
+        builder->get_widget("window_main", window_main);
+        delete window_main;
     }
 
     Glib::RefPtr<Gtk::Builder>& builder;
@@ -149,12 +158,14 @@ protected:
     }
 
     void add_shape() {
-        Gtk::ListBox* list_shapes = nullptr;
+        Gtk::Box* list_shapes = nullptr;
         Gtk::Entry* text_input_name = nullptr;
-        Gtk::TextView* text_points_added;
+        Gtk::TextView* text_points_added = nullptr;
+        Gtk::DrawingArea* drawing_area = nullptr;
         builder->get_widget("list_shapes", list_shapes);
         builder->get_widget("text_input_name", text_input_name);
         builder->get_widget("text_points_added", text_points_added);
+        builder->get_widget("drawing_area", drawing_area);
 
         // Create shape
         shapes.push_back(Drawable(points_buffer));
@@ -174,6 +185,9 @@ protected:
         Gtk::Dialog* dialog_input = nullptr;
         builder->get_widget("dialog_input", dialog_input);
         dialog_input->hide();
+
+        // Update drawing area
+        drawing_area->queue_draw();
     }
 
     void cancel() {

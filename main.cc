@@ -7,6 +7,7 @@
 
 #include "src/control/control.h"
 
+
 int main(int argc, char* argv[]) {
 
     auto app = Gtk::Application::create(argc, argv, "org.gtkmm.engine");
@@ -16,6 +17,7 @@ int main(int argc, char* argv[]) {
 
     Gtk::Window* win = nullptr;
     builder->get_widget("window_main", win);
+	win->set_default_size(500, 500);
 	app->run(*win);
 
 	return 0;
