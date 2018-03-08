@@ -1,6 +1,7 @@
 
 #include <iostream>
-#include <gtkmm/application.h>
+#include <string>
+// #include <gtkmm/application.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/window.h>
 
@@ -15,7 +16,6 @@ int main(int argc, char* argv[]) {
 
     Gtk::Window* win = nullptr;
     builder->get_widget("window_main", win);
-
 	app->run(*win);
 
 	return 0;
