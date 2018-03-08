@@ -16,6 +16,7 @@
 #include <gtkmm/drawingarea.h>
 
 #include "../mode/drawable.h"
+#include "../mode/window.h"
 #include "../mode/point.h"
 #include "draw.h"
 #include "movement.h"
@@ -50,8 +51,20 @@ public:
         Gtk::Window* window_main = nullptr;
         builder->get_widget("window_main", window_main);
         delete window_main;
+
+        Gtk::DrawingArea* dr = nullptr;
+        builder->get_widget("drawing_area", dr);
+
+        Gtk::Allocation alloc = dr->get_allocation();
+        window = Window(alloc.get_width(), alloc.get_height(), 0, 0);
+
+        draw_control = DrawControl(window, shapes);
+
+        connect_draw();
     }
 
+    DrawControl draw_control;
+    Window window;
     Glib::RefPtr<Gtk::Builder>& builder;
     std::vector<Drawable> shapes;
     std::vector<Gtk::Label*> shapes_labels;
@@ -59,10 +72,9 @@ public:
 
 protected:
     void connect_draw() {
-        auto binded = sigc::bind(&draw, &shapes);
         Gtk::DrawingArea* dr = nullptr;
         builder->get_widget("drawing_area", dr);
-        dr->signal_draw().connect(binded);
+        dr->signal_draw().connect(sigc::mem_fun(draw_control, &DrawControl::draw));
     }
 
     void connect_buttons() {
