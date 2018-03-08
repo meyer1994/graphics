@@ -1,27 +1,32 @@
-#ifndef ZOOM_H
-#define ZOOM_H
+#ifndef ZOOM_CONTROL_H
+#define ZOOM_CONTROL_H
 
-#include <vector>
-#include <gtkmm/builder.h>
 #include <gtkmm/drawingarea.h>
-#include "../mode/drawable.h"
+#include "../mode/window.h"
 
-void zoom_in(std::vector<Drawable>* df, const Glib::RefPtr<Gtk::Builder>& builder) {
-    for (Drawable& d : *df) {
-        d.scale(1.1);
+class ZoomControl {
+public:
+    ZoomControl(Window& win, Gtk::DrawingArea& draw)
+    : window(win),
+      drawing_area(draw) {}
+
+    ~ZoomControl() {}
+    
+    void zoom_in() {
+        window.ymax -= 10;
+        window.xmax -= 10;
+        drawing_area.queue_draw();
     }
-    Gtk::DrawingArea* dr = nullptr;
-    builder->get_widget("drawing_area", dr);
-    dr->queue_draw();
-}
 
-void zoom_out(std::vector<Drawable>* df, const Glib::RefPtr<Gtk::Builder>& builder) {
-    for (Drawable& d : *df) {
-        d.scale(0.9);
+    void zoom_out() {
+        window.ymax += 10;
+        window.xmax += 10;
+        drawing_area.queue_draw();
     }
-    Gtk::DrawingArea* dr = nullptr;
-    builder->get_widget("drawing_area", dr);
-    dr->queue_draw();
-}
 
-#endif  // ZOOM_H
+    Window& window;
+    Gtk::DrawingArea& drawing_area;
+};
+
+
+#endif  // ZOOM_CONTROL_H

@@ -28,6 +28,14 @@ public:
     : builder(builder),
       shapes(),
       points_buffer() {
+
+        // Show window
+        Gtk::Window* window_main = nullptr;
+        builder->get_widget("window_main", window_main);
+        window_main->set_default_size(800, 500);
+        window_main->show_all();
+
+        // Add dummy shape (for tests)
         Drawable d(std::vector<Point> {
             Point(0, 0),
             Point(100, 0),
@@ -36,9 +44,20 @@ public:
         });
         shapes.push_back(d);
 
+
+        Gtk::DrawingArea* dr = nullptr;
+        builder->get_widget("drawing_area", dr);
+        Gtk::Allocation alloc = dr->get_allocation();
+        window = new Window(alloc.get_width(), alloc.get_height(), 0, 0);
+        
+        draw_control = new DrawControl(*window, shapes);
+        move_control = new MoveControl(*window, *dr);
+        zoom_control = new ZoomControl(*window, *dr);
+
         connect_draw();
         connect_buttons();
     }
+
     ~Control() {
         for (Gtk::Label* l : shapes_labels) {
             delete l;
@@ -52,19 +71,14 @@ public:
         builder->get_widget("window_main", window_main);
         delete window_main;
 
-        Gtk::DrawingArea* dr = nullptr;
-        builder->get_widget("drawing_area", dr);
-
-        Gtk::Allocation alloc = dr->get_allocation();
-        window = Window(alloc.get_width(), alloc.get_height(), 0, 0);
-
-        draw_control = DrawControl(window, shapes);
-
-        connect_draw();
+        delete draw_control;
+        delete window;
     }
 
-    DrawControl draw_control;
-    Window window;
+    Window* window;
+    DrawControl* draw_control;
+    MoveControl* move_control;
+    ZoomControl* zoom_control;
     Glib::RefPtr<Gtk::Builder>& builder;
     std::vector<Drawable> shapes;
     std::vector<Gtk::Label*> shapes_labels;
@@ -74,41 +88,49 @@ protected:
     void connect_draw() {
         Gtk::DrawingArea* dr = nullptr;
         builder->get_widget("drawing_area", dr);
-        dr->signal_draw().connect(sigc::mem_fun(draw_control, &DrawControl::draw));
+        dr
+            ->signal_draw()
+            .connect(sigc::mem_fun(*draw_control, &DrawControl::draw));
     }
 
     void connect_buttons() {
         // Movement buttons
-        auto bind_up = sigc::bind(&move_up, &shapes, builder);
         Gtk::Button* button_up = nullptr;
         builder->get_widget("button_up", button_up);
-        button_up->signal_clicked().connect(bind_up);
+        button_up
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*move_control, &MoveControl::move_up));
 
-        auto bind_down = sigc::bind(&move_down, &shapes, builder);
         Gtk::Button* button_down = nullptr;
         builder->get_widget("button_down", button_down);
-        button_down->signal_clicked().connect(bind_down);
+        button_down
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*move_control, &MoveControl::move_down));
 
-        auto bind_left = sigc::bind(&move_left, &shapes, builder);
         Gtk::Button* button_left = nullptr;
         builder->get_widget("button_left", button_left);
-        button_left->signal_clicked().connect(bind_left);
+        button_left
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*move_control, &MoveControl::move_left));
 
-        auto bind_right = sigc::bind(&move_right, &shapes, builder);
         Gtk::Button* button_right = nullptr;
         builder->get_widget("button_right", button_right);
-        button_right->signal_clicked().connect(bind_right);
+        button_right
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*move_control, &MoveControl::move_right));
 
         // Zoom buttons
-        auto bind_in = sigc::bind(&zoom_in, &shapes, builder);
         Gtk::Button* button_in = nullptr;
         builder->get_widget("button_in", button_in);
-        button_in->signal_clicked().connect(bind_in);
+        button_in
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*zoom_control, &ZoomControl::zoom_in));
 
-        auto bind_out = sigc::bind(&zoom_out, &shapes, builder);
         Gtk::Button* button_out = nullptr;
         builder->get_widget("button_out", button_out);
-        button_out->signal_clicked().connect(bind_out);
+        button_out
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*zoom_control, &ZoomControl::zoom_out));
 
         // Show dialog button
         Gtk::Button* button_add_shape = nullptr;

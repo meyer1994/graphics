@@ -1,45 +1,44 @@
-#ifndef MOVEMENT_H
-#define MOVEMENT_H
+#ifndef MOVE_CONTROL_H
+#define MOVE_CONTROL_H
 
-#include <vector>
-#include <gtkmm/builder.h>
 #include <gtkmm/drawingarea.h>
-#include "../mode/drawable.h"
+#include "../mode/window.h"
 
-void move_up(std::vector<Drawable>* df, const Glib::RefPtr<Gtk::Builder>& builder) {
-    for (Drawable& d : *df) {
-        d.translate(0, -10);
+class MoveControl {
+public:
+    MoveControl(Window& win, Gtk::DrawingArea& draw) 
+    : window(win),
+      drawing_area(draw) {}
+
+    ~MoveControl() {}
+
+    void move_up() {
+        window.ymax += 10;
+        window.ymin += 10;
+        drawing_area.queue_draw();
     }
-    Gtk::DrawingArea* dr = nullptr;
-    builder->get_widget("drawing_area", dr);
-    dr->queue_draw();
-}
 
-void move_down(std::vector<Drawable>* df, const Glib::RefPtr<Gtk::Builder>& builder) {
-    for (Drawable& d : *df) {
-        d.translate(0, 10);
+    void move_down() {
+        window.ymax -= 10;
+        window.ymin -= 10;
+        drawing_area.queue_draw();
     }
-    Gtk::DrawingArea* dr = nullptr;
-    builder->get_widget("drawing_area", dr);
-    dr->queue_draw();
-}
 
-void move_left(std::vector<Drawable>* df, const Glib::RefPtr<Gtk::Builder>& builder) {
-    for (Drawable& d : *df) {
-        d.translate(-10, 0);
+    void move_left() {
+        window.xmax -= 10;
+        window.xmin -= 10;
+        drawing_area.queue_draw();
     }
-    Gtk::DrawingArea* dr = nullptr;
-    builder->get_widget("drawing_area", dr);
-    dr->queue_draw();
-}
 
-void move_right(std::vector<Drawable>* df, const Glib::RefPtr<Gtk::Builder>& builder) {
-    for (Drawable& d : *df) {
-        d.translate(10, 0);
+    void move_right() {
+        window.xmax += 10;
+        window.xmin += 10;
+        drawing_area.queue_draw();
     }
-    Gtk::DrawingArea* dr = nullptr;
-    builder->get_widget("drawing_area", dr);
-    dr->queue_draw();
-}
 
-#endif  // MOVEMENT_H
+    Window& window;
+    Gtk::DrawingArea& drawing_area;
+};
+
+
+#endif  // MOVE_CONTROL_H

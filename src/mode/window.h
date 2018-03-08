@@ -8,6 +8,7 @@ public:
 	  ymax(ymax),
 	  xmin(xmin),
 	  ymin(ymin) {}
+
 	~Window() {}
 	
 	double xmax;
