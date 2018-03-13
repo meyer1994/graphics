@@ -18,4 +18,8 @@ all:
 	make clean
 
 test:
-	$(C) -o test test.cc
+	cd tests/ && \
+	$(C) -o test test.cc -I ../src/mode && \
+	./test && \
+	rm test
+
