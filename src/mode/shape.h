@@ -16,6 +16,9 @@ public:
 
     explicit Shape(std::vector<Point> p) : points_real(p) {}
 
+    ~Shape() {}
+
+
     Point medium() {
         if (points_real.size() == 0) {
             throw std::domain_error("There are no points in shape");

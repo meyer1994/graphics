@@ -9,6 +9,10 @@ make:
 clean:
 	rm -v main $(OFILES)
 
+debug:
+	$(C) -o main main.cc -I $(GTKFLAGS) -g
+	gdb ./main
+
 run:
 	make
 	./main
@@ -23,3 +27,8 @@ test:
 	./test && \
 	rm test
 
+test_valgrind:
+	cd tests/ && \
+	$(C) -o test test.cc -I ../src/mode && \
+	valgrind --leak-check=full ./test && \
+	rm test

@@ -3,11 +3,14 @@
 
 class Window {
 public:
-	Window(double xmax, double ymax, double xmin, double ymin)
-	: xmax(xmax),
-	  ymax(ymax),
-	  xmin(xmin),
-	  ymin(ymin) {}
+	Window() {}
+
+	Window(double xmx, double ymx, double xmn, double ymn) {
+		xmax = xmx;
+		ymax = ymx;
+		xmin = xmn;
+		ymin = ymn;
+	}
 
 	~Window() {}
 	
