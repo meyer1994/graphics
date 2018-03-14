@@ -1,22 +1,81 @@
-#ifndef DRAWABLE_H
-#define DRAWABLE_H
+#ifndef SHAPE_H
+#define SHAPE_H
 
 #include <vector>
 #include <string>
 #include <cmath>
+#include <exception>
 #include "point.h"
 
 typedef std::vector<std::vector<double>> Matrix;
+const double MATH_PI = std::acos(-1);
 
-const long double _MATH_PI = 3.141592653589793238463;
-
-class Drawable {
+class Shape {
 public:
-    Drawable() {}
+    Shape() {}
 
-    virtual const Point medium() const = 0;
+    explicit Shape(std::vector<Point> p) : points_real(p) {}
 
-    static const Matrix translate_matrix(const std::vector<double>& v) {
+    Point medium() {
+        if (points_real.size() == 0) {
+            throw std::domain_error("There are no points in shape");
+        }
+
+        std::vector<double> point_medium(points_real[0].dimensions(), 0);
+        // Sum
+        for (const Point& p : points_real) {
+            for (int i = 0; i < p.size(); i++) {
+                point_medium[i] += p[i];
+            }
+        }
+        // Divide
+        for (double& d : point_medium) {
+            d /= points_real.size();
+        }
+        return Point(point_medium);
+    }
+
+    void scale(double ratio) {
+        std::vector<double> r(points_real[0].dimensions(), ratio);
+        transform(scale_matrix(r));
+    }
+
+    void rotate(double angle) {
+        transform(rotate_matrix(points_real[0].dimensions(), angle));
+    }
+
+    void translate(double x, double y) {
+        std::vector<double> t{x, y};
+        transform(translate_matrix(t));
+    }
+
+    virtual std::string to_string() const {
+        int total = points_real.size();
+        std::string str = "Shape(";
+        for (int i = 0; i < total - 1; i++) {
+            str.append(points_real[i].to_string());
+            str.append(", ");
+        }
+        str.append(points_real[total - 1].to_string());
+        str.append(")");
+        return str;
+    }
+
+    int size() const {
+        return points_real.size();
+    }
+
+    std::vector<Point> points_real;
+    std::vector<Point> points_window;
+
+protected:
+    void transform(Matrix m) {
+        for (Point& p : points_real) {
+            p = p_multiply(p, m);
+        }
+    }
+
+    Matrix translate_matrix(std::vector<double>& v) {
         int total = v.size();
 
         // Creates TOTAL x TOTAL matrix
@@ -35,7 +94,7 @@ public:
         return matrix;
     }
 
-    static const Matrix scale_matrix(const std::vector<double>& v) {
+    Matrix scale_matrix(std::vector<double>& v) {
         int total = v.size();
 
         // Creates TOTAL x TOTAL matrix
@@ -54,7 +113,7 @@ public:
         return matrix;
     }
 
-    static const Matrix rotate_matrix(const int& dim, const double& angle) {
+    Matrix rotate_matrix(int dim, double angle) {
         if (dim > 3) {
             throw std::invalid_argument("Rotations for more than 3 dimensions not supported");
         }
@@ -65,22 +124,22 @@ public:
 
         // 2 dimensions
         if (dim == 2) {
-            double c = std::cos((angle * _MATH_PI) / 180);
-            double s = std::sin((angle * _MATH_PI) / 180);
+            double c = std::cos((angle * MATH_PI) / 180);
+            double s = std::sin((angle * MATH_PI) / 180);
             return Matrix{
                 std::vector<double>{c, -s, 0},
                 std::vector<double>{s,  c, 0},
                 std::vector<double>{0,  0, 1}
             };
         }
-    
+
         // 3 dimensions
         throw std::invalid_argument("TODO 3 dimensional rotation");
     }
 
-    static const Matrix m_multiply(const Matrix& m0, const Matrix& m1) {
+    Matrix m_multiply(Matrix& m0, Matrix& m1) {
         Matrix res(m0.size(), std::vector<double>(m0.size(), 0));
-        
+
         for (int i = 0; i < res.size(); i++) {
             for (int j = 0; j < res.size(); j++) {
                 for (int k = 0; k < res.size(); k++) {
@@ -92,7 +151,7 @@ public:
         return res;
     }
 
-    static const Point p_multiply(const Point& p, const Matrix& m) {
+    Point p_multiply(Point& p, Matrix& m) {
         Point new_point;
 
         for (int i = 0; i < p.size(); i++) {
@@ -106,43 +165,6 @@ public:
         return new_point;
     }
 
-    virtual void scale() {}
-
-    virtual void rotate() {}
-
-    virtual void translate() {}
-
-    virtual void transform(const Matrix& m) = 0;
-
-    virtual const std::string to_string() const = 0;
-
-    // void move(double x, double y) {
-    //     Point m = get_medium_point();
-    //     for (Point& p : points) {
-    //         p.x = p.x - m.x + x;
-    //         p.y = p.y - m.y + y;
-    //     }
-    // }
-
-    // void inflate(double s) {
-    //     Point medium = get_medium_point();
-    //     move(0, 0);
-    //     scale(s);
-    //     move(medium.x, medium.y);
-    // }
-
-    // void scale(double s) {
-    //     for (Point& p : points) {
-    //         p.x *= s;
-    //         p.y *= s;
-    //     }
-    // }
-
-    // void translate(double x, double y) {
-    //     Point m = get_medium_point();
-    //     move(m.x + x, m.y + y);
-    // }
-
 };
 
-#endif  // DRAWABLE_H
+#endif  // SHAPE_H

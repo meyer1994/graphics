@@ -3,22 +3,32 @@
 
 #include <vector>
 #include <string>
+#include <exception>
 
 class Point : public std::vector<double> {
 public:
     Point() : std::vector<double>() {}
 
-    Point(std::vector<double> coords) : std::vector<double>(coords) {
+    explicit Point(std::vector<double> coords) : std::vector<double>(coords) {
         push_back(1);
+
+        if (coords.size() < 2) {
+            throw std::invalid_argument("Point must have, at least, 2 dimensions");
+        }
     }
 
     // 2D point
-    Point(double x, double y) : std::vector<double>{x, y, 1} {}
+    Point(double x, double y) : std::vector<double>() {
+        push_back(x);
+        push_back(y);
+        push_back(1);
+    }
 
-    // 3D point
-    Point(double x, double y, double z) : std::vector<double>{x, y, z, 1} {}
+    int dimensions() const {
+        return size() - 1;
+    }
 
-    const std::string to_string() const {
+    std::string to_string() const {
 
         if (size() == 0) {
             return "Point()";
