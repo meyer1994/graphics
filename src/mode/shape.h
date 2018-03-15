@@ -1,8 +1,9 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
-#include <vector>
 #include <string>
+#include <vector>
+
 #include "point.h"
 
 class Shape {

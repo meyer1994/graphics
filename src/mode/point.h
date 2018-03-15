@@ -2,8 +2,8 @@
 #define POINT_H
 
 #include <cmath>
-#include <vector>
 #include <string>
+#include <vector>
 #include <exception>
 
 // Better reading
@@ -131,22 +131,17 @@ public:
     }
 
     std::string to_string() const {
-
         if (size() == 0) {
             return "Point()";
         }
-
-        std::string s = "Point(";
-        int total_dimensions = size() - 1;
-
-        for (int i = 0; i < total_dimensions - 1; i++) {
-            s.append(std::to_string(at(i)));
-            s.append(", ");
+        std::string str = "Point(";
+        for (int i = 0; i < size() - 1; i++) {
+            str.append(std::to_string(at(i)));
+            str.append(", ");
         }
-
-        s.append(std::to_string(at(total_dimensions - 1)));
-        s.append(")");
-        return s;
+        str.append(std::to_string(back()));
+        str.append(")");
+        return str;
     }
 };
 

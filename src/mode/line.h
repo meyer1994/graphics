@@ -1,8 +1,8 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "shape.h"
 
@@ -12,11 +12,10 @@ public:
 
     Line(Point a, Point b) : Shape(std::vector<Point>{a, b}) {}
 
-    std::string to_string() {
+    virtual std::string to_string() const {
         if (points_real[0].size() == 0 || points_real[1].size() == 0) {
             return "Line()";
         }
-
         std::string s = "Line(";
         s.append(points_real[0].to_string());
         s.append(", ");
