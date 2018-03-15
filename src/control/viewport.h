@@ -1,9 +1,12 @@
 #ifndef CONTROL_VIEWPORT_H
 #define CONTROL_VIEWPORT_H
 
+#include <string>
 #include <vector>
+#include <exception>
 
 #include <cairomm/context.h>
+#include <gtkmm/entry.h>
 #include <gtkmm/button.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/drawingarea.h>
@@ -20,6 +23,7 @@ public:
     : shapes(s),
       window(w) {
 
+        // Dummy shape
         shapes.push_back(Shape(std::vector<Point>{
             Point(0, 0),
             Point(50, 0),
@@ -27,6 +31,8 @@ public:
             Point(0, 50)
         }));
 
+        b->get_widget("input_viewport_move", input_viewport_move);
+        b->get_widget("input_viewport_zoom", input_viewport_zoom);
         b->get_widget("drawing_area", drawing_area);
         b->get_widget("button_up", button_up);
         b->get_widget("button_down", button_down);
@@ -42,38 +48,38 @@ public:
     ~Viewport() {}
 
     void move_up() {
-        window.ymax += 10;
-        window.ymin += 10;
+        window.ymax += get_move_input();
+        window.ymin += get_move_input();
         drawing_area->queue_draw();
     }
 
     void move_down() {
-        window.ymax -= 10;
-        window.ymin -= 10;
+        window.ymax -= get_move_input();
+        window.ymin -= get_move_input();
         drawing_area->queue_draw();
     }
 
     void move_left() {
-        window.xmax -= 10;
-        window.xmin -= 10;
+        window.xmax -= get_move_input();
+        window.xmin -= get_move_input();
         drawing_area->queue_draw();
     }
 
     void move_right() {
-        window.xmax += 10;
-        window.xmin += 10;
+        window.xmax += get_move_input();
+        window.xmin += get_move_input();
         drawing_area->queue_draw();
     }
 
     void zoom_in() {
-        window.ymax -= 10;
-        window.xmax -= 10;
+        window.ymax -= get_zoom_input();
+        window.xmax -= get_zoom_input();
         drawing_area->queue_draw();
     }
 
     void zoom_out() {
-        window.ymax += 10;
-        window.xmax += 10;
+        window.ymax += get_zoom_input();
+        window.xmax += get_zoom_input();
         drawing_area->queue_draw();
     }
 
@@ -97,9 +103,13 @@ public:
         return true;
     }
 
-    Gtk::DrawingArea* drawing_area = nullptr;
     std::vector<Shape>& shapes;
     Window& window;
+
+    Gtk::DrawingArea* drawing_area = nullptr;
+
+    Gtk::Entry* input_viewport_move = nullptr;
+    Gtk::Entry* input_viewport_zoom = nullptr;
 
     Gtk::Button* button_up = nullptr;
     Gtk::Button* button_down = nullptr;
@@ -168,6 +178,30 @@ protected:
         drawing_area
             ->signal_draw()
             .connect(sigc::mem_fun(*this, &Control::Viewport::draw));
+    }
+
+    double get_move_input() {
+        double move_size = 10;
+        try {
+            std::string move_input = input_viewport_move->get_text();
+            move_size = std::stod(move_input);
+
+        } catch (std::exception& e) {
+            // Nothing
+        }
+        return move_size;        
+    }
+
+    double get_zoom_input() {
+        double zoom_size = 10;
+        try {
+            std::string zoom_input = input_viewport_zoom->get_text();
+            zoom_size = std::stod(zoom_input);
+
+        } catch (std::exception& e) {
+            // Nothing
+        }
+        return zoom_size;        
     }
 };
 

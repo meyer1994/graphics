@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <exception>
 
 #include <gtkmm/box.h>
 #include <gtkmm/entry.h>
