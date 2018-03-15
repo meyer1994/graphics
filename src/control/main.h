@@ -22,17 +22,13 @@ public:
         window_main->set_default_size(1000, 600);
         window_main->show_all();
 
-        Gtk::DrawingArea* d = nullptr;
-        b->get_widget("drawing_area", d);
-        auto alloc = d->get_allocation();
-
-        window = new Window(alloc.get_width(), alloc.get_height(), 0, 0);
         shapes = new std::vector<Shape>();
         shape_labels = new std::vector<Gtk::Label*>();
         
-        control_viewport = new Control::Viewport(b, *shapes, *window);
-        control_dialog = new Control::Dialog(b, *shapes, *shape_labels);
-
+        window = new Window(b);
+        
+        control_viewport = new Viewport(b, *shapes, *window);
+        control_dialog = new Dialog(b, *shapes);
     }
 
     ~Main() {
@@ -48,14 +44,15 @@ public:
         delete shape_labels;
     }
 
-    Window* window;
-    Control::Viewport* control_viewport;
-    Control::Dialog* control_dialog;
+    std::vector<Shape>* shapes = nullptr;
+    std::vector<Gtk::Label*>* shape_labels = nullptr;
+
+    Window* window = nullptr;
+
+    Viewport* control_viewport = nullptr;
+    Dialog* control_dialog = nullptr;
 
     Gtk::Window* window_main = nullptr;
-
-    std::vector<Shape>* shapes;
-    std::vector<Gtk::Label*>* shape_labels;
 
 };
 

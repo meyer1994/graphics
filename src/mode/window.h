@@ -1,15 +1,20 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <gtkmm/builder.h>
+#include <gtkmm/drawingarea.h>
+
 class Window {
 public:
-	Window() {}
+	Window(Glib::RefPtr<Gtk::Builder>& b) {
+        Gtk::DrawingArea* d = nullptr;
+        b->get_widget("drawing_area", d);
+        Gtk::Allocation alloc = d->get_allocation();
 
-	Window(double xmx, double ymx, double xmn, double ymn) {
-		xmax = xmx;
-		ymax = ymx;
-		xmin = xmn;
-		ymin = ymn;
+        xmax = alloc.get_width();
+        ymax = alloc.get_width();
+        xmin = 0;
+        ymin = 0;
 	}
 
 	~Window() {}
