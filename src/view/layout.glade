@@ -26,6 +26,7 @@
                 <property name="name">window_box_main_box_control_movement</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="spacing">5</property>
                 <child>
                   <object class="GtkFrame" id="window_box_main_box_control_movement_frame">
                     <property name="name">window_box_main_box_control_movement_frame</property>
@@ -202,6 +203,74 @@
               </packing>
             </child>
             <child>
+              <object class="GtkFrame" id="frame_rotate">
+                <property name="name">frame_rotate</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkAlignment" id="frame_rotate_align">
+                    <property name="name">frame_rotate_align</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkBox" id="rotate_box">
+                        <property name="name">rotate_box</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="spacing">2</property>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label" translatable="yes">Left</property>
+                            <property name="name">button_rotate_left</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="button_rotate_right">
+                            <property name="label" translatable="yes">Right</property>
+                            <property name="name">button_rotate_right</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel" id="frame_rotate_label">
+                    <property name="name">frame_rotate_label</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Rotation</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkBox" id="window_box_main_box_control_add">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -243,7 +312,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
