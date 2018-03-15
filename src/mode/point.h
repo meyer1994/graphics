@@ -6,14 +6,18 @@
 #include <string>
 #include <exception>
 
-typedef std::vector<std::vector<double>> Matrix;
+// Better reading
+typedef std::vector<double> Vector;
+typedef std::vector<Vector> Matrix;
+
+// Constant
 const double MATH_PI = std::acos(-1);
 
-class Point : public std::vector<double> {
+class Point : public Vector {
 public:
-    Point() : std::vector<double>() {}
+    Point() : Vector() {}
 
-    explicit Point(std::vector<double> coords) : std::vector<double>(coords) {
+    explicit Point(Vector coords) : Vector(coords) {
         push_back(1);
 
         if (coords.size() < 2) {
@@ -22,7 +26,7 @@ public:
     }
 
     // 2D point
-    Point(double x, double y) : std::vector<double>() {
+    Point(double x, double y) : Vector() {
         push_back(x);
         push_back(y);
         push_back(1);
@@ -33,7 +37,7 @@ public:
     }
 
     void scale(double ratio) {
-        std::vector<double> r(dimensions(), ratio);
+        Vector r(dimensions(), ratio);
         transform(scale_matrix(r));
     }
 
@@ -42,12 +46,12 @@ public:
     }
 
     void translate(double x, double y) {
-        std::vector<double> t{x, y};
+        Vector t{x, y};
         transform(translate_matrix(t));
     }
 
     void transform(Matrix m) {
-        std::vector<double> v;
+        Vector v;
 
         // Apply transformation matrix to point
         for (int i = 0; i < size(); i++) {
@@ -64,11 +68,11 @@ public:
         }
     }
 
-    static Matrix translate_matrix(std::vector<double>& v) {
+    static Matrix translate_matrix(Vector& v) {
         int total = v.size();
 
         // Creates TOTAL x TOTAL matrix
-        Matrix matrix(total + 1, std::vector<double>(total + 1, 0));
+        Matrix matrix(total + 1, Vector(total + 1, 0));
 
         // Add 1s to main diagonal
         for (int i = 0; i < total + 1; i++) {
@@ -83,13 +87,13 @@ public:
         return matrix;
     }
 
-    static Matrix scale_matrix(std::vector<double>& v) {
+    static Matrix scale_matrix(Vector& v) {
         int total = v.size();
 
         // Creates TOTAL x TOTAL matrix
         Matrix matrix(total + 1);
-        for (std::vector<double>& v : matrix) {
-            v = std::vector<double>(total + 1, 0);
+        for (Vector& v : matrix) {
+            v = Vector(total + 1, 0);
         }
 
         // Add ratios to main diagonal
@@ -116,9 +120,9 @@ public:
             double c = std::cos((angle * MATH_PI) / 180);
             double s = std::sin((angle * MATH_PI) / 180);
             return Matrix{
-                std::vector<double>{c, -s, 0},
-                std::vector<double>{s,  c, 0},
-                std::vector<double>{0,  0, 1}
+                Vector{c, -s, 0},
+                Vector{s,  c, 0},
+                Vector{0,  0, 1}
             };
         }
 

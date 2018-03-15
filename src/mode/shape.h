@@ -13,13 +13,12 @@ public:
 
     ~Shape() {}
 
-
     Point medium() {
         if (points_real.size() == 0) {
             throw std::domain_error("There are no points in shape");
         }
 
-        std::vector<double> point_medium(points_real[0].dimensions(), 0);
+        Vector point_medium(points_real[0].dimensions(), 0);
         // Sum
         for (const Point& p : points_real) {
             for (int i = 0; i < p.size(); i++) {
@@ -78,7 +77,7 @@ protected:
     }
 
     Matrix m_multiply(Matrix& m0, Matrix& m1) {
-        Matrix res(m0.size(), std::vector<double>(m0.size(), 0));
+        Matrix res(m0.size(), Vector(m0.size(), 0));
 
         for (int i = 0; i < res.size(); i++) {
             for (int j = 0; j < res.size(); j++) {
