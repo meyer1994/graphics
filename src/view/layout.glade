@@ -278,7 +278,7 @@
                                     <property name="valign">center</property>
                                     <property name="spacing">2</property>
                                     <child>
-                                      <object class="GtkButton">
+                                      <object class="GtkButton" id="button_rotate_left">
                                         <property name="label" translatable="yes">Left</property>
                                         <property name="name">button_rotate_left</property>
                                         <property name="visible">True</property>
@@ -348,7 +348,6 @@
                 <property name="name">box_add_shape</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="orientation">vertical</property>
                 <property name="spacing">2</property>
                 <child>
                   <object class="GtkButton" id="button_add_shape">
@@ -367,17 +366,13 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="list_shapes">
-                    <property name="name">list_shapes</property>
+                  <object class="GtkComboBoxText" id="combobox_shapes">
+                    <property name="name">combobox_shapes</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <placeholder/>
-                    </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
+                    <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
@@ -533,23 +528,6 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkTextView" id="text_points_added">
-                        <property name="name">text_points_added</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="tooltip_text" translatable="yes">Added points</property>
-                        <property name="editable">False</property>
-                        <property name="cursor_visible">False</property>
-                        <property name="accepts_tab">False</property>
-                        <property name="monospace">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">5</property>
-                        <property name="width">2</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkEntry" id="text_input_name">
                         <property name="name">text_input_name</property>
                         <property name="visible">True</property>
@@ -595,6 +573,32 @@
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">1</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="box_points_added">
+                        <property name="name">box_points_added</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="label_points_added">
+                            <property name="name">label_points_added</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Points added:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">5</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
