@@ -2,7 +2,6 @@
 
 #include <gtkmm/application.h>
 #include <gtkmm/builder.h>
-#include <gtkmm/window.h>
 
 #include "src/control/main.h"
 
