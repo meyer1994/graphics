@@ -11,6 +11,8 @@
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/comboboxtext.h>
 
+#include "../mode/shape.h"
+
 namespace Control {
 
 class Shapes {
@@ -49,10 +51,52 @@ public:
         // buttons
         b->get_widget("button_shape_rotate_left", button_rotate_left);
         b->get_widget("button_shape_rotate_right", button_rotate_right);
+
+        connect_buttons();
     }
 
-    ~Shapes() {
+    ~Shapes() {}
 
+    void move_up() {
+        Shape& s = get_shape();
+        double move = get_move_input();
+        s.translate(0, move);
+        drawing_area->queue_draw();
+    }
+
+    void move_down() {
+        Shape& s = get_shape();
+        double move = get_move_input();
+        s.translate(0, -move);
+        drawing_area->queue_draw();
+    }
+
+    void move_left() {
+        Shape& s = get_shape();
+        double move = get_move_input();
+        s.translate(-move, 0);
+        drawing_area->queue_draw();
+    }
+
+    void move_right() {
+        Shape& s = get_shape();
+        double move = get_move_input();
+        s.translate(move, 0);
+        drawing_area->queue_draw();
+    }
+
+    void inflate() {
+    	Shape& s = get_shape();
+    	double ratio = get_inflate_input();
+    	s.inflate(ratio);
+        drawing_area->queue_draw();
+    }
+
+    void deflate() {
+    	Shape& s = get_shape();
+    	double ratio = 1 / get_inflate_input();
+    	s.inflate(ratio);
+        drawing_area->queue_draw();
     }
 
     // Shapes to be drawn
@@ -86,10 +130,59 @@ public:
     Gtk::Entry* input_rotate_x = nullptr;
     Gtk::Entry* input_rotate_y = nullptr;
     Gtk::Entry* input_rotate_z = nullptr;
-  
+
 protected:
-    Shape get_shape() {
+    Shape& get_shape() {
         return shapes[combobox_shapes->get_active_row_number()];
+    }
+
+    void connect_buttons() {
+        button_move_up
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Shapes::move_up));
+
+        button_move_down
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Shapes::move_down));
+
+        button_move_left
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Shapes::move_left));
+
+        button_move_right
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Shapes::move_right));
+
+        button_inflate_plus
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Shapes::inflate));
+
+        button_inflate_minus
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Shapes::deflate));
+
+    }
+
+    double get_move_input() const {
+        double move_size = 10;
+        try {
+            std::string move_input = input_move->get_text();
+            move_size = std::stod(move_input);
+        } catch (std::exception& e) {
+            // Nothing
+        }
+        return move_size;
+    }
+
+    double get_inflate_input() const {
+        double inflate_size = 1.5;
+        try {
+            std::string move_input = input_inflate->get_text();
+            inflate_size = std::stod(move_input);
+        } catch (std::exception& e) {
+            // Nothing
+        }
+        return inflate_size;
     }
 };
 

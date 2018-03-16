@@ -51,6 +51,33 @@ public:
         }
     }
 
+    void inflate(double ratio) {
+
+    	// Get distance to origin
+    	Point m_point = medium();
+    	Vector v;
+    	for (int i = 0; i < m_point.size() - 1; i++) {
+    		v.push_back(-m_point[i]);
+    	}
+
+    	// Origin matrix
+    	Matrix m_origin = Point::translate_matrix(v);
+
+    	// Scale matrix
+    	Vector d = Vector(points_real[0].dimensions(), ratio);
+    	Matrix m_scale = Point::scale_matrix(d);
+
+    	// Back to start
+    	Matrix m_medium = Point::translate_matrix(m_point);
+
+    	// Apply
+    	Matrix temp = m_multiply(m_origin, m_scale);
+    	Matrix m_transform = m_multiply(temp, m_medium);
+    	for (Point& p : points_real) {
+    		p.transform(m_transform);
+    	}
+    }
+
     virtual std::string to_string() const {
         int total = points_real.size();
         std::string str = "Shape(";

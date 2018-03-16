@@ -439,7 +439,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="width_chars">5</property>
-                                        <property name="text" translatable="yes">10</property>
+                                        <property name="text" translatable="yes">1.5</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>

@@ -10,6 +10,7 @@
 #include <gtkmm/button.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/drawingarea.h>
+#include <gtkmm/comboboxtext.h>
 
 #include "../mode/shape.h"
 #include "../mode/point.h"
@@ -30,6 +31,9 @@ public:
             Point(50, 50),
             Point(0, 50)
         }));
+        Gtk::ComboBoxText* c = nullptr;
+        b->get_widget("combobox_shapes", c);
+        c->append("teste");
 
         b->get_widget("input_viewport_move", input_viewport_move);
         b->get_widget("input_viewport_zoom", input_viewport_zoom);
@@ -72,7 +76,7 @@ public:
     }
 
     void zoom_in() {
-        double quo = (window.ymax - window.xmin)/(window.xmax - window.xmin);
+        double quo = (window.ymax - window.ymin)/(window.xmax - window.xmin);
         double zoom = get_zoom_input();
         window.ymax -= zoom * quo;
         window.xmax -= zoom;
@@ -80,7 +84,7 @@ public:
     }
 
     void zoom_out() {
-        double quo = (window.ymax - window.xmin)/(window.xmax - window.xmin);
+        double quo = (window.ymax - window.ymin)/(window.xmax - window.xmin);
         double zoom = get_zoom_input();
         window.ymax += zoom * quo;
         window.xmax += zoom;
