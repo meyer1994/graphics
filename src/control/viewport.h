@@ -76,11 +76,6 @@ public:
         double zoom = get_zoom_input();
         window.ymax -= zoom * quo;
         window.xmax -= zoom;
-        printf("xmin = %f\n", window.xmin);
-        printf("xmax = %f\n", window.xmax);
-        printf("ymin = %f\n", window.ymin);
-        printf("ymax = %f\n", window.ymax);
-        printf("quo = %f\n\n",  quo);
         drawing_area->queue_draw();
     }
 
