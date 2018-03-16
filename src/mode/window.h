@@ -12,13 +12,13 @@ public:
         Gtk::Allocation alloc = d->get_allocation();
 
         xmax = alloc.get_width();
-        ymax = alloc.get_width();
+        ymax = alloc.get_height();
         xmin = 0;
         ymin = 0;
 	}
 
 	~Window() {}
-	
+
 	double xmax;
 	double ymax;
 	double xmin;
