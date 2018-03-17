@@ -12,7 +12,7 @@ public:
 
     Line(Point a, Point b) : Shape(std::vector<Point>{a, b}) {}
 
-    virtual std::string to_string() const {
+    virtual std::string to_string() const override {
         if (points_real[0].size() == 0 || points_real[1].size() == 0) {
             return "Line()";
         }
