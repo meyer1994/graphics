@@ -27,6 +27,12 @@ test:
 	./test && \
 	rm test
 
+test_debug:
+	cd tests/ && \
+	$(C) -o test test.cc -I ../src/mode -g && \
+	gdb ./test && \
+	rm test
+
 test_valgrind:
 	cd tests/ && \
 	$(C) -o test test.cc -I ../src/mode && \
