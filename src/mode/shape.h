@@ -19,7 +19,7 @@ public:
             throw std::domain_error("There are no points in shape");
         }
 
-        Vector point_medium(points_real[0].dimensions(), 0);
+        Vector point_medium(points_real[0].size(), 0);
         // Sum
         for (const Point& p : points_real) {
             for (int i = 0; i < p.size(); i++) {
@@ -47,7 +47,7 @@ public:
 
     void translate(double x, double y) {
         for (Point& p : points_real) {
-            p.translate(x, y);
+            p.translate(Vector{x, y});
         }
     }
 
@@ -60,11 +60,11 @@ public:
     		v.push_back(-m_point[i]);
     	}
 
-    	// Origin matrix
+    	// To origin matrix
     	Matrix m_origin = Point::translate_matrix(v);
 
     	// Scale matrix
-    	Vector d = Vector(points_real[0].dimensions(), ratio);
+    	Vector d = Vector(ratio);
     	Matrix m_scale = Point::scale_matrix(d);
 
     	// Back to start
