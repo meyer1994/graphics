@@ -56,7 +56,7 @@ public:
     	// Get distance to origin
     	Point m_point = medium();
     	Vector v;
-    	for (int i = 0; i < m_point.size() - 1; i++) {
+    	for (int i = 0; i < m_point.size(); i++) {
     		v.push_back(-m_point[i]);
     	}
 
@@ -64,7 +64,7 @@ public:
     	Matrix m_origin = Point::translate_matrix(v);
 
     	// Scale matrix
-    	Vector d = Vector(ratio);
+    	Vector d = Vector(m_point.size(), ratio);
     	Matrix m_scale = Point::scale_matrix(d);
 
     	// Back to start
