@@ -6,6 +6,8 @@
 
 #include <shape.h>
 
+#include "util.h"
+
 namespace Test {
 
 void shape() {
@@ -45,15 +47,15 @@ void shape() {
         Point(2, 2),
         Point(2, 1)
     });
-    s3.rotate(-90);
-    assert(std::round(s3.points_real[0][0]) == -1);
-    assert(std::round(s3.points_real[0][1]) ==  1);
-    assert(std::round(s3.points_real[1][0]) == -2);
-    assert(std::round(s3.points_real[1][1]) ==  1);
-    assert(std::round(s3.points_real[2][0]) == -2);
-    assert(std::round(s3.points_real[2][1]) ==  2);
-    assert(std::round(s3.points_real[3][0]) == -1);
-    assert(std::round(s3.points_real[3][1]) ==  2);
+    s3.rotate(90);
+    assert(is_equal(s3.points_real[0][0], -1));
+    assert(is_equal(s3.points_real[0][1],  1));
+    assert(is_equal(s3.points_real[1][0], -2));
+    assert(is_equal(s3.points_real[1][1],  1));
+    assert(is_equal(s3.points_real[2][0], -2));
+    assert(is_equal(s3.points_real[2][1],  2));
+    assert(is_equal(s3.points_real[3][0], -1));
+    assert(is_equal(s3.points_real[3][1],  2));
     std::cout << "[SHAPE]\t\tOK - Rotate matrix" << std::endl;
 
 
