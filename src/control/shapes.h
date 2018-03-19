@@ -100,16 +100,27 @@ public:
     }
 
     void rotate_left() {
-    	Shape& s = get_shape();
     	double angle = get_rotate_input();
-    	s.rotate(angle);
-        drawing_area->queue_draw();
+    	rotate_switch(angle);
     }
 
     void rotate_right() {
-    	Shape& s = get_shape();
     	double angle = get_rotate_input();
-    	s.rotate(-angle);
+    	rotate_switch(-angle);
+    }
+
+    void rotate_switch(double angle){
+        Shape& s = get_shape();
+        if(radio_coord->get_active() == true) {
+            Point p = get_point();
+            s.rotate(angle, p);
+        }
+        if(radio_viewport->get_active() == true) {
+            s.rotate(angle);
+        }
+        if(radio_shape->get_active() == true) {
+            s.rotate(angle, s.medium());
+        }
         drawing_area->queue_draw();
     }
 
@@ -154,6 +165,19 @@ protected:
         return shapes[0];
     }
 
+    Point get_point(){
+        double x,y,z;
+        try {
+            x = std::stod(input_rotate_x->get_text());
+            y = std::stod(input_rotate_y->get_text());
+            // z = std::stod(input_rotate_z->get_text());
+        } catch (std::exception& e) {
+            // pass
+        }
+        return Point(x,y);
+
+    }
+
     void connect_buttons() {
         button_move_up
             ->signal_clicked()
@@ -187,15 +211,7 @@ protected:
         button_rotate_right
             ->signal_clicked()
             .connect(sigc::mem_fun(*this, &Shapes::rotate_right));
-        // radio_shape
-        //     ->signal_clicked()
-        //     .connect(sigc::mem_fun(*this, &Shapes::deflate));
-        // radio_coord
-        //     ->signal_clicked()
-        //     .connect(sigc::mem_fun(*this, &Shapes::deflate));
-        // radio_viewport
-        //     ->signal_clicked()
-        //     .connect(sigc::mem_fun(*this, &Shapes::deflate));
+
 
 
 

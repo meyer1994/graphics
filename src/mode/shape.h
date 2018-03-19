@@ -45,6 +45,20 @@ public:
         }
     }
 
+    void rotate(double angle, Point p) {
+        Vector v;
+    	for (int i = 0; i < p.size(); i++) {
+    		v.push_back(-p[i]);
+    	}
+        Matrix t_mat_go = Point::translate_matrix(v);
+        Matrix r_mat = Point::rotate_matrix(angle);
+        Matrix t_mat_come = Point::translate_matrix(p);
+        Matrix temp = m_multiply(t_mat_go, r_mat);
+        Matrix multi = m_multiply(temp, t_mat_come);
+        transform(multi);
+
+    }
+
     void translate(double x, double y) {
         for (Point& p : points_real) {
             p.translate(Vector{x, y});
