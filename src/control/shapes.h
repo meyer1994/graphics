@@ -94,8 +94,22 @@ public:
 
     void deflate() {
     	Shape& s = get_shape();
-    	double ratio = 1 / get_inflate_input();
-    	s.inflate(ratio);
+    	double ratio = get_inflate_input();
+    	s.inflate(1/ratio);
+        drawing_area->queue_draw();
+    }
+
+    void rotate_left() {
+    	Shape& s = get_shape();
+    	double angle = get_rotate_input();
+    	s.rotate(angle);
+        drawing_area->queue_draw();
+    }
+
+    void rotate_right() {
+    	Shape& s = get_shape();
+    	double angle = get_rotate_input();
+    	s.rotate(-angle);
         drawing_area->queue_draw();
     }
 
@@ -133,7 +147,11 @@ public:
 
 protected:
     Shape& get_shape() {
-        return shapes[combobox_shapes->get_active_row_number()];
+        int index = combobox_shapes->get_active_row_number();
+        if (index > 0) {
+            return shapes[index];
+        }
+        return shapes[0];
     }
 
     void connect_buttons() {
@@ -161,6 +179,27 @@ protected:
             ->signal_clicked()
             .connect(sigc::mem_fun(*this, &Shapes::deflate));
 
+
+        button_rotate_left
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Shapes::rotate_left));
+
+        button_rotate_right
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Shapes::rotate_right));
+        // radio_shape
+        //     ->signal_clicked()
+        //     .connect(sigc::mem_fun(*this, &Shapes::deflate));
+        // radio_coord
+        //     ->signal_clicked()
+        //     .connect(sigc::mem_fun(*this, &Shapes::deflate));
+        // radio_viewport
+        //     ->signal_clicked()
+        //     .connect(sigc::mem_fun(*this, &Shapes::deflate));
+
+
+
+
     }
 
     double get_move_input() const {
@@ -177,13 +216,27 @@ protected:
     double get_inflate_input() const {
         double inflate_size = 1.5;
         try {
-            std::string move_input = input_inflate->get_text();
-            inflate_size = std::stod(move_input);
+            std::string inflate_input = input_inflate->get_text();
+            inflate_size = std::stod(inflate_input);
         } catch (std::exception& e) {
             // Nothing
         }
         return inflate_size;
     }
+
+    double get_rotate_input() const {
+        double angle_value = 30;
+        try {
+            std::string angle_input = input_angle->get_text();
+            angle_value = std::stod(angle_input);
+        } catch (std::exception& e) {
+            // Nothing
+        }
+        return angle_value;
+    }
+
+
+
 };
 
 }  // namespace Control

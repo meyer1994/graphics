@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.4 -->
+<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
   <object class="GtkWindow" id="window_main">
@@ -12,11 +12,15 @@
         <property name="name">window_box_main</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="spacing">3</property>
+        <property name="homogeneous">True</property>
         <child>
           <object class="GtkBox" id="box_control">
             <property name="name">window_box_main_box_control_</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
             <child>
@@ -439,7 +443,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="width_chars">5</property>
-                                        <property name="text" translatable="yes">1.5</property>
+                                        <property name="text" translatable="yes">2</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -614,6 +618,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="xalign">0.5</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">radiobutton_shape_point_rotate</property>
@@ -630,6 +635,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="xalign">0.5</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">radiobutton_shape_point_rotate</property>
@@ -646,6 +652,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="xalign">0.5</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -724,6 +731,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="width_chars">5</property>
+                                        <property name="text" translatable="yes">30</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -790,7 +798,7 @@
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
+            <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -807,13 +815,10 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>
-    </child>
-    <child type="titlebar">
-      <placeholder/>
     </child>
   </object>
   <object class="GtkDialog" id="dialog_input">
@@ -1022,9 +1027,6 @@
           </packing>
         </child>
       </object>
-    </child>
-    <child>
-      <placeholder/>
     </child>
   </object>
 </interface>
