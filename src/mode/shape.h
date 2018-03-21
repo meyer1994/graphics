@@ -50,13 +50,12 @@ public:
     	for (int i = 0; i < p.size(); i++) {
     		v.push_back(-p[i]);
     	}
-        Matrix t_mat_go = Point::translate_matrix(v);
-        Matrix r_mat = Point::rotate_matrix(angle);
-        Matrix t_mat_come = Point::translate_matrix(p);
-        Matrix temp = m_multiply(t_mat_go, r_mat);
-        Matrix multi = m_multiply(temp, t_mat_come);
+        Matrix t_mat_go = Transformation::translate(v);
+        Matrix r_mat = Transformation::rotate(angle);
+        Matrix t_mat_come = Transformation::translate(p);
+        Matrix temp = Transformation::combine(t_mat_go, r_mat);
+        Matrix multi = Transformation::combine(temp, t_mat_come);
         transform(multi);
-
     }
 
     void translate(double x, double y) {
@@ -75,24 +74,24 @@ public:
     	}
 
     	// To origin matrix
-    	Matrix m_origin = Point::translate_matrix(v);
+    	Matrix m_origin = Transformation::translate(v);
 
     	// Scale matrix
     	Vector d = Vector(m_point.size(), ratio);
-    	Matrix m_scale = Point::scale_matrix(d);
+    	Matrix m_scale = Transformation::scale(d);
 
     	// Back to start
-    	Matrix m_medium = Point::translate_matrix(m_point);
+    	Matrix m_medium = Transformation::translate(m_point);
 
     	// Apply
-    	Matrix temp = m_multiply(m_origin, m_scale);
-    	Matrix m_transform = m_multiply(temp, m_medium);
+    	Matrix temp = Transformation::combine(m_origin, m_scale);
+    	Matrix m_transform = Transformation::combine(temp, m_medium);
     	for (Point& p : points_real) {
     		p.transform(m_transform);
     	}
     }
 
-    virtual std::string to_string() const {
+    virtual const std::string to_string() const {
         int total = points_real.size();
         std::string str = "Shape(";
         for (int i = 0; i < total - 1; i++) {
@@ -108,29 +107,22 @@ public:
         return points_real.size();
     }
 
-    std::vector<Point> points_real;
-    std::vector<Point> points_window;
+    const Point& operator[](int i) const {
+        return points_real[i];
+    }
 
-protected:
-    void transform(Matrix m) {
+    Point& operator[](int i) {
+        return points_real[i];
+    }
+
+    void transform(Matrix& m) {
         for (Point& p : points_real) {
             p.transform(m);
         }
     }
 
-    Matrix m_multiply(Matrix& m0, Matrix& m1) {
-        Matrix res(m0.size(), Vector(m0.size(), 0));
+    std::vector<Point> points_real;
 
-        for (int i = 0; i < res.size(); i++) {
-            for (int j = 0; j < res.size(); j++) {
-                for (int k = 0; k < res.size(); k++) {
-                    res[i][j] += (m0[i][k] * m1[k][j]);
-                }
-            }
-        }
-
-        return res;
-    }
 };
 
 #endif  // SHAPE_H

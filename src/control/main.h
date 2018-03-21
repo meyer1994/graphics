@@ -26,7 +26,7 @@ public:
         shapes = new std::vector<Shape>();
         shape_labels = new std::vector<Gtk::Label*>();
 
-        window = new Window(b);
+        window = new Window(b, *shapes);
 
         control_viewport = new Viewport(b, *shapes, *window);
         control_dialog = new Dialog(b, *shapes);

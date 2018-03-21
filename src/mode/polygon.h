@@ -12,7 +12,7 @@ public:
 
     explicit Polygon(std::vector<Point> points) : Shape(points) {}
 
-    virtual std::string to_string() const override {
+    virtual const std::string to_string() const override {
         if (points_real.size() == 0) {
             return "Polygon()";
         }

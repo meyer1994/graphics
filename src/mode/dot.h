@@ -12,7 +12,7 @@ public:
 
     Dot(double x, double y) : Shape(std::vector<Point>{Point(x, y)}) {}
 
-    virtual std::string to_string() const override {
+    virtual const std::string to_string() const override {
         if (points_real.size() == 0) {
             return "Dot()";
         }
