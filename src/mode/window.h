@@ -27,10 +27,6 @@ public:
             Point(x, y),
             Point(0, y)
         });
-        // xmax = x;
-        // ymax = y;
-        // xmin = 0;
-        // ymin = 0;    
         
         drawing_area
             ->signal_draw()
@@ -60,10 +56,6 @@ public:
         return true;
     }
 
-    // double xmax = 0;
-    // double ymax = 0;
-    // double xmin = 0;
-    // double ymin = 0;
     Shape rectangle;
     std::vector<Shape>& shapes;
     Gtk::DrawingArea* drawing_area = nullptr;
@@ -113,20 +105,21 @@ protected:
         // Rotation matrix
         // Copied from:
         // https://stackoverflow.com/questions/21483999
-        double radian = std::atan2(1, 0) - std::atan2(ymax(), 0);
-        double angle = radian * (180 / _MATH_PI);
+        double radian = std::atan2(1.0, 0.0) - std::atan2(ymax(), xmin());
+        double angle = radian * (180.0 / _MATH_PI);
         Matrix rotate = Transformation::rotate(angle);
 
         // Scale matrix
         Gtk::Allocation a = drawing_area->get_allocation();
-        double x_ratio = 1.0 / (a.get_width() / 2);
-        double y_ratio = 1.0 / (a.get_height() / 2);
+        double x_ratio = 1.0 / (a.get_width() / 2.0);
+        double y_ratio = 1.0 / (a.get_height() / 2.0);
         Vector r{x_ratio, y_ratio};
         Matrix scale = Transformation::scale(r);
 
         // Combine transformations
         Matrix temp = Transformation::combine(translate, rotate);
-        return Transformation::combine(temp, scale);
+        Matrix final = Transformation::combine(temp, scale);
+        return final;
     }
 
     Point vp_transform(const Point& p) {

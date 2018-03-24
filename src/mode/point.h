@@ -12,7 +12,7 @@ typedef std::vector<Vector> Matrix;
 
 
 // Constant
-const double _MATH_PI = std::acos(-1);
+const double _MATH_PI = std::acos(-1.0);
 
 
 namespace Transformation {
@@ -53,9 +53,9 @@ Matrix scale(const Vector& v) {
  * @return Matrix of size `(3 x 3)`, of the transformation.
  */
 Matrix rotate(double angle) {
-    // cos() and sin() are in radians
-    double c = std::cos((-angle * _MATH_PI) / 180);
-    double s = std::sin((-angle * _MATH_PI) / 180);
+    double radian = (-angle * _MATH_PI) / 180;
+    double c = std::cos(radian);
+    double s = std::sin(radian);
     return Matrix{
         Vector{c, -s, 0},
         Vector{s,  c, 0},

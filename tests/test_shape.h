@@ -15,7 +15,6 @@ void shape() {
     Shape s0;
     assert(s0.size() == 0);
     assert(s0.points_real.size() == 0);
-    assert(s0.points_window.size() == 0);
     std::cout << "[SHAPE]\t\tOK - Default constructor" << std::endl;
 
 
@@ -66,20 +65,21 @@ void shape() {
 
 
     Shape s3(std::vector<Point>{
+        Point(0, 0),
+        Point(0, 1),
         Point(1, 1),
-        Point(1, 2),
-        Point(2, 2),
-        Point(2, 1)
+        Point(1, 0)
     });
-    s3.rotate(90);
-    assert(is_equal(s3.points_real[0][0], -1));
-    assert(is_equal(s3.points_real[0][1],  1));
-    assert(is_equal(s3.points_real[1][0], -2));
-    assert(is_equal(s3.points_real[1][1],  1));
-    assert(is_equal(s3.points_real[2][0], -2));
-    assert(is_equal(s3.points_real[2][1],  2));
-    assert(is_equal(s3.points_real[3][0], -1));
-    assert(is_equal(s3.points_real[3][1],  2));
+    Point m3 = s3.medium();
+    s3.rotate(90, m3);
+    assert(is_equal(s3.points_real[0][0], 1));
+    assert(is_equal(s3.points_real[0][1], 0));
+    assert(is_equal(s3.points_real[1][0], 0));
+    assert(is_equal(s3.points_real[1][1], 0));
+    assert(is_equal(s3.points_real[2][0], 0));
+    assert(is_equal(s3.points_real[2][1], 1));
+    assert(is_equal(s3.points_real[3][0], 1));
+    assert(is_equal(s3.points_real[3][1], 1));
     std::cout << "[SHAPE]\t\tOK - Rotate" << std::endl;
 
 

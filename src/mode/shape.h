@@ -68,10 +68,10 @@ public:
 
     	// Get distance to origin
     	Point m_point = medium();
-    	Vector v;
-    	for (int i = 0; i < m_point.size(); i++) {
-    		v.push_back(-m_point[i]);
-    	}
+    	Vector v = Vector(m_point.size(), 0);
+        for (int i = 0; i < m_point.size(); i++) {
+            v[i] = -m_point[i];
+        }
 
     	// To origin matrix
     	Matrix m_origin = Transformation::translate(v);

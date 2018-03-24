@@ -34,15 +34,24 @@ public:
         b->get_widget("combobox_shapes", c);
         c->append("teste");
 
-        b->get_widget("input_viewport_move", input_viewport_move);
-        b->get_widget("input_viewport_zoom", input_viewport_zoom);
         b->get_widget("drawing_area", drawing_area);
+
+        // Rotation controls
+        b->get_widget("input_angle", input_angle);
+        b->get_widget("button_rotate_left", button_rotate_left);
+        b->get_widget("button_rotate_right", button_rotate_right);
+
+        // Movement controls
         b->get_widget("button_up", button_up);
         b->get_widget("button_down", button_down);
         b->get_widget("button_left", button_left);
         b->get_widget("button_right", button_right);
+        b->get_widget("input_viewport_move", input_viewport_move);
+
+        // Zoom controls
         b->get_widget("button_in", button_in);
         b->get_widget("button_out", button_out);
+        b->get_widget("input_viewport_zoom", input_viewport_zoom);
 
         connect_buttons();
     }
@@ -74,14 +83,28 @@ public:
     }
 
     void zoom_in() {
-        double zoom = get_zoom_input();
-        window.rectangle.inflate(zoom);
+        double zoom = 1 / get_zoom_input();
+        window.rectangle.inflate(1 + zoom);
         drawing_area->queue_draw();
     }
 
     void zoom_out() {
-        double zoom = get_zoom_input();
-        window.rectangle.inflate(1 / zoom);
+        double zoom = 1 / get_zoom_input();
+        window.rectangle.inflate(1 - zoom);
+        drawing_area->queue_draw();
+    }
+
+    void rotate_right() {
+        double angle = get_angle_input();
+        Point medium = window.rectangle.medium();
+        window.rectangle.rotate(-angle, medium);
+        drawing_area->queue_draw();
+    }
+
+    void rotate_left() {
+        double angle = get_angle_input();
+        Point medium = window.rectangle.medium();
+        window.rectangle.rotate(angle, medium);
         drawing_area->queue_draw();
     }
 
@@ -89,18 +112,24 @@ public:
 
     Gtk::DrawingArea* drawing_area = nullptr;
 
-    Gtk::Entry* input_viewport_move = nullptr;
-    Gtk::Entry* input_viewport_zoom = nullptr;
-
+    // Rotation controls
+    Gtk::Entry* input_angle = nullptr;
+    Gtk::Button* button_rotate_right = nullptr;
+    Gtk::Button* button_rotate_left = nullptr;
+    
+    // Movement controls
     Gtk::Button* button_up = nullptr;
-    Gtk::Button* button_down = nullptr;
     Gtk::Button* button_left = nullptr;
     Gtk::Button* button_right = nullptr;
+    Gtk::Button* button_down = nullptr;
+    Gtk::Entry* input_viewport_move = nullptr;
+
+    // Zoom controls
     Gtk::Button* button_in = nullptr;
     Gtk::Button* button_out = nullptr;
+    Gtk::Entry* input_viewport_zoom = nullptr;
 
 protected:
-
     void connect_buttons() {
         button_up
             ->signal_clicked()
@@ -125,6 +154,14 @@ protected:
         button_out
             ->signal_clicked()
             .connect(sigc::mem_fun(*this, &Control::Viewport::zoom_out));
+
+        button_rotate_left
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Control::Viewport::rotate_left));
+
+        button_rotate_right
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Control::Viewport::rotate_right));
     }
 
     double get_move_input() {
@@ -149,6 +186,17 @@ protected:
             // Nothing
         }
         return zoom_size;
+    }
+
+    double get_angle_input() {
+        double angle = 30;
+        try {
+            std::string angle_input = input_angle->get_text();
+            angle = std::stod(angle_input);
+        } catch (std::exception& e) {
+            // Nothing
+        }
+        return angle;
     }
 };
 

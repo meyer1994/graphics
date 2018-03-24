@@ -32,7 +32,7 @@ void point() {
     std::cout << "[POINT]\t\tOK - 2D constructor" << std::endl;
 
 
-    Matrix scale_matrix = Point::scale_matrix(Vector{2, 2});
+    Matrix scale_matrix = Transformation::scale(Vector{2, 2});
     Matrix expected_scale_matrix = {
         Vector{2, 0, 0},
         Vector{0, 2, 0},
@@ -49,9 +49,9 @@ void point() {
     std::cout << "[POINT]\t\tOK - Scale" << std::endl;
 
 
-    Matrix rotate_matrix = Point::rotate_matrix(90);
-    double c = std::cos((-90 * MATH_PI) / 180);
-    double s = std::sin((-90 * MATH_PI) / 180);
+    Matrix rotate_matrix = Transformation::rotate(90);
+    double c = std::cos((-90 * _MATH_PI) / 180);
+    double s = std::sin((-90 * _MATH_PI) / 180);
     Matrix expected_rotate_matrix = {
         Vector{c, -s, 0},
         Vector{s,  c, 0},
@@ -68,7 +68,7 @@ void point() {
     std::cout << "[POINT]\t\tOK - Rotate" << std::endl;
 
 
-    Matrix translate_matrix = Point::translate_matrix(Vector{10, 10});
+    Matrix translate_matrix = Transformation::translate(Vector{10, 10});
     Matrix expected_translate_matrix = {
         Vector{ 1,  0, 0},
         Vector{ 0,  1, 0},
