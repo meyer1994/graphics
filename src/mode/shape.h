@@ -67,28 +67,25 @@ public:
     void inflate(double ratio) {
 
     	// Get distance to origin
-    	Point m_point = medium();
-    	Vector v = Vector(m_point.size(), 0);
-        for (int i = 0; i < m_point.size(); i++) {
-            v[i] = -m_point[i];
-        }
+        Point m_point = medium();
 
-    	// To origin matrix
-    	Matrix m_origin = Transformation::translate(v);
+        Vector v;
+        for (double d : m_point) {
+            v.push_back(-d);
+        }
+    	Matrix m_to_origin = Transformation::translate(v);
 
     	// Scale matrix
     	Vector d = Vector(m_point.size(), ratio);
     	Matrix m_scale = Transformation::scale(d);
 
     	// Back to start
-    	Matrix m_medium = Transformation::translate(m_point);
+    	Matrix m_to_source = Transformation::translate(m_point);
 
     	// Apply
-    	Matrix temp = Transformation::combine(m_origin, m_scale);
-    	Matrix m_transform = Transformation::combine(temp, m_medium);
-    	for (Point& p : points_real) {
-    		p.transform(m_transform);
-    	}
+    	Matrix temp = Transformation::combine(m_to_origin, m_scale);
+    	Matrix final = Transformation::combine(temp, m_to_source);
+        transform(final);
     }
 
     virtual const std::string to_string() const {

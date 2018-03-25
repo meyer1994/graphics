@@ -97,22 +97,23 @@ protected:
 
     const Matrix transformation() {
         // Translation matrix
-        double x_medium = (xmax() + xmin()) / 2;
-        double y_medium = (ymax() + ymin()) / 2;
-        Vector t{-x_medium, -y_medium};
+        Point medium = rectangle.medium();
+        Vector t{-medium[0], -medium[1]};
         Matrix translate = Transformation::translate(t);
 
         // Rotation matrix
         // Copied from:
         // https://stackoverflow.com/questions/21483999
-        double radian = std::atan2(1.0, 0.0) - std::atan2(ymax(), xmin());
+        double dot = ymax();
+        double det = -xmax();
+        double radian = std::acos(dot / (dot * dot));
         double angle = radian * (180.0 / _MATH_PI);
         Matrix rotate = Transformation::rotate(angle);
 
         // Scale matrix
         Gtk::Allocation a = drawing_area->get_allocation();
-        double x_ratio = 1.0 / (a.get_width() / 2.0);
-        double y_ratio = 1.0 / (a.get_height() / 2.0);
+        double x_ratio = 1.0 / ((ymax() - ymin()) / 2.0);
+        double y_ratio = 1.0 / ((xmax() - xmin()) / 2.0);
         Vector r{x_ratio, y_ratio};
         Matrix scale = Transformation::scale(r);
 
@@ -120,6 +121,7 @@ protected:
         Matrix temp = Transformation::combine(translate, rotate);
         Matrix final = Transformation::combine(temp, scale);
         return final;
+
     }
 
     Point vp_transform(const Point& p) {

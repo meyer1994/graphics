@@ -83,13 +83,13 @@ public:
     }
 
     void zoom_in() {
-        double zoom = 1 / get_zoom_input();
+        double zoom = get_zoom_input() / 100;
         window.rectangle.inflate(1 + zoom);
         drawing_area->queue_draw();
     }
 
     void zoom_out() {
-        double zoom = 1 / get_zoom_input();
+        double zoom = get_zoom_input() / 100;
         window.rectangle.inflate(1 - zoom);
         drawing_area->queue_draw();
     }
