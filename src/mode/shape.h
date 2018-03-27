@@ -10,37 +10,37 @@ class Shape {
 public:
     Shape() {}
 
-    explicit Shape(std::vector<Point> p) : points_real(p) {}
+    explicit Shape(std::vector<Point> p) : real(p) {}
 
     ~Shape() {}
 
     Point medium() {
-        if (points_real.size() == 0) {
+        if (real.size() == 0) {
             throw std::domain_error("There are no points in shape");
         }
 
-        Vector point_medium(points_real[0].size(), 0);
+        Vector point_medium(real[0].size(), 0);
         // Sum
-        for (const Point& p : points_real) {
+        for (const Point& p : real) {
             for (int i = 0; i < p.size(); i++) {
                 point_medium[i] += p[i];
             }
         }
         // Divide
         for (double& d : point_medium) {
-            d /= points_real.size();
+            d /= real.size();
         }
         return Point(point_medium);
     }
 
     void scale(double ratio) {
-        for (Point& p : points_real) {
+        for (Point& p : real) {
             p.scale(ratio);
         }
     }
 
     void rotate(double angle) {
-        for (Point& p : points_real) {
+        for (Point& p : real) {
             p.rotate(angle);
         }
     }
@@ -59,7 +59,7 @@ public:
     }
 
     void translate(double x, double y) {
-        for (Point& p : points_real) {
+        for (Point& p : real) {
             p.translate(Vector{x, y});
         }
     }
@@ -89,36 +89,37 @@ public:
     }
 
     virtual const std::string to_string() const {
-        int total = points_real.size();
+        int total = real.size();
         std::string str = "Shape(";
         for (int i = 0; i < total - 1; i++) {
-            str.append(points_real[i].to_string());
+            str.append(real[i].to_string());
             str.append(", ");
         }
-        str.append(points_real[total - 1].to_string());
+        str.append(real[total - 1].to_string());
         str.append(")");
         return str;
     }
 
     int size() const {
-        return points_real.size();
+        return real.size();
     }
 
     const Point& operator[](int i) const {
-        return points_real[i];
+        return real[i];
     }
 
     Point& operator[](int i) {
-        return points_real[i];
+        return real[i];
     }
 
     void transform(Matrix& m) {
-        for (Point& p : points_real) {
+        for (Point& p : real) {
             p.transform(m);
         }
     }
 
-    std::vector<Point> points_real;
+    std::vector<Point> real;
+    std::vector<Point> window;
 
 };
 

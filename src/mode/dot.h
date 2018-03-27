@@ -6,18 +6,37 @@
 
 #include "shape.h"
 
+/**
+ * @class Dot class.
+ * 
+ * @details Used to draw dots in the drawing area.
+ */
 class Dot : public Shape {
 public:
+    /**
+     * @brief Default constructor.
+     */
     Dot() : Shape() {}
 
+    /**
+     * @brief 2D contructor.
+     * 
+     * @param x X coordinate.
+     * @param y Y coordinate.
+     */
     Dot(double x, double y) : Shape(std::vector<Point>{Point(x, y)}) {}
 
+    /**
+     * @brief To string method.
+     * 
+     * @return An string representing this class.
+     */
     virtual const std::string to_string() const override {
-        if (points_real.size() == 0) {
+        if (real.size() == 0) {
             return "Dot()";
         }
         std::string str = "Dot(";
-        str.append(points_real[0].to_string());
+        str.append(real[0].to_string());
         str.append(")");
         return str;
     }

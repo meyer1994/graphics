@@ -10,8 +10,23 @@
 
 #include "shape.h"
 
+/**
+ * @brief Window class.
+ * 
+ * @details This object represents the window view of the real coordinates. The
+ * coordinates inside this view are normalized in a way that the center of the
+ * window is located at the point (0, 0) and the extremes are (-1, -1) and
+ * (1, 1).
+ * 
+ * @param s [description]
+ */
 class Window {
 public:
+    /**
+     * @brief Constructor.
+     * 
+     * @param s Vector of shapes that are drawn into the viewport.
+     */
 	Window(Glib::RefPtr<Gtk::Builder>& b, std::vector<Shape>& s)
     : shapes(s) {
         b->get_widget("drawing_area", drawing_area);
@@ -47,7 +62,7 @@ public:
         cr->set_source_rgb(0.8, 0, 0);
 
         // Draw all shapes
-        Matrix m = transformation();
+        Matrix m = normalization_matrix();
         for (Shape s : shapes) {
             draw_shape(cr, s, m);
         }
@@ -56,25 +71,42 @@ public:
         return true;
     }
 
+    /**
+     * @brief Gets the width of the window.
+     * 
+     * @return Double representing the widht of the window in real world
+     * coordinates.
+     */
     const double width() const {
-    	Point p0 = rectangle.points_real[0];
-    	Point p1 = rectangle.points_real[1];
+    	Point p0 = rectangle.real[0];
+    	Point p1 = rectangle.real[1];
     	double x = p0[0] - p1[0];
     	double y = p0[1] - p1[1];
     	return std::sqrt(x * x + y * y);
     }
 
+    /**
+     * @brief Gets the height of the window.
+     * 
+     * @return Returns double representing the height of the window.
+     */
     const double height() const {
-    	Point p0 = rectangle.points_real[0];
-    	Point p1 = rectangle.points_real[3];
+    	Point p0 = rectangle.real[0];
+    	Point p1 = rectangle.real[3];
     	double x = p0[0] - p1[0];
     	double y = p0[1] - p1[1];
     	return std::sqrt(x * x + y * y);
     }
 
+    /**
+     * @brief Gets the angle of the window related to the Y axis of the real
+     * world.
+     * 
+     * @return Double representing the angle, in degrees.
+     */
     const double y_angle() const {
-    	double x_vup = rectangle.points_real[3][0] - rectangle.points_real[0][0];
-        double y_vup = rectangle.points_real[3][1] - rectangle.points_real[0][1];
+    	double x_vup = rectangle.real[3][0] - rectangle.real[0][0];
+        double y_vup = rectangle.real[3][1] - rectangle.real[0][1];
         double cos = y_vup / std::sqrt(x_vup * x_vup + y_vup * y_vup);
         double radian = std::acos(cos);
         if(x_vup < 0) {
@@ -83,6 +115,9 @@ public:
         return (radian * 180.0) / _MATH_PI;
     }
 
+    /**
+     * @brief Same as y_angle, but for the X axis.
+     */
     const double x_angle() const {
     	return 90 - y_angle();
     }
@@ -92,16 +127,19 @@ public:
     Gtk::DrawingArea* drawing_area = nullptr;
 
 protected:
-    void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, const Shape& shape, const Matrix& m) {
+    void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, Shape& shape, const Matrix& m) {
         // First point
-        Point p0 = shape.points_real[0];
+        Point p0 = shape.real[0];
         p0.transform(m);
         Point p0v = vp_transform(p0);
         cr->move_to(p0v[0], p0v[1]);
 
+        shape.window.clear();
+
         // Lines to other points
-        for (Point point : shape.points_real) {
+        for (Point point : shape.real) {
             point.transform(m);
+            shape.window.push_back(point);
             Point n = vp_transform(point);
             cr->line_to(n[0], n[1]);
         }
@@ -110,9 +148,7 @@ protected:
         cr->line_to(p0v[0], p0v[1]);
     }
 
-
-
-    const Matrix transformation() {
+    const Matrix normalization_matrix() {
         // Translation matrix
         Point medium = rectangle.medium();
         Vector t{-medium[0], -medium[1]};
@@ -132,7 +168,6 @@ protected:
         Matrix temp = Transformation::combine(translate, rotate);
         Matrix final = Transformation::combine(temp, scale);
         return final;
-
     }
 
     Point vp_transform(const Point& p) {
@@ -140,8 +175,8 @@ protected:
         double xvmax = alloc.get_width();
         double yvmax = alloc.get_height();
 
-        double x = ((p[0] - -1) / (1 - -1)) * (xvmax);
-        double y = (1 - ((p[1] - -1) / (1 - -1))) * (yvmax);
+        double x = ((p[0] + 1) / 2) * (xvmax);
+        double y = (1 - (p[1] + 1) / 2) * (yvmax);
         return Point(x, y);
     }
 };

@@ -9,12 +9,33 @@
 
 #include "shape.h"
 
+/**
+ * @brief Obj descriptor class.
+ * 
+ * @details This class is used to write and read files in the form of .obj. The
+ * file stored in this pattern can be loaded into the software for use.
+ * @return [description]
+ */
 class ObjDescriptor {
 public:
+	/**
+	 * @brief Explicit constructor.
+	 * 
+	 * @param s The vector where to append the shapes to, or get the info to
+	 * write them to the disk.
+	 */
 	explicit ObjDescriptor(std::vector<Shape>& s) : shapes(s) {}
 
 	~ObjDescriptor() {}
 
+	/**
+	 * @brief Write the shapes to disk.
+	 * 
+	 * @details The shapes referenced in the vector passed in the contructor
+	 * will be written in the disk.
+	 * 
+	 * @param fname File name to write to.
+	 */
 	void write(std::string fname) {
 		std::ofstream file(fname);
 		int line_counter = 1;
@@ -42,6 +63,14 @@ public:
 		file.close();
 	}
 
+	/**
+	 * @brief Reads .obj from file.
+	 * 
+	 * @details Reads the objects from the file and appends them to the shapes
+	 * vector.
+	 * 
+	 * @param fname File name to read from.
+	 */
 	void read(std::string fname) {
 		std::ifstream file(fname);
 		std::stringstream buffer;
@@ -53,8 +82,12 @@ public:
 		int index = 0;
 		while (index < contents.size()) {
 			char c = contents[index];
+
+			// Points
 			if (c == 'v') {
 				points.push_back(get_point(contents, index));
+
+			// Objects
 			} else if (c == 'o') {
 				shapes.push_back(get_shape(contents, points, index));
 			}
@@ -66,7 +99,7 @@ public:
 protected:
 	std::string points_to_obj(const Shape& shape) {
 		std::string str;
-		for (const Point& p : shape.points_real) {
+		for (const Point& p : shape.real) {
 			str += "v";
 			for (double d : p) {
 				str += " " + std::to_string(d);
