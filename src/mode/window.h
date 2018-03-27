@@ -27,10 +27,10 @@ public:
             Point(x, y),
             Point(0, y)
         });
-        
+
         drawing_area
             ->signal_draw()
-            .connect(sigc::mem_fun(*this, &Window::on_draw)); 
+            .connect(sigc::mem_fun(*this, &Window::on_draw));
 	}
 
 	~Window() {}
@@ -102,18 +102,17 @@ protected:
         Matrix translate = Transformation::translate(t);
 
         // Rotation matrix
-        // Copied from:
-        // https://stackoverflow.com/questions/21483999
-        double dot = ymax();
-        double det = -xmax();
-        double radian = std::acos(dot / (dot * dot));
-        double angle = radian * (180.0 / _MATH_PI);
+		double x_vup = rectangle.points_real[0][0] - rectangle.points_real[3][0];
+        double y_vup = rectangle.points_real[3][1] - rectangle.points_real[0][1];
+        double cos = y_vup / std::sqrt(x_vup * x_vup + y_vup * y_vup);
+        double radian = std::acos(cos);
+        double angle = (radian * 180.0) / _MATH_PI;
         Matrix rotate = Transformation::rotate(angle);
 
         // Scale matrix
         Gtk::Allocation a = drawing_area->get_allocation();
-        double x_ratio = 1.0 / ((ymax() - ymin()) / 2.0);
-        double y_ratio = 1.0 / ((xmax() - xmin()) / 2.0);
+        double x_ratio = 1.0 / (a.get_width() / 2.0);
+        double y_ratio = 1.0 / (a.get_height() / 2.0);
         Vector r{x_ratio, y_ratio};
         Matrix scale = Transformation::scale(r);
 

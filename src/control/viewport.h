@@ -27,8 +27,7 @@ public:
         s.push_back(Shape(std::vector<Point>{
             Point(0, 0),
             Point(50, 0),
-            Point(50, 50),
-            Point(0, 50)
+            Point(50, 50)
         }));
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
@@ -116,7 +115,7 @@ public:
     Gtk::Entry* input_angle = nullptr;
     Gtk::Button* button_rotate_right = nullptr;
     Gtk::Button* button_rotate_left = nullptr;
-    
+
     // Movement controls
     Gtk::Button* button_up = nullptr;
     Gtk::Button* button_left = nullptr;
