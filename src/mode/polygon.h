@@ -26,7 +26,8 @@ public:
      * 
      * @param points Vector of points that make this polygon.
      */
-    explicit Polygon(std::vector<Point> points) : Shape(points) {}
+    explicit Polygon(std::vector<Point> points, std::string name = "polygon")
+    : Shape(points, name) {}
 
     /**
      * @brief To string method.

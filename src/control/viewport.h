@@ -23,12 +23,13 @@ public:
     Viewport(Glib::RefPtr<Gtk::Builder>& b, std::vector<Shape>& s, Window& w)
     : window(w) {
 
-        // Dummy shape
+        // Dummy shape (debugging)
         s.push_back(Shape(std::vector<Point>{
             Point(0, 0),
             Point(50, 0),
             Point(50, 50)
         }));
+        
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
         c->append("teste");

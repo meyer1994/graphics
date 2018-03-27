@@ -13,8 +13,8 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/comboboxtext.h>
+#include <gtkmm/imagemenuitem.h>
 
-#include "file_dialog.h"
 #include "../mode/dot.h"
 #include "../mode/line.h"
 #include "../mode/point.h"
@@ -37,19 +37,27 @@ public:
     : shapes(s) {
 
         b->get_widget("dialog_input", dialog_input);
-        b->get_widget("combobox_shapes", combobox_shapes);
-        b->get_widget("button_add_shape", button_add_shape);
+
+        // Menu items
+        b->get_widget("menu_item_new", menu_item_new);
+
+        // Buttons
         b->get_widget("button_finish", button_finish);
         b->get_widget("button_cancel", button_cancel);
         b->get_widget("button_add_file", button_add_file);
         b->get_widget("button_add_point", button_add_point);
+
+        // Inputs
         b->get_widget("text_input_name", text_input_name);
         b->get_widget("text_input_x", text_input_x);
         b->get_widget("text_input_y", text_input_y);
-        b->get_widget("box_points_added", box_points_added);
-        b->get_widget("drawing_area", drawing_area);
 
-        file_dialog = new FileDialog(b, s);
+
+        b->get_widget("combobox_shapes", combobox_shapes);
+        b->get_widget("box_points_added", box_points_added);
+
+        // Drawing area
+        b->get_widget("drawing_area", drawing_area);
 
         connect_buttons();
     }
@@ -61,7 +69,6 @@ public:
      */
     ~Dialog() {
         delete dialog_input;
-        delete file_dialog;
         clear_labels();
     }
 
@@ -176,16 +183,19 @@ public:
     // Shapes reference
     std::vector<Shape>& shapes;
 
-    FileDialog* file_dialog = nullptr;
-
     // Top-level dialog
     Gtk::Dialog* dialog_input = nullptr;
 
     // Combobox
     Gtk::ComboBoxText* combobox_shapes = nullptr;
 
+    // Menu items
+    Gtk::ImageMenuItem* menu_item_new = nullptr;
+    Gtk::ImageMenuItem* menu_item_open = nullptr;
+    Gtk::ImageMenuItem* menu_item_save = nullptr;
+    Gtk::ImageMenuItem* menu_item_save_as = nullptr;
+    
     // Buttons
-    Gtk::Button* button_add_shape = nullptr;
     Gtk::Button* button_finish = nullptr;
     Gtk::Button* button_cancel = nullptr;
     Gtk::Button* button_add_point = nullptr;
@@ -232,12 +242,6 @@ protected:
      * supposed to call.
      */
     void connect_buttons() {
-        button_add_shape
-            ->signal_clicked()
-            .connect(sigc::mem_fun(*dialog_input, &Gtk::Dialog::show));
-        button_add_file
-            ->signal_clicked()
-            .connect(sigc::mem_fun(*file_dialog, &FileDialog::on_file_clicked));
         button_finish
             ->signal_clicked()
             .connect(sigc::mem_fun(*this, &Control::Dialog::finish));
@@ -247,6 +251,9 @@ protected:
         button_add_point
             ->signal_clicked()
             .connect(sigc::mem_fun(*this, &Control::Dialog::add_point));
+        menu_item_new
+            ->signal_activate()
+            .connect(sigc::mem_fun(*dialog_input, &Gtk::Dialog::show));
     }
 
     /**

@@ -111,14 +111,20 @@ public:
 
     void rotate_switch(double angle){
         Shape& s = get_shape();
-        if(radio_coord->get_active() == true) {
+
+        // Rotate to any point
+        if(radio_coord->get_active()) {
             Point p = get_point();
             s.rotate(angle, p);
         }
-        if(radio_viewport->get_active() == true) {
+
+        // Rotate to center of viewport
+        if(radio_viewport->get_active()) {
             s.rotate(angle);
         }
-        if(radio_shape->get_active() == true) {
+
+        // Rotate from it's center
+        if(radio_shape->get_active()) {
             s.rotate(angle, s.medium());
         }
         drawing_area->queue_draw();

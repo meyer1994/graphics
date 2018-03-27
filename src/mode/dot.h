@@ -24,7 +24,8 @@ public:
      * @param x X coordinate.
      * @param y Y coordinate.
      */
-    Dot(double x, double y) : Shape(std::vector<Point>{Point(x, y)}) {}
+    Dot(double x, double y, std::string name = "dot")
+    : Shape(std::vector<Point>{Point(x, y)}) {}
 
     /**
      * @brief To string method.

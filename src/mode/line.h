@@ -24,7 +24,8 @@ public:
      * @param a Start point.
      * @param b End point.
      */
-    Line(Point a, Point b) : Shape(std::vector<Point>{a, b}) {}
+    Line(Point a, Point b, std::string name = "line")
+    : Shape(std::vector<Point>{a, b}) {}
 
     /**
      * @brief To string method.

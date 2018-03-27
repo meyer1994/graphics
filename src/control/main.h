@@ -10,7 +10,7 @@
 
 #include "../mode/shape.h"
 #include "../mode/window.h"
-#include "file_dialog.h"
+#include "filechooser.h"
 #include "viewport.h"
 #include "dialog.h"
 #include "shapes.h"
@@ -32,6 +32,7 @@ public:
         control_viewport = new Viewport(b, *shapes, *window);
         control_dialog = new Dialog(b, *shapes);
         control_shapes = new Shapes(b, *shapes);
+        file_chooser = new FileChooser(b, *shapes);
     }
 
     ~Main() {
@@ -40,6 +41,7 @@ public:
         delete control_viewport;
         delete control_dialog;
         delete shapes;
+        delete file_chooser;
 
         for (int i = 0; i < shape_labels->size(); i++) {
             delete (*shape_labels)[i];
@@ -52,9 +54,11 @@ public:
 
     Window* window = nullptr;
 
+    // Controllers
     Viewport* control_viewport = nullptr;
     Dialog* control_dialog = nullptr;
     Shapes* control_shapes = nullptr;
+    FileChooser* file_chooser = nullptr;
 
     Gtk::Window* window_main = nullptr;
 
