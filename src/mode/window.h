@@ -56,6 +56,37 @@ public:
         return true;
     }
 
+    const double width() const {
+    	Point p0 = rectangle.points_real[0];
+    	Point p1 = rectangle.points_real[1];
+    	double x = p0[0] - p1[0];
+    	double y = p0[1] - p1[1];
+    	return std::sqrt(x * x + y * y);
+    }
+
+    const double height() const {
+    	Point p0 = rectangle.points_real[0];
+    	Point p1 = rectangle.points_real[3];
+    	double x = p0[0] - p1[0];
+    	double y = p0[1] - p1[1];
+    	return std::sqrt(x * x + y * y);
+    }
+
+    const double y_angle() const {
+    	double x_vup = rectangle.points_real[3][0] - rectangle.points_real[0][0];
+        double y_vup = rectangle.points_real[3][1] - rectangle.points_real[0][1];
+        double cos = y_vup / std::sqrt(x_vup * x_vup + y_vup * y_vup);
+        double radian = std::acos(cos);
+        if(x_vup < 0) {
+        	radian = -radian;
+        }
+        return (radian * 180.0) / _MATH_PI;
+    }
+
+    const double x_angle() const {
+    	return 90 - y_angle();
+    }
+
     Shape rectangle;
     std::vector<Shape>& shapes;
     Gtk::DrawingArea* drawing_area = nullptr;
@@ -79,21 +110,7 @@ protected:
         cr->line_to(p0v[0], p0v[1]);
     }
 
-    double width() {
-    	Point& p0 = rectangle.points_real[0];
-    	Point& p1 = rectangle.points_real[1];
-    	double x = p0[0] - p1[0];
-    	double y = p0[1] - p1[1];
-    	return std::sqrt(x * x + y * y);
-    }
 
-    double height() {
-    	Point& p0 = rectangle.points_real[0];
-    	Point& p1 = rectangle.points_real[3];
-    	double x = p0[0] - p1[0];
-    	double y = p0[1] - p1[1];
-    	return std::sqrt(x * x + y * y);
-    }
 
     const Matrix transformation() {
         // Translation matrix
@@ -102,15 +119,7 @@ protected:
         Matrix translate = Transformation::translate(t);
 
         // Rotation matrix
-		double x_vup = rectangle.points_real[3][0] - rectangle.points_real[0][0];
-        double y_vup = rectangle.points_real[3][1] - rectangle.points_real[0][1];
-        double cos = y_vup / std::sqrt(x_vup * x_vup + y_vup * y_vup);
-        double radian = std::acos(cos);
-        if(x_vup < 0) {
-        	radian = -radian;
-        }
-        double angle = (radian * 180.0) / _MATH_PI;
-        Matrix rotate = Transformation::rotate(angle);
+        Matrix rotate = Transformation::rotate(y_angle());
 
         // Scale matrix
         Gtk::Allocation a = drawing_area->get_allocation();

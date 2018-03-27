@@ -59,25 +59,37 @@ public:
 
     void move_up() {
         double move = get_move_input();
-        window.rectangle.translate(0, move);
+        double y_angle = window.y_angle();
+        double y_move = std::cos(y_angle * _MATH_PI / 180) * move;
+        double x_move = std::sin(y_angle * _MATH_PI / 180) * move;
+        window.rectangle.translate(x_move, y_move);
         drawing_area->queue_draw();
     }
 
     void move_down() {
         double move = get_move_input();
-        window.rectangle.translate(0, -move);
+        double y_angle = window.y_angle();
+        double y_move = std::cos(y_angle * _MATH_PI / 180) * move;
+        double x_move = std::sin(y_angle * _MATH_PI / 180) * move;
+        window.rectangle.translate(-x_move, -y_move);
         drawing_area->queue_draw();
     }
 
     void move_left() {
-        double move = get_move_input();
-        window.rectangle.translate(-move, 0);
+		double move = get_move_input();
+        double y_angle = window.y_angle();
+        double y_move = std::cos(y_angle * _MATH_PI / 180) * move;
+        double x_move = std::sin(y_angle * _MATH_PI / 180) * move;
+        window.rectangle.translate(-y_move, x_move);
         drawing_area->queue_draw();
     }
 
     void move_right() {
-        double move = get_move_input();
-        window.rectangle.translate(move, 0);
+		double move = get_move_input();
+        double y_angle = window.y_angle();
+        double y_move = std::cos(y_angle * _MATH_PI / 180) * move;
+        double x_move = std::sin(y_angle * _MATH_PI / 180) * move;
+        window.rectangle.translate(y_move, -x_move);
         drawing_area->queue_draw();
     }
 
