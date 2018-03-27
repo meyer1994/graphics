@@ -10,7 +10,9 @@ class Shape {
 public:
     Shape() {}
 
-    explicit Shape(std::vector<Point> p, std::string name = "shape") : real(p) {}
+    explicit Shape(std::vector<Point> p, std::string name = "shape")
+    : real(p),
+      name(name) {}
 
     ~Shape() {}
 

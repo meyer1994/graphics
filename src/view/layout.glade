@@ -991,6 +991,7 @@
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">window_main</property>
+    <property name="action">save</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="box_file_chooser">
         <property name="name">box_file_chooser</property>

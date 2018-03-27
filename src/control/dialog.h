@@ -118,19 +118,19 @@ public:
         // Dot
         if (points_buffer.size() == 1) {
             Point p = points_buffer[0];
-            shapes.push_back(Dot(p[0], p[1]));
+            shapes.push_back(Dot(p[0], p[1], name));
         }
 
         // Line
         if (points_buffer.size() == 2) {
             Point a = points_buffer[0];
             Point b = points_buffer[1];
-            shapes.push_back(Line(a, b));
+            shapes.push_back(Line(a, b, name));
         }
 
         // Polygon
         if (points_buffer.size() > 2) {
-            Polygon p(points_buffer);
+            Polygon p(points_buffer, name);
             shapes.push_back(p);
         }
 

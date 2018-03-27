@@ -202,7 +202,7 @@ protected:
 		index++;
 		int point_i = std::stoi(buffer);
 		points.push_back(p[point_i - 1]);
-		return Shape(points);
+		return Shape(points, "name");
 	}
 };
 

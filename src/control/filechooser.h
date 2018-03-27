@@ -9,6 +9,8 @@
 #include <gtkmm/button.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/drawingarea.h>
+#include <gtkmm/filechooser.h>
+#include <gtkmm/comboboxtext.h>
 #include <gtkmm/imagemenuitem.h>
 #include <gtkmm/filechooserdialog.h>
 
@@ -37,6 +39,9 @@ public:
         dialog_file_chooser->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
         dialog_file_chooser->add_button("_Open", Gtk::RESPONSE_OK);
 
+        // Combobox
+        b->get_widget("combobox_shapes", combobox_shapes);
+
         connect_buttons();
     }
 
@@ -44,7 +49,9 @@ public:
         delete dialog_file_chooser;
     }
 
-    void on_file_clicked() {
+    void open() {
+        dialog_file_chooser->set_action(Gtk::FILE_CHOOSER_ACTION_OPEN);
+
         //Show the dialog and wait for a user response:
         int result = dialog_file_chooser->run();
 
@@ -54,7 +61,37 @@ public:
             {
                 std::string filename = dialog_file_chooser->get_filename();
                 descriptor.read(filename);
+                combobox_shapes->remove_all();
+
+                for (Shape& s : shapes) {
+                    std::cout << s.name << std::endl;
+                    combobox_shapes->append(s.name);
+                }
+
                 drawing_area->queue_draw();
+                dialog_file_chooser->hide();
+                break;
+            }
+            case(Gtk::RESPONSE_CANCEL):
+            {
+                dialog_file_chooser->hide();
+                break;
+            }
+        }
+    }
+
+    void save() {
+        dialog_file_chooser->set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
+
+        //Show the dialog and wait for a user response:
+        int result = dialog_file_chooser->run();
+
+        //Handle the response:
+        switch(result) {
+            case(Gtk::RESPONSE_OK):
+            {
+                std::string filename = dialog_file_chooser->get_current_name();
+                descriptor.write(filename);
                 dialog_file_chooser->hide();
                 break;
             }
@@ -78,6 +115,10 @@ public:
     // Drawin area to update when adding new shapes
     Gtk::DrawingArea* drawing_area = nullptr;
 
+    // Combobox
+    Gtk::ComboBoxText* combobox_shapes = nullptr;
+
+    // Menu items
     Gtk::ImageMenuItem* menu_item_open = nullptr;
     Gtk::ImageMenuItem* menu_item_save = nullptr;
     Gtk::ImageMenuItem* menu_item_save_as = nullptr;
@@ -86,7 +127,10 @@ protected:
     void connect_buttons() {
         menu_item_open
             ->signal_activate()
-            .connect(sigc::mem_fun(*this, &FileChooser::on_file_clicked));
+            .connect(sigc::mem_fun(*this, &FileChooser::open));
+        menu_item_save
+            ->signal_activate()
+            .connect(sigc::mem_fun(*this, &FileChooser::save));
     }
 };
 
