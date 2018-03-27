@@ -14,16 +14,29 @@ const std::string test_file = "test.obj";
 namespace Test {
 
 
-void to_file() {
-	Polygon s(std::vector<Point>{
+void write() {
+	Polygon s0(std::vector<Point>{
 		Point(0, 0),
 		Point(50, 0),
 		Point(50, 50)
 	});
-	std::vector<Shape> shapes{s};
+	Polygon s1(std::vector<Point>{
+		Point(25, 25),
+		Point(10, 10)
+	});
+	std::vector<Shape> shapes{s0, s1};
 	ObjDescriptor obj(shapes);
 	obj.write(test_file);
 	std::cout << "File written" << std::endl;
+}
+
+void read() {
+	std::vector<Shape> s;
+	ObjDescriptor obj(s);
+	obj.read(test_file);
+
+	for (Shape& sh : s)
+		std::cout << sh.to_string() << std::endl;
 }
 
 

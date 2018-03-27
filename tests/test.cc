@@ -14,6 +14,8 @@ int main(int argc, char* argv[]) {
     std::cout << "==========" << std::endl;
     Test::line();
     std::cout << "==========" << std::endl;
-    Test::to_file();
+    Test::write();
+    std::cout << "==========" << std::endl;
+    Test::read();
 
 }

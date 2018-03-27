@@ -10,6 +10,7 @@
 
 #include "../mode/shape.h"
 #include "../mode/window.h"
+#include "file_dialog.h"
 #include "viewport.h"
 #include "dialog.h"
 #include "shapes.h"
