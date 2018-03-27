@@ -61,22 +61,6 @@ public:
     Gtk::DrawingArea* drawing_area = nullptr;
 
 protected:
-    double xmax() {
-        return rectangle.points_real[2][0];
-    }
-
-    double ymax() {
-        return rectangle.points_real[2][1];
-    }
-
-    double xmin() {
-        return rectangle.points_real[0][0];
-    }
-
-    double ymin() {
-        return rectangle.points_real[0][1];
-    }
-
     void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, const Shape& shape, const Matrix& m) {
         // First point
         Point p0 = shape.points_real[0];
@@ -95,6 +79,22 @@ protected:
         cr->line_to(p0v[0], p0v[1]);
     }
 
+    double width() {
+    	Point& p0 = rectangle.points_real[0];
+    	Point& p1 = rectangle.points_real[1];
+    	double x = p0[0] - p1[0];
+    	double y = p0[1] - p1[1];
+    	return std::sqrt(x * x + y * y);
+    }
+
+    double height() {
+    	Point& p0 = rectangle.points_real[0];
+    	Point& p1 = rectangle.points_real[3];
+    	double x = p0[0] - p1[0];
+    	double y = p0[1] - p1[1];
+    	return std::sqrt(x * x + y * y);
+    }
+
     const Matrix transformation() {
         // Translation matrix
         Point medium = rectangle.medium();
@@ -102,17 +102,20 @@ protected:
         Matrix translate = Transformation::translate(t);
 
         // Rotation matrix
-		double x_vup = rectangle.points_real[0][0] - rectangle.points_real[3][0];
+		double x_vup = rectangle.points_real[3][0] - rectangle.points_real[0][0];
         double y_vup = rectangle.points_real[3][1] - rectangle.points_real[0][1];
         double cos = y_vup / std::sqrt(x_vup * x_vup + y_vup * y_vup);
         double radian = std::acos(cos);
+        if(x_vup < 0) {
+        	radian = -radian;
+        }
         double angle = (radian * 180.0) / _MATH_PI;
         Matrix rotate = Transformation::rotate(angle);
 
         // Scale matrix
         Gtk::Allocation a = drawing_area->get_allocation();
-        double x_ratio = 1.0 / (a.get_width() / 2.0);
-        double y_ratio = 1.0 / (a.get_height() / 2.0);
+        double x_ratio = 1.0 / (width() / 2.0);
+        double y_ratio = 1.0 / (height() / 2.0);
         Vector r{x_ratio, y_ratio};
         Matrix scale = Transformation::scale(r);
 
