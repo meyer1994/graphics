@@ -2,6 +2,7 @@
 #include "test_shape.h"
 #include "test_dot.h"
 #include "test_line.h"
+#include "test_descriptor.h"
 
 int main(int argc, char* argv[]) {
 
@@ -12,5 +13,7 @@ int main(int argc, char* argv[]) {
     Test::dot();
     std::cout << "==========" << std::endl;
     Test::line();
+    std::cout << "==========" << std::endl;
+    Test::to_file();
 
 }
