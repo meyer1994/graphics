@@ -307,7 +307,7 @@ protected:
 
 		// Line
     	if (shape.size() == 2) {
-    		clip.cohen_sutherland(shape);
+    		clip.liang_barsky(shape);
     		return;
     	}
 
