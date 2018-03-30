@@ -17,6 +17,7 @@
 #include "../mode/shape.h"
 #include "../mode/point.h"
 #include "../mode/window.h"
+#include "../mode/clipping.h"
 
 namespace Control {
 
@@ -143,7 +144,7 @@ public:
         // Change color to blue
         cr->set_source_rgb(0, 1, 1);
         normalize_shape(window.rectangle, m);
-        draw_shape(cr, window.rectangle);
+        draw_shape(cr, window.rectangle.window);
         cr->stroke();
 
         // Changes color to red
@@ -152,7 +153,10 @@ public:
         // Draw all shapes
         for (Shape s : shapes) {
         	normalize_shape(s, m);
-            draw_shape(cr, s);
+
+        	clipper(s);
+
+            draw_shape(cr, s.window);
         }
         cr->stroke();
 
@@ -161,6 +165,8 @@ public:
 
     Window& window;
     std::vector<Shape>& shapes;
+
+    Clipping clip;
 
     Gtk::DrawingArea* drawing_area = nullptr;
 
@@ -259,15 +265,15 @@ protected:
     	}
     }
 
-    void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, Shape& shape) {
+    void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, std::vector<Point>& points) {
         // First point
-        Point p0 = shape.window[0];
+        Point p0 = points[0];
 
         Point p0v = vp_transform(p0);
         cr->move_to(p0v[0], p0v[1]);
 
         // Lines to other points
-        for (Point point : shape.window) {
+        for (Point point : points) {
             Point n = vp_transform(point);
             cr->line_to(n[0], n[1]);
         }
@@ -284,6 +290,23 @@ protected:
         double x = ((p[0] + 1) / 2) * (xvmax);
         double y = (1 - (p[1] + 1) / 2) * (yvmax);
         return Point(x, y);
+    }
+
+    void clipper(Shape& shape) {
+
+		// Dot
+    	if (shape.size() == 1) {
+
+    		return;
+    	}
+
+		// Line
+    	if (shape.size() == 2) {
+    		clip.cohen_sutherland(shape);
+    		return;
+    	}
+
+    	// Polygon
     }
 };
 
