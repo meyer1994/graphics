@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <gtkmm/builder.h>
-#include <cairomm/context.h>
 #include <gtkmm/drawingarea.h>
 
 #include "shape.h"
@@ -27,11 +26,11 @@ public:
      *
      * @param s Vector of shapes that are drawn into the viewport.
      */
-	Window(Glib::RefPtr<Gtk::Builder>& b, std::vector<Shape>& s)
-    : shapes(s) {
-        b->get_widget("drawing_area", drawing_area);
+	Window(Glib::RefPtr<Gtk::Builder>& b) {
 
-        Gtk::Allocation a = drawing_area->get_allocation();
+		Gtk::DrawingArea* da = nullptr;
+        b->get_widget("drawing_area", da);
+        Gtk::Allocation a = da->get_allocation();
         double x = a.get_width();
         double y = a.get_height();
 
@@ -42,41 +41,9 @@ public:
             Point(x, y),
             Point(0, y)
         });
-
-        drawing_area
-            ->signal_draw()
-            .connect(sigc::mem_fun(*this, &Window::on_draw));
 	}
 
 	~Window() {}
-
-    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-        // Configuration for dots to appear when drawn
-        cr->set_line_cap(Cairo::LINE_CAP_ROUND);
-
-        // Paints background in white
-        cr->set_source_rgb(1, 1, 1);
-        cr->paint();
-
-        // Transformation matrix
-        Matrix m = normalization_matrix();
-
-        // Change color to blue
-        cr->set_source_rgb(0, 1, 1);
-        draw_shape(cr, rectangle, m);
-        cr->stroke();
-
-        // Changes color to red
-        cr->set_source_rgb(0.8, 0, 0);
-
-        // Draw all shapes
-        for (Shape s : shapes) {
-            draw_shape(cr, s, m);
-        }
-        cr->stroke();
-
-        return true;
-    }
 
     /**
      * @brief Gets the width of the window.
@@ -129,34 +96,6 @@ public:
     	return 90 - y_angle();
     }
 
-    Shape rectangle;
-    std::vector<Shape>& shapes;
-    Gtk::DrawingArea* drawing_area = nullptr;
-
-protected:
-    void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, Shape& shape, const Matrix& m) {
-        // First point
-        Point p0 = shape.real[0];
-        p0.transform(m);
-
-        Point p0v = vp_transform(p0);
-        cr->move_to(p0v[0], p0v[1]);
-
-        // Clear window points
-        shape.window.clear();
-
-        // Lines to other points
-        for (Point point : shape.real) {
-            point.transform(m);
-            shape.window.push_back(point);
-            Point n = vp_transform(point);
-            cr->line_to(n[0], n[1]);
-        }
-
-        // Line from last point to first point
-        cr->line_to(p0v[0], p0v[1]);
-    }
-
     const Matrix normalization_matrix() {
         // Translation matrix
         Point medium = rectangle.medium();
@@ -183,15 +122,8 @@ protected:
         return final;
     }
 
-    Point vp_transform(const Point& p) {
-        Gtk::Allocation alloc = drawing_area->get_allocation();
-        double xvmax = alloc.get_width();
-        double yvmax = alloc.get_height();
+    Shape rectangle;
 
-        double x = ((p[0] + 1) / 2) * (xvmax);
-        double y = (1 - (p[1] + 1) / 2) * (yvmax);
-        return Point(x, y);
-    }
 };
 
 #endif  // WINDOW_H

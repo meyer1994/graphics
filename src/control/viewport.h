@@ -9,6 +9,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/button.h>
 #include <gtkmm/builder.h>
+#include <cairomm/context.h>
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/comboboxtext.h>
 
@@ -21,7 +22,8 @@ namespace Control {
 class Viewport {
 public:
     Viewport(Glib::RefPtr<Gtk::Builder>& b, std::vector<Shape>& s, Window& w)
-    : window(w) {
+    : window(w),
+      shapes(s) {
 
         // Dummy shape (debugging)
         s.push_back(Shape(std::vector<Point>{
@@ -29,7 +31,7 @@ public:
             Point(50, 0),
             Point(50, 50)
         }));
-        
+
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
         c->append("teste");
@@ -52,6 +54,10 @@ public:
         b->get_widget("button_in", button_in);
         b->get_widget("button_out", button_out);
         b->get_widget("input_viewport_zoom", input_viewport_zoom);
+
+        drawing_area
+            ->signal_draw()
+            .connect(sigc::mem_fun(*this, &Viewport::on_draw));
 
         connect_buttons();
     }
@@ -120,7 +126,36 @@ public:
         drawing_area->queue_draw();
     }
 
+    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+        // Configuration for dots to appear when drawn
+        cr->set_line_cap(Cairo::LINE_CAP_ROUND);
+
+        // Paints background in white
+        cr->set_source_rgb(1, 1, 1);
+        cr->paint();
+
+        // Transformation matrix
+        Matrix m = window.normalization_matrix();
+
+        // Change color to blue
+        cr->set_source_rgb(0, 1, 1);
+        draw_shape(cr, window.rectangle, m);
+        cr->stroke();
+
+        // Changes color to red
+        cr->set_source_rgb(0.8, 0, 0);
+
+        // Draw all shapes
+        for (Shape s : shapes) {
+            draw_shape(cr, s, m);
+        }
+        cr->stroke();
+
+        return true;
+    }
+
     Window& window;
+    std::vector<Shape>& shapes;
 
     Gtk::DrawingArea* drawing_area = nullptr;
 
@@ -209,6 +244,39 @@ protected:
             // Nothing
         }
         return angle;
+    }
+
+    void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, Shape& shape, const Matrix& m) {
+        // First point
+        Point p0 = shape.real[0];
+        p0.transform(m);
+
+        Point p0v = vp_transform(p0);
+        cr->move_to(p0v[0], p0v[1]);
+
+        // Clear window points
+        shape.window.clear();
+
+        // Lines to other points
+        for (Point point : shape.real) {
+            point.transform(m);
+            shape.window.push_back(point);
+            Point n = vp_transform(point);
+            cr->line_to(n[0], n[1]);
+        }
+
+        // Line from last point to first point
+        cr->line_to(p0v[0], p0v[1]);
+    }
+
+    Point vp_transform(const Point& p) {
+        Gtk::Allocation alloc = drawing_area->get_allocation();
+        double xvmax = alloc.get_width();
+        double yvmax = alloc.get_height();
+
+        double x = ((p[0] + 1) / 2) * (xvmax);
+        double y = (1 - (p[1] + 1) / 2) * (yvmax);
+        return Point(x, y);
     }
 };
 
