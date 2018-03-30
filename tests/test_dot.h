@@ -17,7 +17,7 @@ void dot() {
 
 
     Dot d1(1, 2);
-    assert(d1.points_real[0].size() == 2);
+    assert(d1.real[0].size() == 2);
     std::cout << "[DOT]\t\tOK - 2D constructor" << std::endl;
 
 
@@ -28,20 +28,20 @@ void dot() {
 
     Dot d3(45, 50);
     d3.translate(15, 10);
-    assert(d3.points_real[0] == Point(60, 60));
+    assert(d3.real[0] == Point(60, 60));
     std::cout << "[DOT]\t\tOK - Translate" << std::endl;
 
 
     Dot d4(20, 35);
     d4.scale(3);
-    assert(d4.points_real[0] == Point(60, 105));
+    assert(d4.real[0] == Point(60, 105));
     std::cout << "[DOT]\t\tOK - Scale" << std::endl;
 
 
     Dot d5(50, 0);
     d5.rotate(90);
-    assert(std::round(d5.points_real[0][0]) == 0);
-    assert(std::round(d5.points_real[0][1]) == 50);
+    assert(std::round(d5.real[0][0]) == 0);
+    assert(std::round(d5.real[0][1]) == 50);
     std::cout << "[DOT]\t\tOK - Rotate" << std::endl;
 
 }

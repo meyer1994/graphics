@@ -3,6 +3,7 @@
 #include "test_dot.h"
 #include "test_line.h"
 #include "test_descriptor.h"
+#include <typeinfo>
 
 int main(int argc, char* argv[]) {
 
