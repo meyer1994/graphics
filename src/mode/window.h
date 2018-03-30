@@ -12,19 +12,19 @@
 
 /**
  * @brief Window class.
- * 
+ *
  * @details This object represents the window view of the real coordinates. The
  * coordinates inside this view are normalized in a way that the center of the
  * window is located at the point (0, 0) and the extremes are (-1, -1) and
  * (1, 1).
- * 
+ *
  * @param s [description]
  */
 class Window {
 public:
     /**
      * @brief Constructor.
-     * 
+     *
      * @param s Vector of shapes that are drawn into the viewport.
      */
 	Window(Glib::RefPtr<Gtk::Builder>& b, std::vector<Shape>& s)
@@ -58,11 +58,18 @@ public:
         cr->set_source_rgb(1, 1, 1);
         cr->paint();
 
+        // Transformation matrix
+        Matrix m = normalization_matrix();
+
+        // Change color to blue
+        cr->set_source_rgb(0, 1, 1);
+        draw_shape(cr, rectangle, m);
+        cr->stroke();
+
         // Changes color to red
         cr->set_source_rgb(0.8, 0, 0);
 
         // Draw all shapes
-        Matrix m = normalization_matrix();
         for (Shape s : shapes) {
             draw_shape(cr, s, m);
         }
@@ -73,7 +80,7 @@ public:
 
     /**
      * @brief Gets the width of the window.
-     * 
+     *
      * @return Double representing the widht of the window in real world
      * coordinates.
      */
@@ -87,7 +94,7 @@ public:
 
     /**
      * @brief Gets the height of the window.
-     * 
+     *
      * @return Returns double representing the height of the window.
      */
     const double height() const {
@@ -101,7 +108,7 @@ public:
     /**
      * @brief Gets the angle of the window related to the Y axis of the real
      * world.
-     * 
+     *
      * @return Double representing the angle, in degrees.
      */
     const double y_angle() const {
@@ -131,9 +138,11 @@ protected:
         // First point
         Point p0 = shape.real[0];
         p0.transform(m);
+
         Point p0v = vp_transform(p0);
         cr->move_to(p0v[0], p0v[1]);
 
+        // Clear window points
         shape.window.clear();
 
         // Lines to other points
@@ -158,9 +167,13 @@ protected:
         Matrix rotate = Transformation::rotate(y_angle());
 
         // Scale matrix
-        Gtk::Allocation a = drawing_area->get_allocation();
         double x_ratio = 1.0 / (width() / 2.0);
         double y_ratio = 1.0 / (height() / 2.0);
+
+        // Just to draw the shape for easier clipping validation
+        x_ratio *= 0.9;
+        y_ratio *= 0.9;
+
         Vector r{x_ratio, y_ratio};
         Matrix scale = Transformation::scale(r);
 

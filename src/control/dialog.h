@@ -30,7 +30,7 @@ public:
      *
      * @param b Builder of the GTK application. Used to get all the widgets
      * that are related to this control.
-     * 
+     *
      * @param s Shapes vector. Will add new shapes to this vector.
      */
     Dialog(Glib::RefPtr<Gtk::Builder>& b, std::vector<Shape>& s)
@@ -75,7 +75,7 @@ public:
     /**
      * @brief Add point to the point_buffer.
      *
-     * @details Will only add the point if the inputs are correct numbers that 
+     * @details Will only add the point if the inputs are correct numbers that
      * do not throw any kind of exception when passed to std::stod().
      */
     void add_point() {
@@ -100,7 +100,7 @@ public:
      *
      * @details If there is no points in points_buffer or no name has been set,
      * it won't do anything and it will return false.
-     * 
+     *
      * @return true if the shape was added. False otherwise.
      */
     bool add_shape() {
@@ -194,7 +194,7 @@ public:
     Gtk::ImageMenuItem* menu_item_open = nullptr;
     Gtk::ImageMenuItem* menu_item_save = nullptr;
     Gtk::ImageMenuItem* menu_item_save_as = nullptr;
-    
+
     // Buttons
     Gtk::Button* button_finish = nullptr;
     Gtk::Button* button_cancel = nullptr;
@@ -215,11 +215,11 @@ public:
 protected:
     /**
      * @brief Get point.
-     * 
+     *
      * @details Gets the input from the user and convert to doubles.
-     * 
+     *
      * @return Point inputted by user.
-     * 
+     *
      * @throws std::invalid_argument If the input is "wrong". Wrong in the
      * sense of std::stod(double) not accepting it.
      */
@@ -237,7 +237,7 @@ protected:
 
     /**
      * @brief Connects all buttons to it's functions.
-     * 
+     *
      * @details Will connect all the button signals to the methods they are
      * supposed to call.
      */
@@ -258,7 +258,7 @@ protected:
 
     /**
      * @brief Clear labels vector.
-     * 
+     *
      * @details The labels must be initialized with new when adding them to the
      * vector. So this method is just to clean them up. It also removes all the
      * references from the box_points_added widget by calling remove() on each
@@ -274,9 +274,9 @@ protected:
 
     /**
      * @brief Updates box with added points.
-     * 
+     *
      * @details Simply adds a label with the point to the box.
-     * 
+     *
      * @param p Point to be added.
      */
     void update_added_points(Point& p) {
