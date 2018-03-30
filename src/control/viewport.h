@@ -13,6 +13,7 @@
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/comboboxtext.h>
 
+#include "../mode/line.h"
 #include "../mode/shape.h"
 #include "../mode/point.h"
 #include "../mode/window.h"
@@ -26,11 +27,13 @@ public:
       shapes(s) {
 
         // Dummy shape (debugging)
-        s.push_back(Shape(std::vector<Point>{
-            Point(0, 0),
-            Point(50, 0),
-            Point(50, 50)
-        }));
+        // s.push_back(Shape(std::vector<Point>{
+        //     Point(0, 0),
+        //     Point(50, 0),
+        //     Point(50, 50)
+        // }));
+
+        s.push_back(Line(Point(0, 0), Point(50, 50)));
 
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
@@ -139,7 +142,8 @@ public:
 
         // Change color to blue
         cr->set_source_rgb(0, 1, 1);
-        draw_shape(cr, window.rectangle, m);
+        normalize_shape(window.rectangle, m);
+        draw_shape(cr, window.rectangle);
         cr->stroke();
 
         // Changes color to red
@@ -147,7 +151,8 @@ public:
 
         // Draw all shapes
         for (Shape s : shapes) {
-            draw_shape(cr, s, m);
+        	normalize_shape(s, m);
+            draw_shape(cr, s);
         }
         cr->stroke();
 
@@ -246,21 +251,23 @@ protected:
         return angle;
     }
 
-    void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, Shape& shape, const Matrix& m) {
+    void normalize_shape(Shape& shape, Matrix& transformation) {
+    	shape.window.clear();
+    	for (Point p : shape.real) {
+    		p.transform(transformation);
+    		shape.window.push_back(p);
+    	}
+    }
+
+    void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, Shape& shape) {
         // First point
-        Point p0 = shape.real[0];
-        p0.transform(m);
+        Point p0 = shape.window[0];
 
         Point p0v = vp_transform(p0);
         cr->move_to(p0v[0], p0v[1]);
 
-        // Clear window points
-        shape.window.clear();
-
         // Lines to other points
-        for (Point point : shape.real) {
-            point.transform(m);
-            shape.window.push_back(point);
+        for (Point point : shape.window) {
             Point n = vp_transform(point);
             cr->line_to(n[0], n[1]);
         }
