@@ -34,14 +34,12 @@ public:
 
 			// Trivial reject
 			if ((a_code & b_code) != 0) {
+				line.window.clear();
 				return;
 			}
 
 			// Find which point is outside viewport
-			short out = a_code;
-			if (a_code == INSIDE) {
-				out = b_code;
-			}
+			short out = a_code ? a_code : b_code;
 
 
 			// Find intersection point
@@ -73,7 +71,6 @@ public:
 				b_code = out_code(b);
 			}
 		}
-
 	}
 
 protected:

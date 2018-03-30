@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 #include <exception>
 
 
@@ -266,6 +267,10 @@ protected:
     }
 
     void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, std::vector<Point>& points) {
+        if (points.empty()) {
+        	return;
+        }
+
         // First point
         Point p0 = points[0];
 
