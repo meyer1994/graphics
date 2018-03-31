@@ -29,13 +29,16 @@ public:
       shapes(s) {
 
         // Dummy shape (debugging)
-        // s.push_back(Shape(std::vector<Point>{
-        //     Point(0, 0),
-        //     Point(50, 0),
-        //     Point(50, 50)
-        // }));
+        Shape dummy = Shape(std::vector<Point>{
+            Point(0, 0),
+            Point(50, 50),
+            Point(50, 0)
+        });
+        dummy.fill = true;
+        s.push_back(dummy);
 
-        s.push_back(Line(Point(0, 0), Point(50, 50)));
+
+        s.push_back(Line(Point(0, 0), Point(50, 50), "linhaaaaaa"));
 
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
@@ -154,12 +157,13 @@ public:
         // Draw all shapes
         for (Shape s : shapes) {
         	normalize_shape(s, m);
-
         	clipper(s);
-
             draw_shape(cr, s.window);
+            if (s.fill) {
+            	cr->fill();
+            }
+	        cr->stroke();
         }
-        cr->stroke();
 
         return true;
     }
@@ -301,17 +305,17 @@ protected:
 
 		// Dot
     	if (shape.size() == 1) {
-
-    		return;
+    		return clip.dot(shape);
     	}
 
 		// Line
     	if (shape.size() == 2) {
-    		clip.liang_barsky(shape);
-    		return;
+    		// return clip.cohen_sutherland(shape);
+    		return clip.liang_barsky(shape);
     	}
 
     	// Polygon
+    	clip.sutherland_hodgman(shape);
     }
 };
 
