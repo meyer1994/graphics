@@ -19,14 +19,14 @@
  *
  * @param s [description]
  */
-class Window {
+class Window : public Shape {
 public:
     /**
      * @brief Constructor.
      *
      * @param s Vector of shapes that are drawn into the viewport.
      */
-	Window(Glib::RefPtr<Gtk::Builder>& b) {
+	Window(Glib::RefPtr<Gtk::Builder>& b) : Shape() {
 
 		Gtk::DrawingArea* da = nullptr;
         b->get_widget("drawing_area", da);
@@ -35,12 +35,12 @@ public:
         double y = a.get_height();
 
         // Initial window size, matches the size of the drawing area
-        rectangle = Shape(std::vector<Point>{
+        real = std::vector<Point>{
             Point(0, 0),
             Point(x, 0),
             Point(x, y),
             Point(0, y)
-        });
+        };
 	}
 
 	~Window() {}
@@ -52,8 +52,8 @@ public:
      * coordinates.
      */
     const double width() const {
-    	Point p0 = rectangle.real[0];
-    	Point p1 = rectangle.real[1];
+    	Point p0 = real[0];
+    	Point p1 = real[1];
     	double x = p0[0] - p1[0];
     	double y = p0[1] - p1[1];
     	return std::sqrt(x * x + y * y);
@@ -65,8 +65,8 @@ public:
      * @return Returns double representing the height of the window.
      */
     const double height() const {
-    	Point p0 = rectangle.real[0];
-    	Point p1 = rectangle.real[3];
+    	Point p0 = real[0];
+    	Point p1 = real[3];
     	double x = p0[0] - p1[0];
     	double y = p0[1] - p1[1];
     	return std::sqrt(x * x + y * y);
@@ -79,8 +79,8 @@ public:
      * @return Double representing the angle, in degrees.
      */
     const double y_angle() const {
-    	double x_vup = rectangle.real[3][0] - rectangle.real[0][0];
-        double y_vup = rectangle.real[3][1] - rectangle.real[0][1];
+    	double x_vup = real[3][0] - real[0][0];
+        double y_vup = real[3][1] - real[0][1];
         double cos = y_vup / std::sqrt(x_vup * x_vup + y_vup * y_vup);
         double radian = std::acos(cos);
         if(x_vup < 0) {
@@ -98,8 +98,8 @@ public:
 
     const Matrix normalization_matrix() {
         // Translation matrix
-        Point medium = rectangle.medium();
-        Vector t{-medium[0], -medium[1]};
+        Point med = medium();
+        Vector t{-med[0], -med[1]};
         Matrix translate = Transformation::translate(t);
 
         // Rotation matrix
@@ -121,9 +121,6 @@ public:
         Matrix final = Transformation::combine(temp, scale);
         return final;
     }
-
-    Shape rectangle;
-
 };
 
 #endif  // WINDOW_H
