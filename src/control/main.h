@@ -53,7 +53,7 @@ public:
 
         control_viewport = new Viewport(b, *mode_viewport);
         control_dialog = new Dialog(b, *shapes);
-        control_shapes = new Shapes(b, *shapes);
+        control_shapes = new Shapes(b, *mode_viewport);
         file_chooser = new FileChooser(b, *shapes);
     }
 

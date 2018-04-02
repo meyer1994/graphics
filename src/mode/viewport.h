@@ -48,6 +48,7 @@ public:
 	}
 
 	Window& window;
+	std::vector<Shape>& shapes;
 
 protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
@@ -142,7 +143,6 @@ protected:
 	}
 
 	Gtk::DrawingArea& drawing_area;
-	std::vector<Shape>& shapes;
 	Clipping clipping;
 	int line_clipping_method = 0;
 };
