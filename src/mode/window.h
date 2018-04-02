@@ -4,9 +4,6 @@
 #include <cmath>
 #include <vector>
 
-#include <gtkmm/builder.h>
-#include <gtkmm/drawingarea.h>
-
 #include "shape.h"
 
 /**
@@ -26,22 +23,13 @@ public:
      *
      * @param s Vector of shapes that are drawn into the viewport.
      */
-	Window(Glib::RefPtr<Gtk::Builder>& b) : Shape() {
-
-		Gtk::DrawingArea* da = nullptr;
-        b->get_widget("drawing_area", da);
-        Gtk::Allocation a = da->get_allocation();
-        double x = a.get_width();
-        double y = a.get_height();
-
-        // Initial window size, matches the size of the drawing area
-        real = std::vector<Point>{
-            Point(0, 0),
-            Point(x, 0),
-            Point(x, y),
-            Point(0, y)
-        };
-	}
+	Window(double width, double heigth)
+    : Shape(std::vector<Point>{
+        Point(0, 0),
+        Point(width, 0),
+        Point(width, heigth),
+        Point(0, heigth)
+    }) {}
 
 	~Window() {}
 

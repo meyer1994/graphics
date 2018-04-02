@@ -2,46 +2,20 @@
 #define CONTROL_VIEWPORT_H
 
 #include <string>
-#include <vector>
-#include <iostream>
 #include <exception>
-
 
 #include <gtkmm/entry.h>
 #include <gtkmm/button.h>
 #include <gtkmm/builder.h>
-#include <cairomm/context.h>
-#include <gtkmm/drawingarea.h>
-#include <gtkmm/comboboxtext.h>
 
-#include "../mode/line.h"
-#include "../mode/shape.h"
-#include "../mode/point.h"
-#include "../mode/window.h"
-#include "../mode/clipping.h"
+#include "../mode/viewport.h"
 
 namespace Control {
 
 class Viewport {
 public:
-	Viewport(Glib::RefPtr<Gtk::Builder>& b, std::vector<Shape>& s, Window& w)
-	: window(w),
-	  shapes(s) {
-
-		// Dummy shape (debugging)
-		// s.push_back(Shape(std::vector<Point>{
-		//     Point(0, 0),
-		//     Point(50, 0),
-		//     Point(50, 50)
-		// }));
-
-		s.push_back(Line(Point(0, 0), Point(50, 50)));
-
-		Gtk::ComboBoxText* c = nullptr;
-		b->get_widget("combobox_shapes", c);
-		c->append("teste");
-
-		b->get_widget("drawing_area", drawing_area);
+	Viewport(Glib::RefPtr<Gtk::Builder>& b, Mode::Viewport& viewport)
+	: viewport(viewport) {
 
 		// Rotation controls
 		b->get_widget("input_angle", input_angle);
@@ -60,54 +34,12 @@ public:
 		b->get_widget("button_out", button_out);
 		b->get_widget("input_viewport_zoom", input_viewport_zoom);
 
-		drawing_area
-			->signal_draw()
-			.connect(sigc::mem_fun(*this, &Viewport::on_draw));
-
 		connect_buttons();
 	}
 
 	~Viewport() {}
 
-	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-		// Configuration for dots to appear when drawn
-		cr->set_line_cap(Cairo::LINE_CAP_ROUND);
-
-		// Paints background in white
-		cr->set_source_rgb(1, 1, 1);
-		cr->paint();
-
-		// Transformation matrix
-		Matrix m = window.normalization_matrix();
-
-		// Change color to blue
-		cr->set_source_rgb(0, 1, 1);
-		normalize_shape(window, m);
-		draw_shape(cr, window.window);
-		cr->stroke();
-
-		// Changes color to red
-		cr->set_source_rgb(0.8, 0, 0);
-
-		// Draw all shapes
-		for (Shape s : shapes) {
-			normalize_shape(s, m);
-
-			clipper(s);
-
-			draw_shape(cr, s.window);
-		}
-		cr->stroke();
-
-		return true;
-	}
-
-	Window& window;
-	std::vector<Shape>& shapes;
-
-	Clipping clip;
-
-	Gtk::DrawingArea* drawing_area = nullptr;
+	Mode::Viewport& viewport;
 
 	// Rotation controls
 	Gtk::Entry* input_angle = nullptr;
@@ -133,59 +65,59 @@ protected:
 			[this]() {
 				double x = get_x_movement();
 				double y = get_y_movement();
-				window.translate(x, y);
-				drawing_area->queue_draw();
+				viewport.window.translate(x, y);
+				viewport.draw();
 			});
 		button_down->signal_clicked().connect(
 			[this]() {
 				double x = get_x_movement();
 				double y = get_y_movement();
-				this->window.translate(-x, -y);
-				this->drawing_area->queue_draw();
+				viewport.window.translate(-x, -y);
+				viewport.draw();
 			});
 		button_left->signal_clicked().connect(
 			[this]() {
 				double x = get_x_movement();
 				double y = get_y_movement();
-				this->window.translate(-y, x);
-				this->drawing_area->queue_draw();
+				viewport.window.translate(-y, x);
+				viewport.draw();
 			});
 		button_right->signal_clicked().connect(
 			[this]() {
 				double x = get_x_movement();
 				double y = get_y_movement();
-				this->window.translate(y, -x);
-				this->drawing_area->queue_draw();
+				viewport.window.translate(y, -x);
+				viewport.draw();
 			});
 
 		// Zoom buttons
 		button_in->signal_clicked().connect(
 			[this]() {
 				double zoom = get_zoom_input() / 100;
-				window.inflate(1 - zoom);
-				drawing_area->queue_draw();
+				viewport.window.inflate(1 - zoom);
+				viewport.draw();
 			});
 		button_out->signal_clicked().connect(
 			[this]() {
 				double zoom = get_zoom_input() / 100;
-				window.inflate(1 + zoom);
-				drawing_area->queue_draw();
+				viewport.window.inflate(1 + zoom);
+				viewport.draw();
 			});
 		
 		// Rotation buttons
 		button_rotate_left->signal_clicked().connect(
 			[this]() {
 				double angle = get_angle_input();
-				Point medium = window.medium();
-				window.rotate(-angle, medium);
-				drawing_area->queue_draw();
+				Point medium = viewport.window.medium();
+				viewport.window.rotate(-angle, medium);
+				viewport.draw();
 			});
 		button_rotate_right->signal_clicked().connect(
 			[this]() {
 				double angle = get_angle_input();
-				Point medium = window.medium();
-				window.rotate(angle, medium);
-				drawing_area->queue_draw();
+				Point medium = viewport.window.medium();
+				viewport.window.rotate(angle, medium);
+				viewport.draw();
 			});
 	}
 
@@ -203,13 +135,13 @@ protected:
 
 	double get_y_movement() {
 		double move = get_move_input();
-		double y_angle = window.y_angle();
+		double y_angle = viewport.window.y_angle();
 		return std::cos(y_angle * _MATH_PI / 180) * move;
 	}
 
 	double get_x_movement() {
 		double move = get_move_input();
-		double y_angle = window.y_angle();
+		double y_angle = viewport.window.y_angle();
 		return std::sin(y_angle * _MATH_PI / 180) * move;
 	}
 
@@ -235,61 +167,6 @@ protected:
 		}
 		return angle;
 	}
-
-	void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, std::vector<Point>& points) {
-		if (points.empty()) {
-			return;
-		}
-
-		// First point
-		Point p0 = points[0];
-
-		Point p0v = vp_transform(p0);
-		cr->move_to(p0v[0], p0v[1]);
-
-		// Lines to other points
-		for (Point point : points) {
-			Point n = vp_transform(point);
-			cr->line_to(n[0], n[1]);
-		}
-
-		// Line from last point to first point
-		cr->line_to(p0v[0], p0v[1]);
-	}
-
-	void normalize_shape(Shape& shape, Matrix& transformation) {
-		shape.window.clear();
-		for (Point p : shape.real) {
-			p.transform(transformation);
-			shape.window.push_back(p);
-		}
-	}
-
-	Point vp_transform(const Point& p) {
-		Gtk::Allocation alloc = drawing_area->get_allocation();
-		double xvmax = alloc.get_width();
-		double yvmax = alloc.get_height();
-
-		double x = ((p[0] + 1) / 2) * (xvmax);
-		double y = (1 - (p[1] + 1) / 2) * (yvmax);
-		return Point(x, y);
-	}
-
-	void clipper(Shape& shape) {
-		// Dot
-    	if (shape.size() == 1) {
-    		return clip.dot(shape);
-    	}
-
-		// Line
-    	if (shape.size() == 2) {
-    		// return clip.cohen_sutherland(shape);
-    		return clip.liang_barsky(shape);
-    	}
-
-    	// Polygon
-    	clip.sutherland_hodgman(shape);
-    }
 };
 
 }  // namespace Control

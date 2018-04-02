@@ -14,11 +14,15 @@ namespace Mode {
 
 class Viewport {
 public:
-	Viewport(Window& window, std::vector<Shape>& shapes)
+	Viewport(Window& window, std::vector<Shape>& shapes, Gtk::DrawingArea& drawing_area)
 	: window(window),
 	  shapes(shapes),
-	  clipping() {
+	  clipping(),
+	  drawing_area(drawing_area) {
 
+		drawing_area
+			.signal_draw()
+			.connect(sigc::mem_fun(*this, &Viewport::on_draw));
 	}
 
 	~Viewport() {}
@@ -36,8 +40,14 @@ public:
 		if (type != 0 || type != 1) {
 			type = 0;
 		}
-		line_clippint_method = type;
+		line_clipping_method = type;
 	}
+
+	void draw() {
+		drawing_area.queue_draw();
+	}
+
+	Window& window;
 
 protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
@@ -103,7 +113,7 @@ protected:
 	}
 
 	Point vp_transform(const Point& p) {
-		Gtk::Allocation alloc = drawing_area->get_allocation();
+		Gtk::Allocation alloc = drawing_area.get_allocation();
 		double xvmax = alloc.get_width();
 		double yvmax = alloc.get_height();
 
@@ -114,32 +124,28 @@ protected:
 
 	void clipper(Shape& shape) {
 		// Dot
-    	if (shape.size() == 1) {
-    		return clip.dot(shape);
-    	}
+		if (shape.size() == 1) {
+			return clipping.dot(shape);
+		}
 
 		// Line
-    	if (shape.size() == 2) {
-    		if (line_clippint_method == 0) {
-	    		return clip.cohen_sutherland(shape);
-    		}
+		if (shape.size() == 2) {
+			if (line_clipping_method == 0) {
+				return clipping.cohen_sutherland(shape);
+			}
 
-    		return clip.liang_barsky(shape);
-    	}
+			return clipping.liang_barsky(shape);
+		}
 
-    	// Polygon
-    	clip.sutherland_hodgman(shape);
-    }
+		// Polygon
+		clipping.sutherland_hodgman(shape);
+	}
 
-	Window& window;
-
+	Gtk::DrawingArea& drawing_area;
 	std::vector<Shape>& shapes;
-
 	Clipping clipping;
-	int line_clippint_method;
+	int line_clipping_method = 0;
 };
-
-
 	
 }  // namespace Mode
 
