@@ -125,6 +125,8 @@ public:
 
     std::string name;
 
+    bool fill = false;
+
 };
 
 #endif  // SHAPE_H

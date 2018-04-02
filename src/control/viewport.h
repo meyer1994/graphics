@@ -69,20 +69,6 @@ public:
 
 	~Viewport() {}
 
-	void rotate_right() {
-		double angle = get_angle_input();
-		Point medium = window.medium();
-		window.rotate(-angle, medium);
-		drawing_area->queue_draw();
-	}
-
-	void rotate_left() {
-		double angle = get_angle_input();
-		Point medium = window.medium();
-		window.rotate(angle, medium);
-		drawing_area->queue_draw();
-	}
-
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 		// Configuration for dots to appear when drawn
 		cr->set_line_cap(Cairo::LINE_CAP_ROUND);
@@ -292,19 +278,19 @@ protected:
 	void clipper(Shape& shape) {
 
 		// Dot
-		if (shape.size() == 1) {
-
-			return;
-		}
+    	if (shape.size() == 1) {
+    		return clip.dot(shape);
+    	}
 
 		// Line
-		if (shape.size() == 2) {
-			clip.liang_barsky(shape);
-			return;
-		}
+    	if (shape.size() == 2) {
+    		// return clip.cohen_sutherland(shape);
+    		return clip.liang_barsky(shape);
+    	}
 
-		// Polygon
-	}
+    	// Polygon
+    	clip.sutherland_hodgman(shape);
+    }
 };
 
 }  // namespace Control
