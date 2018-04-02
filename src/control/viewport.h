@@ -276,7 +276,6 @@ protected:
 	}
 
 	void clipper(Shape& shape) {
-
 		// Dot
     	if (shape.size() == 1) {
     		return clip.dot(shape);
