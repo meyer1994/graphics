@@ -29,11 +29,13 @@ public:
         window_main->show_all();
 
         // Dummy shape (debugging)
-        shapes.push_back(Shape(std::vector<Point>{
+        Shape s = Shape(std::vector<Point>{
             Point(0, 0),
             Point(50, 0),
             Point(50, 50)
-        }));
+        });
+        s.filled = true;
+        shapes.push_back(s);
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
         c->append("teste");

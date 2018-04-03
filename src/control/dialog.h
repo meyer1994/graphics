@@ -11,6 +11,7 @@
 #include <gtkmm/button.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/builder.h>
+#include <gtkmm/checkbutton.h>
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/imagemenuitem.h>
 
@@ -45,6 +46,7 @@ public:
         b->get_widget("button_finish", button_finish);
         b->get_widget("button_cancel", button_cancel);
         b->get_widget("button_add_point", button_add_point);
+        b->get_widget("checkbox_filled", checkbox_filled);
 
         // Inputs
         b->get_widget("text_input_name", text_input_name);
@@ -94,6 +96,7 @@ protected:
     Gtk::Button* button_finish = nullptr;
     Gtk::Button* button_cancel = nullptr;
     Gtk::Button* button_add_point = nullptr;
+    Gtk::CheckButton* checkbox_filled = nullptr;
 
     // Text entries
     Gtk::Entry* text_input_name = nullptr;
@@ -182,6 +185,7 @@ protected:
         // Polygon
         if (points_buffer.size() > 2) {
             Polygon p(points_buffer, name);
+            p.filled = checkbox_filled->get_active();
             viewport.shapes.push_back(p);
         }
 

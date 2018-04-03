@@ -84,8 +84,12 @@ protected:
 			}
 
 			draw_shape(cr, s.window);
+			if (s.filled) {
+				cr->fill();
+			}
+
+			cr->stroke();
 		}
-		cr->stroke();
 
 		return true;
 	}

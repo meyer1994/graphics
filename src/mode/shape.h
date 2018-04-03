@@ -124,9 +124,7 @@ public:
     std::vector<Point> window;
 
     std::string name;
-
-    bool fill = false;
-
+    bool filled = false;
 };
 
 #endif  // SHAPE_H

@@ -1188,7 +1188,7 @@
                     <property name="name">dialog_input_frame_input_alignment_grid</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="halign">start</property>
+                    <property name="halign">center</property>
                     <property name="valign">start</property>
                     <property name="row_spacing">2</property>
                     <property name="column_spacing">2</property>
@@ -1305,7 +1305,19 @@
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkCheckButton" id="checkbox_filled">
+                        <property name="label" translatable="yes">Filled</property>
+                        <property name="name">checkbox_filled</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="halign">center</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
+                      </packing>
                     </child>
                   </object>
                 </child>
