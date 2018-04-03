@@ -54,7 +54,7 @@ public:
         control_viewport = new Viewport(b, *mode_viewport);
         control_dialog = new Dialog(b, *mode_viewport);
         control_shapes = new Shapes(b, *mode_viewport);
-        file_chooser = new FileChooser(b, *shapes);
+        control_filechooser = new FileChooser(b, *mode_viewport);
     }
 
     ~Main() {
@@ -63,7 +63,7 @@ public:
         delete control_viewport;
         delete control_dialog;
         delete shapes;
-        delete file_chooser;
+        delete control_filechooser;
         delete mode_viewport;
 
         for (int i = 0; i < shape_labels->size(); i++) {
@@ -83,7 +83,7 @@ public:
     Viewport* control_viewport = nullptr;
     Dialog* control_dialog = nullptr;
     Shapes* control_shapes = nullptr;
-    FileChooser* file_chooser = nullptr;
+    FileChooser* control_filechooser = nullptr;
 
     Gtk::Window* window_main = nullptr;
 

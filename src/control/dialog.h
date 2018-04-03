@@ -11,7 +11,6 @@
 #include <gtkmm/button.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/builder.h>
-#include <gtkmm/drawingarea.h>
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/imagemenuitem.h>
 
