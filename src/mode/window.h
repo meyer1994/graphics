@@ -6,6 +6,8 @@
 
 #include "shape.h"
 
+namespace Mode {
+
 /**
  * @brief Window class.
  *
@@ -111,5 +113,7 @@ public:
         return final;
     }
 };
+
+}  // namespace Mode
 
 #endif  // WINDOW_H

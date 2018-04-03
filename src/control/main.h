@@ -23,7 +23,6 @@ namespace Control {
 class Main {
 public:
     Main(Glib::RefPtr<Gtk::Builder>& b) {
-
         // Creates main window
         b->get_widget("window_main", window_main);
         window_main->set_default_size(1000, 600);
@@ -39,6 +38,7 @@ public:
         b->get_widget("combobox_shapes", c);
         c->append("teste");
 
+        // Gets size to pass to window
         Gtk::DrawingArea* drawing_area = nullptr;
         b->get_widget("drawing_area", drawing_area);
         Gtk::Allocation alloc = drawing_area->get_allocation();
@@ -46,14 +46,14 @@ public:
         double height = alloc.get_height();
 
         // Modes
-        window = Window(width, height);
+        window = Mode::Window(width, height);
         mode_viewport = new Mode::Viewport(window, shapes, *drawing_area);
 
         // Controllers
-        control_viewport = new Viewport(b, *mode_viewport);
-        control_dialog = new Dialog(b, *mode_viewport);
-        control_shapes = new Shapes(b, *mode_viewport);
-        control_filechooser = new FileChooser(b, *mode_viewport);
+        control_viewport = new Control::Viewport(b, *mode_viewport);
+        control_dialog = new Control::Dialog(b, *mode_viewport);
+        control_shapes = new Control::Shapes(b, *mode_viewport);
+        control_filechooser = new Control::FileChooser(b, *mode_viewport);
     }
 
     ~Main() {
@@ -75,13 +75,13 @@ public:
     // Mode
     Mode::Viewport* mode_viewport = nullptr;
     std::vector<Shape> shapes;
-    Window window;
+    Mode::Window window;
 
     // Controllers
-    Viewport* control_viewport = nullptr;
-    Dialog* control_dialog = nullptr;
-    Shapes* control_shapes = nullptr;
-    FileChooser* control_filechooser = nullptr;
+    Control::Viewport* control_viewport = nullptr;
+    Control::Dialog* control_dialog = nullptr;
+    Control::Shapes* control_shapes = nullptr;
+    Control::FileChooser* control_filechooser = nullptr;
 };
 
 } // namespace Control

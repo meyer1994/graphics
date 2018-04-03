@@ -14,7 +14,7 @@ namespace Mode {
 
 class Viewport {
 public:
-	Viewport(Window& window, std::vector<Shape>& shapes, Gtk::DrawingArea& drawing_area)
+	Viewport(Mode::Window& window, std::vector<Shape>& shapes, Gtk::DrawingArea& drawing_area)
 	: window(window),
 	  shapes(shapes),
 	  clipping(),
@@ -47,7 +47,7 @@ public:
 		drawing_area.queue_draw();
 	}
 
-	Window& window;
+	Mode::Window& window;
 	std::vector<Shape>& shapes;
 
 protected:

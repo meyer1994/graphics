@@ -9,6 +9,8 @@
 
 #include "shape.h"
 
+namespace Mode {
+
 /**
  * @brief Obj descriptor class.
  * 
@@ -205,5 +207,7 @@ protected:
 		return Shape(points, "name");
 	}
 };
+
+}  // namespace Mode
 
 #endif  // OBJ_DESCRIPTOR_H

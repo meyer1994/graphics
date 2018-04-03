@@ -47,7 +47,7 @@ public:
     }
 
     Mode::Viewport& viewport;
-    ObjDescriptor descriptor;
+    Mode::ObjDescriptor descriptor;
 
     Gtk::FileChooserDialog* dialog_file_chooser = nullptr;
     Gtk::ComboBoxText* combobox_shapes = nullptr;
