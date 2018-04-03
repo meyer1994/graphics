@@ -72,6 +72,7 @@ public:
     // View
     Gtk::Window* window_main = nullptr;
 
+protected:
     // Mode
     Mode::Viewport* mode_viewport = nullptr;
     std::vector<Shape> shapes;

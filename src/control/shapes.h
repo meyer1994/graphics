@@ -58,6 +58,7 @@ public:
 
 	~Shapes() {}
 
+protected:
 	// Shapes to be drawn
 	Mode::Viewport& viewport;
 
@@ -91,8 +92,7 @@ public:
 	Gtk::CheckButton* check_clipping = nullptr;
 	Gtk::RadioButton* radio_cohen = nullptr;
 	Gtk::RadioButton* radio_liang = nullptr;
-
-protected:
+	
 	void connect_buttons() {
 		// Shape movement
 		button_move_up

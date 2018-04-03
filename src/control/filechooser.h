@@ -46,6 +46,7 @@ public:
         delete dialog_file_chooser;
     }
 
+protected:
     Mode::Viewport& viewport;
     Mode::ObjDescriptor descriptor;
 
@@ -57,7 +58,6 @@ public:
     Gtk::ImageMenuItem* menu_item_save = nullptr;
     Gtk::ImageMenuItem* menu_item_save_as = nullptr;
 
-protected:
     void connect_buttons() {
         menu_item_open
             ->signal_activate()

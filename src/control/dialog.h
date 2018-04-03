@@ -68,6 +68,7 @@ public:
         clear_labels();
     }
 
+protected:
     // Hold created points
     std::vector<Point> points_buffer;
 
@@ -102,7 +103,6 @@ public:
     // Hold labels of the points added
     Gtk::Box* box_points_added = nullptr;
 
-protected:
     /**
      * @brief Connects all buttons to it's functions.
      *

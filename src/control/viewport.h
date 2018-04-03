@@ -39,6 +39,7 @@ public:
 
 	~Viewport() {}
 
+protected:
 	Mode::Viewport& viewport;
 
 	// Rotation controls
@@ -58,7 +59,6 @@ public:
 	Gtk::Button* button_out = nullptr;
 	Gtk::Entry* input_viewport_zoom = nullptr;
 
-protected:
 	void connect_buttons() {
 		// Movement buttons
 		button_up->signal_clicked().connect(
