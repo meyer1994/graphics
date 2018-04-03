@@ -14,14 +14,12 @@
         <property name="can_focus">False</property>
         <property name="spacing">3</property>
         <child>
-          <object class="GtkBox" id="box_control">
-            <property name="name">window_box_main_box_control_</property>
+          <object class="GtkGrid" id="grid_control">
+            <property name="name">grid_control</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">5</property>
+            <property name="row_spacing">5</property>
+            <property name="column_spacing">5</property>
             <child>
               <object class="GtkFrame" id="frame_viewport_controls">
                 <property name="name">frame_viewport_controls</property>
@@ -337,34 +335,9 @@
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox" id="box_add_shape">
-                <property name="name">box_add_shape</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="spacing">2</property>
-                <child>
-                  <object class="GtkComboBoxText" id="combobox_shapes">
-                    <property name="name">combobox_shapes</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+                <property name="width">2</property>
               </packing>
             </child>
             <child>
@@ -770,6 +743,93 @@
                             <property name="width">4</property>
                           </packing>
                         </child>
+                        <child>
+                          <object class="GtkFrame" id="frame_shape_clipping">
+                            <property name="name">frame_shape_clipping</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label_xalign">0</property>
+                            <property name="shadow_type">none</property>
+                            <child>
+                              <object class="GtkAlignment" id="align_shape_control_clipping">
+                                <property name="name">align_shape_control_clipping</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkGrid" id="grid_shape_clipping">
+                                    <property name="name">grid_shape_clipping</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="row_spacing">2</property>
+                                    <property name="column_spacing">2</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="checkbox_shape_clipping">
+                                        <property name="label" translatable="yes">Clipping ON/OFF</property>
+                                        <property name="name">checkbox_shape_clipping</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">center</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="radio_shape_clipping_cohen">
+                                        <property name="label" translatable="yes">Cohen-Sutherland</property>
+                                        <property name="name">radio_shape_clipping_cohen</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="radio_shape_clipping_liang">
+                                        <property name="label" translatable="yes">Liang-Barsky</property>
+                                        <property name="name">radio_shape_clipping_liang</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <property name="group">radio_shape_clipping_cohen</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel" id="label_shape_control_clipping">
+                                <property name="name">label_shape_control_clipping</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Clipping</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">4</property>
+                            <property name="width">4</property>
+                          </packing>
+                        </child>
                       </object>
                     </child>
                   </object>
@@ -784,15 +844,52 @@
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFrame" id="frame_shape_list">
+                <property name="name">frame_shape_list</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">none</property>
+                <child>
+                  <object class="GtkAlignment" id="align_shape_list">
+                    <property name="name">align_shape_list</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkComboBoxText" id="combobox_shapes">
+                        <property name="name">combobox_shapes</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel" id="label_shape_list">
+                    <property name="name">label_shape_list</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Shapes</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+                <property name="width">2</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
+            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -1208,17 +1305,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button_add_file">
-                        <property name="label" translatable="yes">File</property>
-                        <property name="name">button_add_file</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                 </child>

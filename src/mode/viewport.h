@@ -43,6 +43,10 @@ public:
 		line_clipping_method = type;
 	}
 
+	void toggle_clipping() {
+		clipping_toggle = !clipping_toggle;
+	}
+
 	void draw() {
 		drawing_area.queue_draw();
 	}
@@ -75,7 +79,9 @@ protected:
 		for (Shape s : shapes) {
 			normalize_shape(s, m);
 
-			clipper(s);
+			if (clipping_toggle) {
+				clipper(s);
+			}
 
 			draw_shape(cr, s.window);
 		}
@@ -145,6 +151,7 @@ protected:
 	Gtk::DrawingArea& drawing_area;
 	Clipping clipping;
 	int line_clipping_method = 0;
+	bool clipping_toggle = true;
 };
 	
 }  // namespace Mode

@@ -7,6 +7,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/button.h>
 #include <gtkmm/builder.h>
+#include <gtkmm/checkbutton.h>
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/comboboxtext.h>
 
@@ -37,18 +38,20 @@ public:
 		b->get_widget("input_shape_inflate", input_inflate);
 
 		// Get rotation widgets
-		// radio buttons
 		b->get_widget("radiobutton_shape_object_rotate", radio_shape);
 		b->get_widget("radiobutton_shape_viewport_rotate", radio_viewport);
 		b->get_widget("radiobutton_shape_point_rotate", radio_coord);
-		// entries
 		b->get_widget("input_shape_rotation_x", input_rotate_x);
 		b->get_widget("input_shape_rotation_y", input_rotate_y);
 		b->get_widget("input_shape_rotation_z", input_rotate_z);
 		b->get_widget("input_shape_rotation_angle", input_angle);
-		// buttons
 		b->get_widget("button_shape_rotate_left", button_rotate_left);
 		b->get_widget("button_shape_rotate_right", button_rotate_right);
+
+		// Clipping widgets
+		b->get_widget("checkbox_shape_clipping", check_clipping);
+		b->get_widget("radio_shape_clipping_cohen", radio_cohen);
+		b->get_widget("radio_shape_clipping_liang", radio_liang);
 
 		connect_buttons();
 	}
@@ -83,6 +86,11 @@ public:
 	Gtk::Entry* input_rotate_x = nullptr;
 	Gtk::Entry* input_rotate_y = nullptr;
 	Gtk::Entry* input_rotate_z = nullptr;
+
+	// Clipping
+	Gtk::CheckButton* check_clipping = nullptr;
+	Gtk::RadioButton* radio_cohen = nullptr;
+	Gtk::RadioButton* radio_liang = nullptr;
 
 protected:
 	void connect_buttons() {
@@ -145,6 +153,26 @@ protected:
 			.connect([this]() {
 				double angle = get_rotate_input();
 				rotate(-angle);
+				viewport.draw();
+			});
+
+		// Clipping
+		check_clipping
+			->signal_toggled()
+			.connect([this]() {
+				viewport.toggle_clipping();
+				viewport.draw();
+			});
+		radio_liang
+			->signal_toggled()
+			.connect([this]() {
+				viewport.set_line_clipping_method(0);
+				viewport.draw();
+			});
+		radio_cohen
+			->signal_toggled()
+			.connect([this]() {
+				viewport.set_line_clipping_method(1);
 				viewport.draw();
 			});
 	}

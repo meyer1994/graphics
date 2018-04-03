@@ -300,7 +300,6 @@ protected:
 
 		return Point(x, y);
 	}
-
 };
 
 #endif  // CLIPPING_H
