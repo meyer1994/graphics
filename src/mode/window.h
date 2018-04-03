@@ -18,6 +18,7 @@
  */
 class Window : public Shape {
 public:
+    Window() : Shape() {}
     /**
      * @brief Constructor.
      *
