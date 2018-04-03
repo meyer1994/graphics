@@ -52,7 +52,7 @@ public:
         mode_viewport = new Mode::Viewport(*window, *shapes, *drawing_area);
 
         control_viewport = new Viewport(b, *mode_viewport);
-        control_dialog = new Dialog(b, *shapes);
+        control_dialog = new Dialog(b, *mode_viewport);
         control_shapes = new Shapes(b, *mode_viewport);
         file_chooser = new FileChooser(b, *shapes);
     }
@@ -64,6 +64,7 @@ public:
         delete control_dialog;
         delete shapes;
         delete file_chooser;
+        delete mode_viewport;
 
         for (int i = 0; i < shape_labels->size(); i++) {
             delete (*shape_labels)[i];

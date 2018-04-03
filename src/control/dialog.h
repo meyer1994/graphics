@@ -20,6 +20,7 @@
 #include "../mode/point.h"
 #include "../mode/shape.h"
 #include "../mode/polygon.h"
+#include "../mode/viewport.h"
 
 namespace Control {
 
@@ -33,18 +34,17 @@ public:
      *
      * @param s Shapes vector. Will add new shapes to this vector.
      */
-    Dialog(Glib::RefPtr<Gtk::Builder>& b, std::vector<Shape>& s)
-    : shapes(s) {
+    Dialog(Glib::RefPtr<Gtk::Builder>& b, Mode::Viewport& viewport)
+    : viewport(viewport) {
 
         b->get_widget("dialog_input", dialog_input);
 
-        // Menu items
+        // Menu item
         b->get_widget("menu_item_new", menu_item_new);
 
         // Buttons
         b->get_widget("button_finish", button_finish);
         b->get_widget("button_cancel", button_cancel);
-        b->get_widget("button_add_file", button_add_file);
         b->get_widget("button_add_point", button_add_point);
 
         // Inputs
@@ -52,12 +52,9 @@ public:
         b->get_widget("text_input_x", text_input_x);
         b->get_widget("text_input_y", text_input_y);
 
-
+        // Combo box
         b->get_widget("combobox_shapes", combobox_shapes);
         b->get_widget("box_points_added", box_points_added);
-
-        // Drawing area
-        b->get_widget("drawing_area", drawing_area);
 
         connect_buttons();
     }
@@ -72,27 +69,82 @@ public:
         clear_labels();
     }
 
+    // Hold created points
+    std::vector<Point> points_buffer;
+
+    // Hold created points labels
+    std::vector<Gtk::Label*> points_labels_buffer;
+
+    // Shapes reference
+    Mode::Viewport& viewport;
+
+    // Top-level dialog
+    Gtk::Dialog* dialog_input = nullptr;
+
+    // Combobox
+    Gtk::ComboBoxText* combobox_shapes = nullptr;
+
+    // Menu items
+    Gtk::ImageMenuItem* menu_item_new = nullptr;
+    Gtk::ImageMenuItem* menu_item_open = nullptr;
+    Gtk::ImageMenuItem* menu_item_save = nullptr;
+    Gtk::ImageMenuItem* menu_item_save_as = nullptr;
+
+    // Buttons
+    Gtk::Button* button_finish = nullptr;
+    Gtk::Button* button_cancel = nullptr;
+    Gtk::Button* button_add_point = nullptr;
+
+    // Text entries
+    Gtk::Entry* text_input_name = nullptr;
+    Gtk::Entry* text_input_x = nullptr;
+    Gtk::Entry* text_input_y = nullptr;
+
+    // Hold labels of the points added
+    Gtk::Box* box_points_added = nullptr;
+
+protected:
     /**
-     * @brief Add point to the point_buffer.
+     * @brief Connects all buttons to it's functions.
      *
-     * @details Will only add the point if the inputs are correct numbers that
-     * do not throw any kind of exception when passed to std::stod().
+     * @details Will connect all the button signals to the methods they are
+     * supposed to call.
      */
-    void add_point() {
-        try {
-            // Get point
-            Point p = get_point();
-            points_buffer.push_back(p);
+    void connect_buttons() {
+        button_finish
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Control::Dialog::finish));
+        button_cancel
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Control::Dialog::cancel));
+        button_add_point
+            ->signal_clicked()
+            .connect(sigc::mem_fun(*this, &Control::Dialog::add_point));
+        menu_item_new
+            ->signal_activate()
+            .connect(sigc::mem_fun(*dialog_input, &Gtk::Dialog::show));
+    }
 
-            // Clear text inputs
-            text_input_x->set_text("");
-            text_input_y->set_text("");
+    /**
+     * @brief Get point.
+     *
+     * @details Gets the input from the user and convert to doubles.
+     *
+     * @return Point inputted by user.
+     *
+     * @throws std::invalid_argument If the input is "wrong". Wrong in the
+     * sense of std::stod(double) not accepting it.
+     */
+    Point get_point() {
+        // Get text input
+        std::string sx = text_input_x->get_text();
+        std::string sy = text_input_y->get_text();
 
-            // Update text view
-            update_added_points(p);
-        } catch (std::exception& e) {
-            // Nothing
-        }
+        // Convert to double
+        double x = std::stod(sx);
+        double y = std::stod(sy);
+
+        return Point(x, y);
     }
 
     /**
@@ -118,27 +170,27 @@ public:
         // Dot
         if (points_buffer.size() == 1) {
             Point p = points_buffer[0];
-            shapes.push_back(Dot(p[0], p[1], name));
+            viewport.shapes.push_back(Dot(p[0], p[1], name));
         }
 
         // Line
         if (points_buffer.size() == 2) {
             Point a = points_buffer[0];
             Point b = points_buffer[1];
-            shapes.push_back(Line(a, b, name));
+            viewport.shapes.push_back(Line(a, b, name));
         }
 
         // Polygon
         if (points_buffer.size() > 2) {
             Polygon p(points_buffer, name);
-            shapes.push_back(p);
+            viewport.shapes.push_back(p);
         }
 
         // Add shape name to combobox
         combobox_shapes->append(name);
 
         // Redraw drawing area
-        drawing_area->queue_draw();
+        viewport.draw();
 
         return true;
     }
@@ -174,86 +226,27 @@ public:
         }
     }
 
-    // Hold created points
-    std::vector<Point> points_buffer;
-
-    // Hold created points labels
-    std::vector<Gtk::Label*> points_labels_buffer;
-
-    // Shapes reference
-    std::vector<Shape>& shapes;
-
-    // Top-level dialog
-    Gtk::Dialog* dialog_input = nullptr;
-
-    // Combobox
-    Gtk::ComboBoxText* combobox_shapes = nullptr;
-
-    // Menu items
-    Gtk::ImageMenuItem* menu_item_new = nullptr;
-    Gtk::ImageMenuItem* menu_item_open = nullptr;
-    Gtk::ImageMenuItem* menu_item_save = nullptr;
-    Gtk::ImageMenuItem* menu_item_save_as = nullptr;
-
-    // Buttons
-    Gtk::Button* button_finish = nullptr;
-    Gtk::Button* button_cancel = nullptr;
-    Gtk::Button* button_add_point = nullptr;
-    Gtk::Button* button_add_file = nullptr;
-
-    // Text entries
-    Gtk::Entry* text_input_name = nullptr;
-    Gtk::Entry* text_input_x = nullptr;
-    Gtk::Entry* text_input_y = nullptr;
-
-    // Hold labels of the points added
-    Gtk::Box* box_points_added = nullptr;
-
-    // Drawin area to update when adding new shapes
-    Gtk::DrawingArea* drawing_area = nullptr;
-
-protected:
     /**
-     * @brief Get point.
+     * @brief Add point to the point_buffer.
      *
-     * @details Gets the input from the user and convert to doubles.
-     *
-     * @return Point inputted by user.
-     *
-     * @throws std::invalid_argument If the input is "wrong". Wrong in the
-     * sense of std::stod(double) not accepting it.
+     * @details Will only add the point if the inputs are correct numbers that
+     * do not throw any kind of exception when passed to std::stod().
      */
-    Point get_point() {
-        // Get text input
-        std::string sx = text_input_x->get_text();
-        std::string sy = text_input_y->get_text();
+    void add_point() {
+        try {
+            // Get point
+            Point p = get_point();
+            points_buffer.push_back(p);
 
-        // Convert to double
-        double x = std::stod(sx);
-        double y = std::stod(sy);
+            // Clear text inputs
+            text_input_x->set_text("");
+            text_input_y->set_text("");
 
-        return Point(x, y);
-    }
-
-    /**
-     * @brief Connects all buttons to it's functions.
-     *
-     * @details Will connect all the button signals to the methods they are
-     * supposed to call.
-     */
-    void connect_buttons() {
-        button_finish
-            ->signal_clicked()
-            .connect(sigc::mem_fun(*this, &Control::Dialog::finish));
-        button_cancel
-            ->signal_clicked()
-            .connect(sigc::mem_fun(*this, &Control::Dialog::cancel));
-        button_add_point
-            ->signal_clicked()
-            .connect(sigc::mem_fun(*this, &Control::Dialog::add_point));
-        menu_item_new
-            ->signal_activate()
-            .connect(sigc::mem_fun(*dialog_input, &Gtk::Dialog::show));
+            // Update text view
+            update_added_points(p);
+        } catch (std::exception& e) {
+            // Nothing
+        }
     }
 
     /**
@@ -285,7 +278,6 @@ protected:
         box_points_added->add(*l);
         l->show();
     }
-
 };
 
 }  // namespace Control
