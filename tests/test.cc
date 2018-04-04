@@ -2,8 +2,10 @@
 #include "test_shape.h"
 #include "test_dot.h"
 #include "test_line.h"
-#include "test_descriptor.h"
+// #include "test_descriptor.h"
 #include <typeinfo>
+
+enum class T {A};
 
 int main(int argc, char* argv[]) {
 
@@ -15,8 +17,10 @@ int main(int argc, char* argv[]) {
     std::cout << "==========" << std::endl;
     Test::line();
     std::cout << "==========" << std::endl;
-    Test::write();
+    // Test::write();
     std::cout << "==========" << std::endl;
-    Test::read();
+    // Test::read();
 
+    Shape s = Line();
+    std::cout << s.to_string() << "\n";
 }

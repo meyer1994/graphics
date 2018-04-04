@@ -8,7 +8,7 @@
 
 /**
  * @class Dot class.
- * 
+ *
  * @details Used to draw dots in the drawing area.
  */
 class Dot : public Shape {
@@ -16,20 +16,20 @@ public:
     /**
      * @brief Default constructor.
      */
-    Dot() : Shape() {}
+    Dot() : Shape(name = "dot") {}
 
     /**
      * @brief 2D contructor.
-     * 
+     *
      * @param x X coordinate.
      * @param y Y coordinate.
      */
     Dot(double x, double y, std::string name = "dot")
-    : Shape(std::vector<Point>{Point(x, y)}) {}
+    : Shape(std::vector<Point>{Point(x, y)}, name) {}
 
     /**
      * @brief To string method.
-     * 
+     *
      * @return An string representing this class.
      */
     virtual const std::string to_string() const override {
@@ -41,6 +41,8 @@ public:
         str.append(")");
         return str;
     }
+
+    const Type type = Type::Dot;
 
 };
 

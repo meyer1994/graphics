@@ -6,9 +6,13 @@
 
 #include "point.h"
 
+enum class Type { Dot, Line, Polygon, Shape, BezierCurve };
+
 class Shape {
 public:
     Shape() {}
+
+    Shape(std::string name) : name(name) {}
 
     explicit Shape(std::vector<Point> p, std::string name = "shape")
     : real(p),
@@ -91,6 +95,10 @@ public:
     }
 
     virtual const std::string to_string() const {
+    	if (size() == 0) {
+    		return "Shape()";
+    	}
+
         int total = real.size();
         std::string str = "Shape(";
         for (int i = 0; i < total - 1; i++) {

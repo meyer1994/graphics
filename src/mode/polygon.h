@@ -8,7 +8,7 @@
 
 /**
  * @brief Polygon class.
- * 
+ *
  * @details Class used to draw polygons into the drawing area.
  */
 class Polygon : public Shape {
@@ -16,14 +16,14 @@ public:
     /**
      * @brief Default constructor.
      */
-    Polygon() : Shape() {}
+    Polygon() : Shape(name = "polygon") {}
 
     /**
      * @brief Explicit constructor.
-     * 
+     *
      * @details The last point of the vector will be connected with the first
      * point of the vector.
-     * 
+     *
      * @param points Vector of points that make this polygon.
      */
     explicit Polygon(std::vector<Point> points, std::string name = "polygon")
@@ -31,7 +31,7 @@ public:
 
     /**
      * @brief To string method.
-     * 
+     *
      * @return Representation of this class.
      */
     virtual const std::string to_string() const override {
@@ -47,6 +47,7 @@ public:
         str.append(")");
         return str;
     }
+
 };
 
 #endif  // POLYGON_H

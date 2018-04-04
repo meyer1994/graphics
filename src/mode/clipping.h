@@ -31,6 +31,30 @@ public:
 		}
 	}
 
+	void bezier_curve(Shape& curve) {
+
+		for (int i = 0; i < curve.window.size() - 1; i++) {
+			Point a_real = curve.real[i];
+			Point b_real = curve.real[i + 1];
+			Point a_window = curve.window[i];
+			Point b_window = curve.window[i + 1];
+
+			Line line(a_real, b_real);
+			line.window.push_back(a_window);
+			line.window.push_back(b_window);
+
+			cohen_sutherland(line);
+			// Trivial reject
+			if (!line.window.empty()) {
+				curve.window[i] = line.window[0];
+				curve.window[i + 1] = line.window[1];
+			} else {
+				curve.window.erase(curve.window.begin() + i);
+				i--;
+			}
+		}
+	}
+
 	void cohen_sutherland(Shape& line) {
 
 		Point& a = line.window[0];

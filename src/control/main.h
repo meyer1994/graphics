@@ -10,6 +10,7 @@
 #include <gtkmm/comboboxtext.h>
 
 #include "../mode/shape.h"
+#include "../mode/bezier_curve.h"
 #include "../mode/window.h"
 #include "../mode/viewport.h"
 
@@ -28,13 +29,22 @@ public:
         window_main->set_default_size(1000, 600);
         window_main->show_all();
 
+        BezierCurve s = BezierCurve(std::vector<Point>{
+			Point(1, 1),
+			Point(2, 3),
+			Point(3, 0),
+			Point(4, 1)
+       }, 0.01);
+
         // Dummy shape (debugging)
-        Shape s = Shape(std::vector<Point>{
-            Point(0, 0),
-            Point(50, 0),
-            Point(50, 50)
-        });
-        s.filled = true;
+   //      Shape s = Shape(std::vector<Point>{
+			// Point(0, 100),
+			// Point(100, 100),
+			// Point(100, 0),
+			// Point(50, 50),
+			// Point(0, 0)
+   //      });
+        // s.filled = true;
         shapes.push_back(s);
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);

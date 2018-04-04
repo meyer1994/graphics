@@ -8,7 +8,7 @@
 
 /**
  * @class Line class.
- * 
+ *
  * @details Used to draw single lines in the drawing area.
  */
 class Line : public Shape {
@@ -16,20 +16,20 @@ public:
     /**
      * @brief Default constructor.
      */
-    Line() : Shape() {}
+    Line() : Shape(name = "line") {}
 
     /**
      * @brief 2 point constructor.
-     * 
+     *
      * @param a Start point.
      * @param b End point.
      */
     Line(Point a, Point b, std::string name = "line")
-    : Shape(std::vector<Point>{a, b}) {}
+    : Shape(std::vector<Point>{a, b}, name) {}
 
     /**
      * @brief To string method.
-     * 
+     *
      * @return String representation fo this class.
      */
     virtual const std::string to_string() const override {
@@ -43,6 +43,9 @@ public:
         s.append(")");
         return s;
     }
+
+    static const Type type = Type::Line;
+
 };
 
 #endif  // LINE_H

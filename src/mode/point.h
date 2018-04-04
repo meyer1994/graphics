@@ -19,11 +19,11 @@ namespace Transformation {
 
 /**
  * @brief Static scale matrix method.
- * 
+ *
  * @details Returns an scale matrix to be used in transform operations.
- * 
+ *
  * @param v Vector containing the values to scale dimensions.
- * 
+ *
  * @return Matrix of size `v.size() + 1`, of the transformation.
  */
 Matrix scale(const Vector& v) {
@@ -45,11 +45,11 @@ Matrix scale(const Vector& v) {
 
 /**
  * @brief Static rotate matrix method (only works for 2D).
- * 
+ *
  * @details Returns an rotate matrix to be used in transform operations.
- * 
+ *
  * @param angle Angle to rotate matrix from origin.
- * 
+ *
  * @return Matrix of size `(3 x 3)`, of the transformation.
  */
 Matrix rotate(double angle) {
@@ -65,11 +65,11 @@ Matrix rotate(double angle) {
 
 /**
  * @brief Static translate matrix method.
- * 
+ *
  * @details Returns an translate matrix to be used in transform operations.
- * 
+ *
  * @param v Vector containing the values to translate each coordinate.
- * 
+ *
  * @return Matrix of size `v.size() + 1`, of the transformation.
  */
 Matrix translate(const Vector& v) {
@@ -113,6 +113,57 @@ Matrix combine(const Matrix& m0, const Matrix& m1) {
     return result;
 }
 
+Vector multiply(const Vector& line, const Matrix& matrix) {
+	if (line.size() != matrix.size()) {
+		throw std::invalid_argument("Line must have same number of columns"
+									" as the matrix has lines");
+	}
+
+	// Column of 0s
+	Vector result(line.size(), 0);
+	int total = line.size();
+
+	for (int i = 0; i < total; i++) {
+		for (int j = 0; j < total; j++) {
+			result[i] += line[j] * matrix[j][i];
+		}
+	}
+
+	return result;
+}
+
+Vector multiply(const Matrix& matrix, const Vector& column) {
+	if (matrix.size() != column.size()) {
+		throw std::invalid_argument("Column must have same number of lines"
+									" as the matrix has columns");
+	}
+
+	// Column of 0s
+	Vector result(column.size(), 0);
+	int total = column.size();
+
+	for (int i = 0; i < total; i++) {
+		for (int j = 0; j < total; j++) {
+			result[i] += matrix[i][j] * column[j];
+		}
+	}
+
+	return result;
+}
+
+double multiply(const Vector& v0, const Vector& v1) {
+	if (v0.size() != v1.size()) {
+		throw std::invalid_argument("Vectors must be of same size");
+	}
+
+	double result = 0;
+	for (int i = 0; i < v0.size(); i++) {
+		result += v0[i] * v1[i];
+	}
+
+	return result;
+}
+
 }  // namespace Transformation
 
 
@@ -120,18 +171,18 @@ class Point : public Vector {
 public:
     /**
      * @brief Default constructor.
-     * 
+     *
      * @details Instantiate an empty point, with no coordinates whatsoever.
      */
     Point() : Vector() {}
 
     /**
      * @brief Explicit constructor.
-     * 
+     *
      * @details Creates a point with the coordinates passed into as a vector.
      * This means, coords[0] is X, coords[1] is Y and so on. The dimension of
      * the point is determined by the size of this vector.
-     * 
+     *
      * @param coords Vector of doubles to be used as coordinates in the space.
      */
     explicit Point(Vector coords) : Vector(coords) {
@@ -142,10 +193,10 @@ public:
 
     /**
      * @brief 2D point constructor.
-     * 
+     *
      * @details Utility constructor to easily create a 2D point. Is the same as
      * calling Point(Vector{x, y}).
-     * 
+     *
      * @param x X coordinate in space.
      * @param y Y coordinate in space
      */
@@ -156,11 +207,11 @@ public:
 
     /**
      * @brief Scale the point from the origin.
-     * 
+     *
      * @details Will multiply all the point coordinates by the desired ratio.
      * A consequence of this approach is that it will make points get further
      * away from the origin, (0, 0), when used.
-     * 
+     *
      * @param ratio By how much do you want to scale the point's coordinates.
      */
     const Point& scale(double ratio) {
@@ -172,18 +223,18 @@ public:
 
     /**
      * @brief Rotate the point based on the origin.
-     * 
+     *
      * @details Rotate the point by the angle passed. It follows the principle
      * of the unit circle. Which means, if you rotate it 90 degrees, it will
      * rotate it in an anti-clockwise fashion.
-     * 
+     *
      * Example:
      * ```{.cpp}
      * Point p(5, 0);
      * p.rotate(90);
      * // p is now (0, 5)
      * ```
-     * 
+     *
      * @param angle The angle, in degrees,you want to rotate.
      */
     const Point& rotate(double angle) {
@@ -194,10 +245,10 @@ public:
 
     /**
      * @brief Translate point.
-     * 
+     *
      * @details Will simply sum the values passed with the correspondend
      * coordiante values.
-     * 
+     *
      * @param v Vector with the values to be summed with the coordinates.
      */
     const Point& translate(const Vector& v) {
@@ -208,11 +259,11 @@ public:
 
     /**
      * @brief Transform function.
-     * 
+     *
      * @details Applies the transformation matrix passed to the point. Very
      * useful when there is the need for more than one transformation at one
      * time. It simply multiplies the point with the matrix passed as argument.
-     * 
+     *
      * @param m Matrix to transform point with.
      */
     const Point& transform(const Matrix& m) {
@@ -240,9 +291,9 @@ public:
 
     /**
      * @brief To string method.
-     * 
+     *
      * @details Makes a representation of the point. For easier debugging.
-     * 
+     *
      * @return String in the form of `Point(x, y, ...)`.
      */
     const std::string to_string() const {

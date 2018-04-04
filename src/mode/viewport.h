@@ -29,11 +29,11 @@ public:
 
 	/**
 	 * @brief Sets the desired clipping method for lines.
-	 * 
+	 *
 	 * @details 0 (default) is Cohen-Sutherland algorithm;
 	 *          1 is Liang-Barsky algorithm.
 	 * If a different number is provided, it will be set to the default type.
-	 * 
+	 *
 	 * @param type Number of the desired algorithm to be used.
 	 */
 	void set_line_clipping_method(int type) {
@@ -66,12 +66,6 @@ protected:
 		// Transformation matrix
 		Matrix m = window.normalization_matrix();
 
-		// Change color to blue
-		cr->set_source_rgb(0, 1, 1);
-		normalize_shape(window, m);
-		draw_shape(cr, window.window);
-		cr->stroke();
-
 		// Changes color to red
 		cr->set_source_rgb(0.8, 0, 0);
 
@@ -91,17 +85,31 @@ protected:
 			cr->stroke();
 		}
 
+		// Change color to blue
+		cr->set_source_rgb(0, 1, 1);
+		normalize_shape(window, m);
+		draw_closed(cr, window.window);
+		cr->stroke();
+
 		return true;
 	}
 
 	void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, std::vector<Point>& points) {
-		if (points.empty()) {
-			return;
-		}
-
 		// First point
 		Point p0 = points[0];
+		Point p0v = vp_transform(p0);
+		cr->move_to(p0v[0], p0v[1]);
 
+		// Lines to other points
+		for (int i = 1; i < points.size(); i++) {
+			Point n = vp_transform(points[i]);
+			cr->line_to(n[0], n[1]);
+		}
+	}
+
+	void draw_closed(const Cairo::RefPtr<Cairo::Context>& cr, std::vector<Point>& points) {
+		// First point
+		Point p0 = points[0];
 		Point p0v = vp_transform(p0);
 		cr->move_to(p0v[0], p0v[1]);
 
@@ -111,7 +119,7 @@ protected:
 			cr->line_to(n[0], n[1]);
 		}
 
-		// Line from last point to first point
+		// Last to first
 		cr->line_to(p0v[0], p0v[1]);
 	}
 
@@ -135,21 +143,27 @@ protected:
 
 	void clipper(Shape& shape) {
 		// Dot
-		if (shape.size() == 1) {
+		if (shape.name == "dot") {
 			return clipping.dot(shape);
 		}
 
 		// Line
-		if (shape.size() == 2) {
+		if (shape.name == "line") {
 			if (line_clipping_method == 0) {
 				return clipping.cohen_sutherland(shape);
 			}
-
 			return clipping.liang_barsky(shape);
 		}
 
+		// Curve
+		if (shape.name == "curve") {
+			return clipping.bezier_curve(shape);
+		}
+
 		// Polygon
-		clipping.sutherland_hodgman(shape);
+		if (shape.name == "polygon") {
+			return clipping.sutherland_hodgman(shape);
+		}
 	}
 
 	Gtk::DrawingArea& drawing_area;
@@ -157,7 +171,7 @@ protected:
 	int line_clipping_method = 0;
 	bool clipping_toggle = true;
 };
-	
+
 }  // namespace Mode
 
 #endif  // MODE_VIEWPORT_H

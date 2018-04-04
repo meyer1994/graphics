@@ -92,7 +92,7 @@ protected:
 	Gtk::CheckButton* check_clipping = nullptr;
 	Gtk::RadioButton* radio_cohen = nullptr;
 	Gtk::RadioButton* radio_liang = nullptr;
-	
+
 	void connect_buttons() {
 		// Shape movement
 		button_move_up
@@ -123,7 +123,7 @@ protected:
 				move(m, 0);
 				viewport.draw();
 			});
-		
+
 		// Shape scaling
 		button_inflate_plus
 			->signal_clicked()
@@ -176,7 +176,7 @@ protected:
 				viewport.draw();
 			});
 	}
-	
+
 	Shape& get_shape() {
 		int index = combobox_shapes->get_active_row_number();
 		// get_active_row_number returns -1 when there is nothing selected
