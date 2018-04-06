@@ -72,7 +72,7 @@ public:
         cr->line_to(first[0], first[1]);
     }
 
-    bool filled == false;
+    bool filled = false;
 
 };
 
