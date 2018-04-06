@@ -26,7 +26,7 @@ public:
 	 * @param s The vector where to append the shapes to, or get the info to
 	 * write them to the disk.
 	 */
-	explicit ObjDescriptor(std::vector<Shape>& s) : shapes(s) {}
+	explicit ObjDescriptor(std::vector<Shape*>& s) : shapes(s) {}
 
 	~ObjDescriptor() {}
 
@@ -45,17 +45,17 @@ public:
 		std::string points;
 		std::string objects;
 
-		for (Shape& s : shapes) {
-			points += points_to_obj(s);
+		for (Shape* s : shapes) {
+			points += points_to_obj(*s);
 
 			objects += "o meu_objeto" + std::to_string(line_counter);
 			objects += "\n";
 
-			objects += get_type(s);
-			for (int i = 0; i < s.size(); i++) {
+			objects += get_type(*s);
+			for (int i = 0; i < s->size(); i++) {
 				objects += " " + std::to_string(line_counter + i);
 			}
-			line_counter += s.size();
+			line_counter += s->size();
 			objects += "\n";
 		}
 
@@ -91,7 +91,7 @@ public:
 
 			// Objects
 			} else if (c == 'o') {
-				shapes.push_back(get_shape(contents, points, index));
+				shapes->push_back(get_shape(contents, points, index));
 			}
 		}
 	}
@@ -155,7 +155,7 @@ protected:
 		return Point(values);
 	}
 
-	Shape get_shape(const std::string& contents,
+	Shape* get_shape(const std::string& contents,
 					const std::vector<Point>& p,
 					int& index) {
 		// Goes to first char of object name
@@ -204,7 +204,7 @@ protected:
 		index++;
 		int point_i = std::stoi(buffer);
 		points.push_back(p[point_i - 1]);
-		return Shape(points, "name");
+		return new Shape(points, "name");
 	}
 };
 
