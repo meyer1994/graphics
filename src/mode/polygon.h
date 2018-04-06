@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include <cairomm/context.h>
+
+#include "point.h"
 #include "shape.h"
 
 /**
@@ -26,8 +29,10 @@ public:
      *
      * @param points Vector of points that make this polygon.
      */
-    explicit Polygon(std::vector<Point> points, std::string name = "polygon")
+    Polygon(std::vector<Point> points, std::string name = "polygon")
     : Shape(points, name) {}
+
+    virtual ~Polygon() {}
 
     /**
      * @brief To string method.
@@ -38,15 +43,33 @@ public:
         if (real.size() == 0) {
             return "Polygon()";
         }
+
         std::string str = "Polygon(";
+
         for (int i = 0; i < size() - 1; i++) {
-            str.append(real.at(i).to_string());
-            str.append(", ");
+            const Point& p = real.at(i);
+            str += p.to_string() + ", ";
         }
-        str.append(real.back().to_string());
-        str.append(")");
+
+        const Point& p = real.back();
+        str += p.to_string() + ")";
+
         return str;
     }
+
+    virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) const override {
+        const Point& first = window.front();
+        cr->move_to(first[0], first[1]);
+
+        for (int i = 1; i < window.size(); i++) {
+            const Point& p = window[i];
+            cr->line_to(p[0], p[1]);
+        }
+
+        cr->line_to(first[0], first[1]);
+    }
+
+    bool filled == false;
 
 };
 

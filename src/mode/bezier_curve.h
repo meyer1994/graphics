@@ -3,31 +3,56 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
 #include <stdexcept>
+
+#include <cairomm/context.h>
 
 #include "point.h"
 #include "shape.h"
 
 class BezierCurve : public Shape {
 public:
-	BezierCurve() : Shape(name = "curve") {}
+	BezierCurve() : Shape("curve") {}
 
 	BezierCurve(std::vector<Point> points, double t = 0.05, std::string name = "curve")
 	: Shape(points, name),
 	  input(points),
 	  t(t) {
 		if (points.size() % 3 != 1) {
-			throw std::invalid_argument("Points size must obey { size % 3 == 1"
-										" }");
+			throw std::invalid_argument("Points size must obey { size % 3 == 1 }");
 		}
 
 		blending_function();
 	}
 
-	~BezierCurve() {}
+	virtual ~BezierCurve() {}
 
-    const Type type = Type::BezierCurve;
+	virtual const std::string to_string() const override {
+		if (input.empty()) {
+			return std::string("BezierCurve()");
+		}
+
+		std::string str = "BezierCurve(";
+
+		for (int i = 0; i < input.size() - 1; i++) {
+			const Point& p = input[i];
+			str += p.to_string() + ", ";
+		}
+
+		str += input.back().to_string() + ")";
+
+		return str;
+	}
+
+	virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) const override {
+		const Point& first = window.front();
+		cr->move_to(first[0], first[1]);
+
+		for (int i = 1; i < window.size(); i++) {
+			const Point& p = window[i];
+			cr->line_to(p[0], p[1]);
+		}
+	}
 
 	std::vector<Point> input;
 	double t;

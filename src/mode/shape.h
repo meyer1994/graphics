@@ -4,21 +4,21 @@
 #include <string>
 #include <vector>
 
-#include "point.h"
+#include <cairomm/context.h>
 
-enum class Type { Dot, Line, Polygon, Shape, BezierCurve };
+#include "point.h"
 
 class Shape {
 public:
-    Shape() {}
+    Shape() : name("shape") {}
 
     Shape(std::string name) : name(name) {}
 
-    explicit Shape(std::vector<Point> p, std::string name = "shape")
+    Shape(std::vector<Point> p, std::string name = "shape")
     : real(p),
       name(name) {}
 
-    ~Shape() {}
+    virtual ~Shape() {}
 
     Point medium() {
         if (real.size() == 0) {
@@ -94,22 +94,6 @@ public:
         transform(final);
     }
 
-    virtual const std::string to_string() const {
-    	if (size() == 0) {
-    		return "Shape()";
-    	}
-
-        int total = real.size();
-        std::string str = "Shape(";
-        for (int i = 0; i < total - 1; i++) {
-            str.append(real[i].to_string());
-            str.append(", ");
-        }
-        str.append(real[total - 1].to_string());
-        str.append(")");
-        return str;
-    }
-
     int size() const {
         return real.size();
     }
@@ -128,11 +112,14 @@ public:
         }
     }
 
+    virtual const std::string to_string() const = 0;
+
+    virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) const = 0;
+
     std::vector<Point> real;
     std::vector<Point> window;
 
     std::string name;
-    bool filled = false;
 };
 
 #endif  // SHAPE_H

@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include <cairomm/context.h>
+
+#include "point.h"
 #include "shape.h"
 
 /**
@@ -27,25 +30,32 @@ public:
     Line(Point a, Point b, std::string name = "line")
     : Shape(std::vector<Point>{a, b}, name) {}
 
+    virtual ~Line() {}
+
     /**
      * @brief To string method.
      *
      * @return String representation fo this class.
      */
     virtual const std::string to_string() const override {
-        if (real[0].size() == 0 || real[1].size() == 0) {
+        if (real.empty()) {
             return "Line()";
         }
-        std::string s = "Line(";
-        s.append(real[0].to_string());
-        s.append(", ");
-        s.append(real[1].to_string());
-        s.append(")");
-        return s;
+
+        std::string str = "Line(";
+        str += real[0].to_string() + ", ";
+        str += real[1].to_string() + ")";
+
+        return str;
     }
 
-    static const Type type = Type::Line;
+    virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) const override {
+        const Point& a = window[0];
+        const Point& b = window[1];
 
+        cr->move_to(a[0], a[1]);
+        cr->line_to(b[0], b[1]);
+    }
 };
 
 #endif  // LINE_H
