@@ -21,6 +21,8 @@ public:
      */
     Line() : Shape(name = "line") {}
 
+    Line(std::string name) : Shape(name) {}
+
     /**
      * @brief 2 point constructor.
      *

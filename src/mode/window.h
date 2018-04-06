@@ -18,21 +18,21 @@ namespace Mode {
  *
  * @param s [description]
  */
-class Window : public Shape {
+class Window : public Polygon {
 public:
-    Window() : Shape() {}
+    Window() : Polygon(name = "window") {}
     /**
      * @brief Constructor.
      *
      * @param s Vector of shapes that are drawn into the viewport.
      */
 	Window(double width, double heigth)
-    : Shape(std::vector<Point>{
+    : Polygon(std::vector<Point>{
         Point(0, 0),
         Point(width, 0),
         Point(width, heigth),
         Point(0, heigth)
-    }) {}
+    },  "window") {}
 
 	~Window() {}
 

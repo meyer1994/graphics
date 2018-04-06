@@ -12,7 +12,9 @@
 
 class BezierCurve : public Shape {
 public:
-	BezierCurve() : Shape("curve") {}
+	BezierCurve() : Shape("bezier_curve") {}
+
+	BezierCurve(std::string name) : Shape(name) {}
 
 	BezierCurve(std::vector<Point> points, double t = 0.05, std::string name = "curve")
 	: Shape(points, name),

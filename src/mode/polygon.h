@@ -21,6 +21,9 @@ public:
      */
     Polygon() : Shape(name = "polygon") {}
 
+
+    Polygon(std::string name) : Shape(name) {}
+
     /**
      * @brief Explicit constructor.
      *

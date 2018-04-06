@@ -21,6 +21,8 @@ public:
      */
     Dot() : Shape(name = "dot") {}
 
+    Dot(std::string name) : Shape(name) {}
+
     /**
      * @brief 2D contructor.
      *
