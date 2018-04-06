@@ -68,55 +68,32 @@ protected:
 
 		// Draw all shapes
 		for (Shape* s : shapes) {
-			normalize_shape(*s, m);
-			draw_closed(cr, s->window);
+			s->window.clear();
+
+			for (Point p : s->real) {
+				p.transform(m);
+				p = vp_transform(p);
+				s->window.push_back(p);
+			}
+
+			s->draw(cr);
 			cr->stroke();
 		}
 
 		// Change color to blue
 		cr->set_source_rgb(0, 1, 1);
-		normalize_shape(window, m);
-		draw_closed(cr, window.window);
+
+		// Draw clipping region
+		window.window.clear();
+		for (Point p : window.real) {
+			p.transform(m);
+			p = vp_transform(p);
+			window.window.push_back(p);
+		}
+		window.draw(cr);
 		cr->stroke();
 
 		return true;
-	}
-
-	void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, std::vector<Point>& points) {
-		// First point
-		Point p0 = points[0];
-		Point p0v = vp_transform(p0);
-		cr->move_to(p0v[0], p0v[1]);
-
-		// Lines to other points
-		for (int i = 1; i < points.size(); i++) {
-			Point n = vp_transform(points[i]);
-			cr->line_to(n[0], n[1]);
-		}
-	}
-
-	void draw_closed(const Cairo::RefPtr<Cairo::Context>& cr, std::vector<Point>& points) {
-		// First point
-		Point p0 = points[0];
-		Point p0v = vp_transform(p0);
-		cr->move_to(p0v[0], p0v[1]);
-
-		// Lines to other points
-		for (Point point : points) {
-			Point n = vp_transform(point);
-			cr->line_to(n[0], n[1]);
-		}
-
-		// Last to first
-		cr->line_to(p0v[0], p0v[1]);
-	}
-
-	void normalize_shape(Shape& shape, Matrix& transformation) {
-		shape.window.clear();
-		for (Point p : shape.real) {
-			p.transform(transformation);
-			shape.window.push_back(p);
-		}
 	}
 
 	Point vp_transform(const Point& p) {
