@@ -37,7 +37,7 @@ public:
 		connect_buttons();
 	}
 
-	~Viewport() {}
+	virtual ~Viewport() {}
 
 protected:
 	Mode::Viewport& viewport;

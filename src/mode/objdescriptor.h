@@ -7,7 +7,10 @@
 #include <sstream>
 #include <typeinfo>
 
+#include "dot.h"
+#include "line.h"
 #include "shape.h"
+#include "polygon.h"
 
 namespace Mode {
 
@@ -28,7 +31,7 @@ public:
 	 */
 	explicit ObjDescriptor(std::vector<Shape*>& s) : shapes(s) {}
 
-	~ObjDescriptor() {}
+	virtual ~ObjDescriptor() {}
 
 	/**
 	 * @brief Write the shapes to disk.
@@ -91,12 +94,12 @@ public:
 
 			// Objects
 			} else if (c == 'o') {
-				shapes->push_back(get_shape(contents, points, index));
+				shapes.push_back(get_shape(contents, points, index));
 			}
 		}
 	}
 
-	std::vector<Shape>& shapes;
+	std::vector<Shape*>& shapes;
 
 protected:
 	std::string points_to_obj(const Shape& shape) {
@@ -204,7 +207,24 @@ protected:
 		index++;
 		int point_i = std::stoi(buffer);
 		points.push_back(p[point_i - 1]);
-		return new Shape(points, "name");
+
+		int size = points.size();
+		switch (size) {
+			case 1:
+			{
+				return new Dot(points[0], "dot");
+			}
+			case 2:
+			{	
+				Point a = points[0];
+				Point b = points[1];
+				return new Line(a, b);
+			}
+			default:
+			{
+				return new Polygon(points);
+			}
+		}
 	}
 };
 

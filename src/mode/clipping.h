@@ -18,7 +18,7 @@ class Clipping {
 public:
 	Clipping() {}
 
-	~Clipping() {}
+	virtual ~Clipping() {}
 
 	void dot(Shape& dot) {
 		Point& point = dot.window[0];

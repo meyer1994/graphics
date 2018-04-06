@@ -42,7 +42,7 @@ public:
         connect_buttons();
     }
 
-    ~FileChooser() {
+    virtual ~FileChooser() {
         delete dialog_file_chooser;
     }
 
@@ -81,9 +81,8 @@ protected:
                 descriptor.read(filename);
                 combobox_shapes->remove_all();
 
-                for (Shape& s : viewport.shapes) {
-                    std::cout << s.name << std::endl;
-                    combobox_shapes->append(s.name);
+                for (Shape* s : viewport.shapes) {
+                    combobox_shapes->append(s->name);
                 }
 
                 viewport.draw();

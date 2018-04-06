@@ -9,6 +9,7 @@
 #include <gtkmm/application.h>
 #include <gtkmm/comboboxtext.h>
 
+#include "../mode/polygon.h"
 #include "../mode/shape.h"
 #include "../mode/bezier_curve.h"
 #include "../mode/window.h"
@@ -29,23 +30,18 @@ public:
         window_main->set_default_size(1000, 600);
         window_main->show_all();
 
-        BezierCurve s = BezierCurve(std::vector<Point>{
-			Point(1, 1),
-			Point(2, 3),
-			Point(3, 0),
-			Point(4, 1)
-       }, 0.01);
-
         // Dummy shape (debugging)
-   //      Shape s = Shape(std::vector<Point>{
-			// Point(0, 100),
-			// Point(100, 100),
-			// Point(100, 0),
-			// Point(50, 50),
-			// Point(0, 0)
-   //      });
-        // s.filled = true;
+        Polygon* s = new Polygon(std::vector<Point>{
+			Point(0, 100),
+			Point(100, 100),
+			Point(100, 0),
+			Point(50, 50),
+			Point(0, 0)
+        });
+        s->filled = true;
         shapes.push_back(s);
+
+        // Add text to combo box
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
         c->append("teste");
@@ -68,7 +64,7 @@ public:
         control_filechooser = new Control::FileChooser(b, *mode_viewport);
     }
 
-    ~Main() {
+    virtual ~Main() {
         // View
         delete window_main;
 
@@ -79,6 +75,11 @@ public:
 
         // Mode
         delete mode_viewport;
+
+        // Clear shapes
+        for (Shape* s : shapes) {
+            delete s;
+        }
     }
 
     // View
@@ -87,7 +88,7 @@ public:
 protected:
     // Mode
     Mode::Viewport* mode_viewport = nullptr;
-    std::vector<Shape> shapes;
+    std::vector<Shape*> shapes;
     Mode::Window window;
 
     // Controllers

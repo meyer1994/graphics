@@ -56,7 +56,7 @@ public:
 		connect_buttons();
 	}
 
-	~Shapes() {}
+	virtual ~Shapes() {}
 
 protected:
 	// Shapes to be drawn
@@ -177,7 +177,7 @@ protected:
 			});
 	}
 
-	Shape& get_shape() {
+	Shape* get_shape() {
 		int index = combobox_shapes->get_active_row_number();
 		// get_active_row_number returns -1 when there is nothing selected
 		if (index == -1) {
@@ -233,8 +233,8 @@ protected:
 
 	void move(double x, double y) {
 		try {
-			Shape& s = get_shape();
-			s.translate(x, y);
+			Shape* s = get_shape();
+			s->translate(x, y);
 		} catch(std::exception& e) {
 			// nothing
 		}
@@ -242,8 +242,8 @@ protected:
 
 	void inflate(double ratio) {
 		try {
-			Shape& s = get_shape();
-			s.inflate(ratio);
+			Shape* s = get_shape();
+			s->inflate(ratio);
 		} catch(std::exception& e) {
 			return;
 		}
@@ -251,19 +251,19 @@ protected:
 
 	void rotate(double angle) {
 		try {
-			Shape& s = get_shape();
+			Shape* s = get_shape();
 			// Rotate to any point
 			if(radio_coord->get_active()) {
 				Point p = get_point();
-				s.rotate(angle, p);
+				s->rotate(angle, p);
 			}
 			// Rotate to center of viewport
 			if(radio_viewport->get_active()) {
-				s.rotate(angle);
+				s->rotate(angle);
 			}
 			// Rotate from it's center
 			if(radio_shape->get_active()) {
-				s.rotate(angle, s.medium());
+				s->rotate(angle, s->medium());
 			}
 			viewport.draw();
 		} catch(std::exception& e) {

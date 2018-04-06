@@ -172,20 +172,20 @@ protected:
         // Dot
         if (points_buffer.size() == 1) {
             Point p = points_buffer[0];
-            viewport.shapes.push_back(Dot(p[0], p[1], name));
+            viewport.shapes.push_back(new Dot(p[0], p[1], name));
         }
 
         // Line
         if (points_buffer.size() == 2) {
             Point a = points_buffer[0];
             Point b = points_buffer[1];
-            viewport.shapes.push_back(Line(a, b, name));
+            viewport.shapes.push_back(new Line(a, b, name));
         }
 
         // Polygon
         if (points_buffer.size() > 2) {
-            Polygon p(points_buffer, name);
-            p.filled = checkbox_filled->get_active();
+            Polygon* p = new Polygon(points_buffer, name);
+            p->filled = checkbox_filled->get_active();
             viewport.shapes.push_back(p);
         }
 

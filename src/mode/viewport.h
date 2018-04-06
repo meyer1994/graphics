@@ -69,7 +69,7 @@ protected:
 		// Draw all shapes
 		for (Shape* s : shapes) {
 			normalize_shape(*s, m);
-			draw_closed(cr, s->window)
+			draw_closed(cr, s->window);
 			cr->stroke();
 		}
 
