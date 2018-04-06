@@ -20,64 +20,61 @@ public:
 
 	virtual ~Clipping() {}
 
-	void dot(Shape& dot) {
-		Point& point = dot.window[0];
+	void dot(Shape* dot) {
+		Point& point = dot->window[0];
 
 		bool x_inside = point[0] < -1 || point[0] > 1;
 		bool y_inside = point[1] < -1 || point[1] > 1;
 
 		if (!x_inside || !y_inside) {
-			dot.window.clear();
+			dot->window.clear();
 		}
 	}
 
-	void bezier_curve(Shape& curve) {
+	void bezier_curve(Shape* curve) {
 
-		for (int i = 0; i < curve.window.size() - 1; i++) {
-			Point a_real = curve.real[i];
-			Point b_real = curve.real[i + 1];
-			Point a_window = curve.window[i];
-			Point b_window = curve.window[i + 1];
+		for (int i = 0; i < curve->window.size() - 1; i++) {
+			Point& a = curve->window[i];
+			Point& b = curve->window[i + 1];
 
-			Line line(a_real, b_real);
-			line.window.push_back(a_window);
-			line.window.push_back(b_window);
-
-			cohen_sutherland(line);
-			// Trivial reject
-			if (!line.window.empty()) {
-				curve.window[i] = line.window[0];
-				curve.window[i + 1] = line.window[1];
-			} else {
-				curve.window.erase(curve.window.begin() + i);
+			bool result = cohen_sutherland_aux(a, b);
+			if (!result) {
+				auto iter = curve->window.begin() + i;
+				curve->window.erase(iter);
 				i--;
 			}
 		}
 	}
 
-	void cohen_sutherland(Shape& line) {
 
-		Point& a = line.window[0];
-		Point& b = line.window[1];
+	void cohen_sutherland(Shape* line) {
+		Point& a = line->window[0];
+		Point& b = line->window[1];
 
+		bool result = cohen_sutherland_aux(a, b);
+
+		if (!result) {
+			line->window.clear();
+		}
+	}
+
+	bool cohen_sutherland_aux(Point& a, Point& b) {
 		short a_code = out_code(a);
 		short b_code = out_code(b);
 
 		while(true) {
 			// Trivial accept
 			if ((a_code | b_code) == 0) {
-				return;
+				return true;
 			}
 
 			// Trivial reject
 			if ((a_code & b_code) != 0) {
-				line.window.clear();
-				return;
+				return false;
 			}
 
 			// Find which point is outside viewport
 			short out = a_code ? a_code : b_code;
-
 
 			// Find intersection point
 			double x;
@@ -96,7 +93,6 @@ public:
 				x = xmin;
 			}
 
-
 			// Move point to viewport edge
 			if (out == a_code) {
 				a[0] = x;
@@ -110,9 +106,9 @@ public:
 		}
 	}
 
-	void liang_barsky(Shape& line) {
-		Point& a = line.window[0];
-		Point& b = line.window[1];
+	void liang_barsky(Shape* line) {
+		Point& a = line->window[0];
+		Point& b = line->window[1];
 
 		double x1 = a[0];
 		double y1 = a[1];
@@ -138,7 +134,7 @@ public:
 
 
 		if ((p1 == 0 && q1 < 0) || (p3 == 0 && q3 < 0)) {
-			line.window.clear();
+			line->window.clear();
 			return;
 		}
 
@@ -172,7 +168,7 @@ public:
 		rn2 = min(posarr, posind); // minimum of positive array
 
 		if (rn1 > rn2)  { // reject
-			line.window.clear();
+			line->window.clear();
 			return;
 		}
 
@@ -183,7 +179,7 @@ public:
 		b[1] = y1 + p4 * rn2;
 	}
 
-	void sutherland_hodgman(Shape& polygon) {
+	void sutherland_hodgman(Shape* polygon) {
 		std::vector<Point> clp{
 			Point(xmin, ymin),
 			Point(xmax, ymin),
@@ -199,7 +195,7 @@ public:
 	        Point e1 = clp[k];
 	        // We pass the current array of vertices, it's size
 	        // and the end points of the selected clipper line
-	        clip(polygon.window, e0, e1);
+	        clip(polygon->window, e0, e1);
 	    }
 	}
 

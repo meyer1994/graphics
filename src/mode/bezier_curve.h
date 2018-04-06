@@ -46,12 +46,15 @@ public:
 		return str;
 	}
 
-	virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) const override {
-		const Point& first = window.front();
+	virtual void draw(
+		const Cairo::RefPtr<Cairo::Context>& cr,
+        const std::vector<Point>& points) const override {
+
+		const Point& first = points.front();
 		cr->move_to(first[0], first[1]);
 
-		for (int i = 1; i < window.size(); i++) {
-			const Point& p = window[i];
+		for (int i = 1; i < points.size(); i++) {
+			const Point& p = points[i];
 			cr->line_to(p[0], p[1]);
 		}
 	}

@@ -54,8 +54,11 @@ public:
         return str;
     }
 
-    virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) const override {
-        const Point& p = window.front();
+    virtual void draw(
+        const Cairo::RefPtr<Cairo::Context>& cr,
+        const std::vector<Point>& points) const override {
+
+        const Point& p = points.front();
         Cairo::LineCap cap = cr->get_line_cap();
 
         cr->set_line_cap(Cairo::LINE_CAP_ROUND);

@@ -5,10 +5,14 @@
 
 #include <gtkmm/drawingarea.h>
 
-#include "point.h"
+#include "dot.h"
+#include "line.h"
 #include "shape.h"
+#include "point.h"
 #include "window.h"
+#include "polygon.h"
 #include "clipping.h"
+#include "bezier_curve.h"
 
 namespace Mode {
 
@@ -63,35 +67,49 @@ protected:
 		// Transformation matrix
 		Matrix m = window.normalization_matrix();
 
+		// Change color to blue
+		cr->set_source_rgb(0, 1, 1);
+
+		// Draw clipping region for debugging
+		window.window.clear();
+		std::vector<Point> draw_points;
+		for (Point p : window.real) {
+			p.transform(m);
+			window.window.push_back(p);
+
+			p = vp_transform(p);
+			draw_points.push_back(p);
+		}
+		window.draw(cr, draw_points);
+		cr->stroke();
+
 		// Changes color to red
 		cr->set_source_rgb(0.8, 0, 0);
 
 		// Draw all shapes
 		for (Shape* s : shapes) {
+
 			s->window.clear();
 
+			// Normalize and transform to viewport
 			for (Point p : s->real) {
 				p.transform(m);
-				p = vp_transform(p);
 				s->window.push_back(p);
 			}
 
-			s->draw(cr);
+			if (clipping_toggle) {
+				clipper(s);
+			}
+
+			std::vector<Point> draw_points;
+			for (Point p : s->window) {
+				p = vp_transform(p);
+				draw_points.push_back(p);
+			}
+
+			s->draw(cr, draw_points);
 			cr->stroke();
 		}
-
-		// Change color to blue
-		cr->set_source_rgb(0, 1, 1);
-
-		// Draw clipping region
-		window.window.clear();
-		for (Point p : window.real) {
-			p.transform(m);
-			p = vp_transform(p);
-			window.window.push_back(p);
-		}
-		window.draw(cr);
-		cr->stroke();
 
 		return true;
 	}
@@ -106,14 +124,14 @@ protected:
 		return Point(x, y);
 	}
 
-	void clipper(Shape& shape) {
+	void clipper(Shape* shape) {
 		// Dot
-		if (shape.name == "dot") {
+		if (dynamic_cast<Dot*>(shape) != nullptr) {
 			return clipping.dot(shape);
 		}
 
 		// Line
-		if (shape.name == "line") {
+		if (dynamic_cast<Line*>(shape) != nullptr) {
 			if (line_clipping_method == 0) {
 				return clipping.cohen_sutherland(shape);
 			}
@@ -121,12 +139,12 @@ protected:
 		}
 
 		// Curve
-		if (shape.name == "curve") {
+		if (dynamic_cast<BezierCurve*>(shape) != nullptr) {
 			return clipping.bezier_curve(shape);
 		}
 
 		// Polygon
-		if (shape.name == "polygon") {
+		if (dynamic_cast<Polygon*>(shape) != nullptr) {
 			return clipping.sutherland_hodgman(shape);
 		}
 	}

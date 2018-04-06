@@ -114,7 +114,9 @@ public:
 
     virtual const std::string to_string() const = 0;
 
-    virtual void draw(const Cairo::RefPtr<Cairo::Context>& cr) const = 0;
+    virtual void draw(
+        const Cairo::RefPtr<Cairo::Context>& cr,
+        const std::vector<Point>& points) const = 0;
 
     std::vector<Point> real;
     std::vector<Point> window;

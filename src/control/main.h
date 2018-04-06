@@ -30,7 +30,7 @@ public:
         window_main->set_default_size(1000, 600);
         window_main->show_all();
 
-        // Dummy shape (debugging)
+        // Dummy polygon (debugging)
         Polygon* s = new Polygon(std::vector<Point>{
 			Point(0, 100),
 			Point(100, 100),
@@ -41,10 +41,21 @@ public:
         s->filled = true;
         shapes.push_back(s);
 
+        // Dummy curve (debugging)
+        BezierCurve* bc = new BezierCurve(std::vector<Point>{
+            Point(0, 0),
+            Point(100, 100),
+            Point(200, 0),
+            Point(300, 100),
+        });
+        shapes.push_back(bc);
+        
+
         // Add text to combo box
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
-        c->append("teste");
+        c->append("poligono");
+        c->append("linha");
 
         // Gets size to pass to window
         Gtk::DrawingArea* drawing_area = nullptr;
