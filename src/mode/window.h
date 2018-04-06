@@ -20,7 +20,7 @@ namespace Mode {
  */
 class Window : public Polygon {
 public:
-    Window() : Polygon(name = "window") {}
+    Window() : Polygon("window") {}
     /**
      * @brief Constructor.
      *
@@ -34,7 +34,7 @@ public:
         Point(0, heigth)
     },  "window") {}
 
-	~Window() {}
+	virtual ~Window() {}
 
     /**
      * @brief Gets the width of the window.
