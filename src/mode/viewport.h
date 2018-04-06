@@ -14,7 +14,7 @@ namespace Mode {
 
 class Viewport {
 public:
-	Viewport(Mode::Window& window, std::vector<Shape>& shapes, Gtk::DrawingArea& drawing_area)
+	Viewport(Mode::Window& window, std::vector<Shape*>& shapes, Gtk::DrawingArea& drawing_area)
 	: window(window),
 	  shapes(shapes),
 	  clipping(),
@@ -25,7 +25,7 @@ public:
 			.connect(sigc::mem_fun(*this, &Viewport::on_draw));
 	}
 
-	~Viewport() {}
+	virtual ~Viewport() {}
 
 	/**
 	 * @brief Sets the desired clipping method for lines.
@@ -52,13 +52,10 @@ public:
 	}
 
 	Mode::Window& window;
-	std::vector<Shape>& shapes;
+	std::vector<Shape*>& shapes;
 
 protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-		// Configuration for dots to appear when drawn
-		cr->set_line_cap(Cairo::LINE_CAP_ROUND);
-
 		// Paints background in white
 		cr->set_source_rgb(1, 1, 1);
 		cr->paint();
@@ -70,18 +67,9 @@ protected:
 		cr->set_source_rgb(0.8, 0, 0);
 
 		// Draw all shapes
-		for (Shape s : shapes) {
-			normalize_shape(s, m);
-
-			if (clipping_toggle) {
-				clipper(s);
-			}
-
-			draw_shape(cr, s.window);
-			if (s.filled) {
-				cr->fill();
-			}
-
+		for (Shape* s : shapes) {
+			normalize_shape(*s, m);
+			draw_closed(cr, s->window)
 			cr->stroke();
 		}
 
