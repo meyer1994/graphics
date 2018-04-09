@@ -20,6 +20,7 @@
 #include "../mode/point.h"
 #include "../mode/shape.h"
 #include "../mode/polygon.h"
+#include "../mode/bezier_curve.h"
 #include "../mode/viewport.h"
 
 namespace Control {
@@ -47,6 +48,7 @@ public:
         b->get_widget("button_cancel", button_cancel);
         b->get_widget("button_add_point", button_add_point);
         b->get_widget("checkbox_filled", checkbox_filled);
+        b->get_widget("checkbox_curve", checkbox_curve);        
 
         // Inputs
         b->get_widget("text_input_name", text_input_name);
@@ -97,6 +99,7 @@ protected:
     Gtk::Button* button_cancel = nullptr;
     Gtk::Button* button_add_point = nullptr;
     Gtk::CheckButton* checkbox_filled = nullptr;
+    Gtk::CheckButton* checkbox_curve = nullptr;
 
     // Text entries
     Gtk::Entry* text_input_name = nullptr;
@@ -182,12 +185,17 @@ protected:
             viewport.shapes.push_back(new Line(a, b, name));
         }
 
-        // Polygon
-        if (points_buffer.size() > 2) {
+        // Curve and Polygon
+        if (points_buffer.size() % 3 - 1 == 0 && checkbox_curve->get_active()) {
+            BezierCurve* bc = new BezierCurve(points_buffer, 0.005, name);
+            viewport.shapes.push_back(bc);
+        } else {
             Polygon* p = new Polygon(points_buffer, name);
             p->filled = checkbox_filled->get_active();
             viewport.shapes.push_back(p);
         }
+
+
 
         // Add shape name to combobox
         combobox_shapes->append(name);

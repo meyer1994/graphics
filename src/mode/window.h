@@ -39,7 +39,7 @@ public:
     /**
      * @brief Gets the width of the window.
      *
-     * @return Double representing the widht of the window in real world
+     * @return Double representing the width of the window in real world
      * coordinates.
      */
     const double width() const {

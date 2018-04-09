@@ -108,6 +108,13 @@ protected:
 			}
 
 			s->draw(cr, draw_points);
+
+			if (dynamic_cast<Polygon*>(s) != nullptr) {
+				Polygon* p = dynamic_cast<Polygon*>(s);
+				if(p->filled == true) {
+					cr->fill();
+				}
+			}
 			cr->stroke();
 		}
 

@@ -55,7 +55,7 @@ public:
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
         c->append("poligono");
-        c->append("linha");
+        c->append("curva");
 
         // Gets size to pass to window
         Gtk::DrawingArea* drawing_area = nullptr;

@@ -51,7 +51,7 @@ public:
 		// Clipping widgets
 		b->get_widget("checkbox_shape_clipping", check_clipping);
 		b->get_widget("radio_shape_clipping_cohen", radio_cohen);
-		b->get_widget("radio_shape_clipping_liang", radio_liang);
+		b->get_widget("radio_shape_clipping_liang", radio_liang);	
 
 		connect_buttons();
 	}
