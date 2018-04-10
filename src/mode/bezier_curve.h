@@ -109,7 +109,7 @@ protected:
 				double x = Transformation::multiply(t_magic, x_vector);
 				double y = Transformation::multiply(t_magic, y_vector);
 
-				std::cout << x << "\n" << y << "\n\n";
+				// std::cout << x << "\n" << y << "\n\n";
 
 				real.push_back(Point(x, y));
 

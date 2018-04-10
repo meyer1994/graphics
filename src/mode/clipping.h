@@ -188,13 +188,13 @@ public:
 		};
 
 		//i and k are two consecutive indexes
-	    for (int i = 0; i < clp.size(); i++) {
-	        int k = (i + 1) % clp.size();
+	   	for (int i = 0; i < clp.size(); i++) {
+	      	int k = (i + 1) % clp.size();
 
-	        Point e0 = clp[i];
-	        Point e1 = clp[k];
-	        // We pass the current array of vertices, it's size
-	        // and the end points of the selected clipper line
+	       	Point e0 = clp[i];
+	       	Point e1 = clp[k];
+	       	// We pass the current array of vertices, it's size
+	       	// and the end points of the selected clipper line
 	        clip(polygon->window, e0, e1);
 	    }
 	}
@@ -293,7 +293,12 @@ protected:
 
 	    // Copying new points into original array
 	    // and changing the no. of vertices
+	    if(new_points.size() == 0) {
+	    	points.clear();
+	    	points.push_back(Point(0,0));
+	    } else {
 	    points = new_points;
+		}
 	}
 
 	Point intersection(Point& p1, Point& p2, Point& p3, Point& p4) {
