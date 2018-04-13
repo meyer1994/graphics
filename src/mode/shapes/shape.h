@@ -4,15 +4,15 @@
 #include <string>
 #include <vector>
 
-#include <cairomm/context.h>
-
 #include "point.h"
+
+enum class Type2D { Dot, Line, Polygon, BezierCurve };
 
 class Shape {
 public:
     Shape() : name("shape") {}
 
-    Shape(std::string name) : name(name) {}
+    explicit Shape(std::string name) : name(name) {}
 
     Shape(std::vector<Point> p, std::string name = "shape")
     : real(p),
@@ -114,12 +114,12 @@ public:
 
     virtual const std::string to_string() const = 0;
 
-    virtual void draw(
-        const Cairo::RefPtr<Cairo::Context>& cr,
-        const std::vector<Point>& points) const = 0;
+    virtual const Type2D type() const = 0;
 
     std::vector<Point> real;
     std::vector<Point> window;
+
+    bool filled = false;
 
     std::string name;
 };

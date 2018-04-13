@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <cairomm/context.h>
-
 #include "point.h"
 #include "shape.h"
 
@@ -60,23 +58,9 @@ public:
         return str;
     }
 
-    virtual void draw(
-        const Cairo::RefPtr<Cairo::Context>& cr,
-        const std::vector<Point>& points) const override {
-
-        const Point& first = points.front();
-        cr->move_to(first[0], first[1]);
-
-        for (int i = 1; i < points.size(); i++) {
-            const Point& p = points[i];
-            cr->line_to(p[0], p[1]);
-        }
-
-        cr->line_to(first[0], first[1]);
+    virtual const Type2D type() const override {
+        return Type2D::Polygon;
     }
-
-    bool filled = false;
-
 };
 
 #endif  // POLYGON_H

@@ -24,6 +24,7 @@ public:
 	  clipping(window),
 	  drawing_area(drawing_area) {
 
+	  	// Connect
 		drawing_area
 			.signal_draw()
 			.connect(sigc::mem_fun(*this, &Viewport::on_draw));
@@ -41,14 +42,15 @@ public:
 	 * @param type Number of the desired algorithm to be used.
 	 */
 	void set_line_clipping_method(int type) {
-		if (type != 0 || type != 1) {
-			type = 0;
+		if (type != COHEN_SUTHERLAND || type != LIANG_BARSKY) {
+			type = COHEN_SUTHERLAND;
+			return;
 		}
 		line_clipping_method = type;
 	}
 
 	void toggle_clipping() {
-		clipping_toggle = !clipping_toggle;
+		clipping_active = !clipping_active;
 	}
 
 	void draw() {
@@ -57,6 +59,9 @@ public:
 
 	Mode::Window& window;
 	std::vector<Shape*>& shapes;
+
+	static const int COHEN_SUTHERLAND = 0;
+	static const int LIANG_BARSKY = 1;
 
 protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
@@ -67,58 +72,81 @@ protected:
 		// Transformation matrix
 		Matrix m = window.normalization_matrix();
 
+		// Changes color to red
+		cr->set_source_rgb(0.8, 0, 0);
+
+		// Draw all shapes
+		for (Shape* shape : shapes) {
+
+			// Normalize points
+			shape->window.clear();
+			for (Point p : shape->real) {
+				p.transform(m);
+				shape->window.push_back(p);
+			}
+
+			// Clipping
+			if (clipping_active) {
+				clipper(shape);
+			}
+
+			// Draw it
+			if (!shape->window.empty()) {
+				draw_shape_2d(cr, shape);
+			}
+			cr->stroke();
+		}
+
 		// Change color to blue
 		cr->set_source_rgb(0, 1, 1);
 
 		// Draw clipping region for debugging
 		window.window.clear();
-		std::vector<Point> draw_points;
 		for (Point p : window.real) {
 			p.transform(m);
 			window.window.push_back(p);
-
-			p = vp_transform(p);
-			draw_points.push_back(p);
 		}
-		window.draw(cr, draw_points);
+		draw_shape_2d(cr, &window);
 		cr->stroke();
 
-		// Changes color to red
-		cr->set_source_rgb(0.8, 0, 0);
+		return true;
+	}
 
-		// Draw all shapes
-		for (Shape* s : shapes) {
+	void draw_shape_2d(
+		const Cairo::RefPtr<Cairo::Context>& cr, 
+		const Shape* shape)
+	{	
 
-			s->window.clear();
-
-			// Normalize and transform to viewport
-			for (Point p : s->real) {
-				p.transform(m);
-				s->window.push_back(p);
-			}
-
-			if (clipping_toggle) {
-				clipper(s);
-			}
-
-			std::vector<Point> draw_points;
-			for (Point p : s->window) {
-				p = vp_transform(p);
-				draw_points.push_back(p);
-			}
-
-			s->draw(cr, draw_points);
-
-			if (dynamic_cast<Polygon*>(s) != nullptr) {
-				Polygon* p = dynamic_cast<Polygon*>(s);
-				if(p->filled == true) {
-					cr->fill();
-				}
-			}
-			cr->stroke();
+		// Dot case
+		if (shape->type() == Type2D::Dot) {
+			const Point& p = shape->window.front();
+			Cairo::LineCap cap = cr->get_line_cap();
+			cr->set_line_cap(Cairo::LINE_CAP_ROUND);
+			cr->move_to(p[0], p[1]);
+			cr->line_to(p[0], p[1]);
+			cr->set_line_cap(cap);
+			return;
 		}
 
-		return true;
+		// Move pen to first point
+		const Point& first = vp_transform(shape->window.front());
+		cr->move_to(first[0], first[1]);
+
+		// Draw all other points
+		for (const Point& p : shape->window) {
+			const Point t = vp_transform(p);
+			cr->line_to(t[0], t[1]);
+		}
+
+		// Polygon, close drawing
+		if (shape->type() == Type2D::Polygon) {
+			cr->close_path();
+
+			// Fill it
+			if (shape->filled) {
+				cr->fill();
+			}
+		}
 	}
 
 	Point vp_transform(const Point& p) {
@@ -132,6 +160,7 @@ protected:
 	}
 
 	void clipper(Shape* shape) {
+
 		// Dot
 		if (dynamic_cast<Dot*>(shape) != nullptr) {
 			return clipping.dot(shape);
@@ -159,7 +188,7 @@ protected:
 	Gtk::DrawingArea& drawing_area;
 	Clipping clipping;
 	int line_clipping_method = 0;
-	bool clipping_toggle = true;
+	bool clipping_active = true;
 };
 
 }  // namespace Mode

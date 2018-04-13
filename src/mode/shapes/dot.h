@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <cairomm/context.h>
-
 #include "point.h"
 #include "shape.h"
 
@@ -54,17 +52,8 @@ public:
         return str;
     }
 
-    virtual void draw(
-        const Cairo::RefPtr<Cairo::Context>& cr,
-        const std::vector<Point>& points) const override {
-
-        const Point& p = points.front();
-        Cairo::LineCap cap = cr->get_line_cap();
-
-        cr->set_line_cap(Cairo::LINE_CAP_ROUND);
-        cr->move_to(p[0], p[1]);
-        cr->line_to(p[0], p[1]);
-        cr->set_line_cap(cap);
+    virtual const Type2D type() const override {
+        return Type2D::Dot;
     }
 };
 

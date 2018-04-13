@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <cairomm/context.h>
-
 #include "point.h"
 #include "shape.h"
 
@@ -21,7 +19,7 @@ public:
      */
     Line() : Shape(name = "line") {}
 
-    Line(std::string name) : Shape(name) {}
+    explicit Line(std::string name) : Shape(name) {}
 
     /**
      * @brief 2 point constructor.
@@ -51,15 +49,8 @@ public:
         return str;
     }
 
-    virtual void draw(
-        const Cairo::RefPtr<Cairo::Context>& cr,
-        const std::vector<Point>& points) const override {
-        
-        const Point& a = points[0];
-        const Point& b = points[1];
-
-        cr->move_to(a[0], a[1]);
-        cr->line_to(b[0], b[1]);
+    virtual const Type2D type() const override {
+        return Type2D::Line;
     }
 };
 
