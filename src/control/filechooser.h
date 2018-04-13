@@ -12,8 +12,8 @@
 #include <gtkmm/imagemenuitem.h>
 #include <gtkmm/filechooserdialog.h>
 
-#include "../mode/shape.h"
 #include "../mode/viewport.h"
+#include "../mode/shapes/shape.h"
 #include "../mode/objdescriptor.h"
 
 namespace Control {

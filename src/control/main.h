@@ -9,9 +9,9 @@
 #include <gtkmm/application.h>
 #include <gtkmm/comboboxtext.h>
 
-#include "../mode/polygon.h"
-#include "../mode/shape.h"
-#include "../mode/bezier_curve.h"
+#include "../mode/shapes/polygon.h"
+#include "../mode/shapes/shape.h"
+#include "../mode/shapes/bezier_curve.h"
 #include "../mode/window.h"
 #include "../mode/viewport.h"
 

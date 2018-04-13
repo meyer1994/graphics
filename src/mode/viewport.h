@@ -5,14 +5,14 @@
 
 #include <gtkmm/drawingarea.h>
 
-#include "dot.h"
-#include "line.h"
-#include "shape.h"
-#include "point.h"
 #include "window.h"
-#include "polygon.h"
 #include "clipping.h"
-#include "bezier_curve.h"
+#include "shapes/dot.h"
+#include "shapes/line.h"
+#include "shapes/shape.h"
+#include "shapes/point.h"
+#include "shapes/polygon.h"
+#include "shapes/bezier_curve.h"
 
 namespace Mode {
 
@@ -21,7 +21,7 @@ public:
 	Viewport(Mode::Window& window, std::vector<Shape*>& shapes, Gtk::DrawingArea& drawing_area)
 	: window(window),
 	  shapes(shapes),
-	  clipping(),
+	  clipping(window),
 	  drawing_area(drawing_area) {
 
 		drawing_area

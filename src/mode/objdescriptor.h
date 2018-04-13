@@ -7,10 +7,10 @@
 #include <sstream>
 #include <typeinfo>
 
-#include "dot.h"
-#include "line.h"
-#include "shape.h"
-#include "polygon.h"
+#include "shapes/dot.h"
+#include "shapes/line.h"
+#include "shapes/shape.h"
+#include "shapes/polygon.h"
 
 namespace Mode {
 

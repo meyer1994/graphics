@@ -4,7 +4,7 @@
 #include <cmath>
 #include <vector>
 
-#include "shape.h"
+#include "shapes/shape.h"
 
 namespace Mode {
 

@@ -3,10 +3,11 @@
 
 #include <iostream>
 
-#include "line.h"
-#include "point.h"
-#include "shape.h"
 #include "window.h"
+#include "shapes/line.h"
+#include "shapes/point.h"
+#include "shapes/shape.h"
+#include "shapes/polygon.h"
 
 const short INSIDE = 0; // 0000
 const short LEFT = 1;   // 0001
@@ -16,7 +17,25 @@ const short TOP = 8;    // 1000
 
 class Clipping {
 public:
-	Clipping() {}
+	Clipping(Polygon& clip_region)
+	: clip_region(clip_region),
+	xmax(0.9),
+	ymax(0.9),
+	xmin(-0.9),
+	ymin(-0.9)
+	{
+		if (clip_region.size() != 4) {
+			throw std::invalid_argument("Clip region shape should be a "
+				"rectangle. The sizes used will be the first point and the "
+				"third point of it");
+		}
+
+		// Not used because the teacher wants to see the clipping working
+		// xmax = clip_region[2][0];
+		// ymax = clip_region[2][1];
+		// xmin = clip_region[0][0];
+		// ymin = clip_region[0][0];
+	}
 
 	virtual ~Clipping() {}
 
@@ -45,7 +64,6 @@ public:
 			}
 		}
 	}
-
 
 	void cohen_sutherland(Shape* line) {
 		Point& a = line->window[0];
@@ -201,10 +219,11 @@ public:
 
 protected:
 	// Window values (normalized)
-	double xmax = .9;
-	double ymax = .9;
-	double xmin = -.9;
-	double ymin = -.9;
+	Polygon& clip_region;
+	double xmax;
+	double ymax;
+	double xmin;
+	double ymin;
 
 	const short out_code(const Point& point) const {
 		// Point values

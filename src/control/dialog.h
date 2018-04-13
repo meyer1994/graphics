@@ -15,12 +15,12 @@
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/imagemenuitem.h>
 
-#include "../mode/dot.h"
-#include "../mode/line.h"
-#include "../mode/point.h"
-#include "../mode/shape.h"
-#include "../mode/polygon.h"
-#include "../mode/bezier_curve.h"
+#include "../mode/shapes/dot.h"
+#include "../mode/shapes/line.h"
+#include "../mode/shapes/point.h"
+#include "../mode/shapes/shape.h"
+#include "../mode/shapes/polygon.h"
+#include "../mode/shapes/bezier_curve.h"
 #include "../mode/viewport.h"
 
 namespace Control {

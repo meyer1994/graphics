@@ -1,41 +1,39 @@
 
-C=g++
 GTKFLAGS=`pkg-config gtkmm-3.0 --cflags --libs`
-OFILES=`find -name '*.o'`
-VALGRIND=valgrind --leak-check=full
+
 
 make:
-	$(C) -o main main.cc -I $(GTKFLAGS) 
+	g++ -o main main.cc -I $(GTKFLAGS) --std=c++11
 
 run:
 	make
 	./main
 
 clean:
-	rm -v main $(OFILES)
+	rm -v main `find -name '*.o'`
 
 debug:
-	$(C) -o main main.cc -I $(GTKFLAGS) -g
+	g++ -o main main.cc -I $(GTKFLAGS) -g --std=c++11
 	gdb ./main
 
 valgrind:
 	make
-	$(VALGRIND) ./main
+	valgrind --leak-check=full ./main
 
 test:
 	cd tests/ && \
-	$(C) -o test test.cc -I ../src/mode && \
+	g++ -o test test.cc -I ../src/mode $(GTKFLAGS) && \
 	./test && \
 	rm test
 
 test_debug:
 	cd tests/ && \
-	$(C) -o test test.cc -I ../src/mode -g && \
+	g++ -o test test.cc -I ../src/mode $(GTKFLAGS) -g && \
 	gdb ./test && \
 	rm test
 
 test_valgrind:
 	cd tests/ && \
-	$(C) -o test test.cc -I ../src/mode && \
-	$(VALGRIND) ./test && \
+	g++ -o test test.cc -I ../src/mode $(GTKFLAGS) && \
+	valgrind --leak-check=full ./test && \
 	rm test

@@ -11,9 +11,9 @@
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/comboboxtext.h>
 
-#include "../mode/point.h"
-#include "../mode/shape.h"
 #include "../mode/viewport.h"
+#include "../mode/shapes/point.h"
+#include "../mode/shapes/shape.h"
 
 namespace Control {
 
