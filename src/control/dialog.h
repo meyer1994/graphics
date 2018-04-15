@@ -12,6 +12,7 @@
 #include <gtkmm/dialog.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/checkbutton.h>
+#include <gtkmm/radiobutton.h>
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/imagemenuitem.h>
 
@@ -48,7 +49,9 @@ public:
         b->get_widget("button_cancel", button_cancel);
         b->get_widget("button_add_point", button_add_point);
         b->get_widget("checkbox_filled", checkbox_filled);
-        b->get_widget("checkbox_curve", checkbox_curve);        
+        b->get_widget("radio_Bezier_curve", radio_Bezier_curve);
+        b->get_widget("radio_bspline_curve", radio_bspline_curve);
+        b->get_widget("radio_polygon", radio_polygon);
 
         // Inputs
         b->get_widget("text_input_name", text_input_name);
@@ -99,7 +102,9 @@ protected:
     Gtk::Button* button_cancel = nullptr;
     Gtk::Button* button_add_point = nullptr;
     Gtk::CheckButton* checkbox_filled = nullptr;
-    Gtk::CheckButton* checkbox_curve = nullptr;
+    Gtk::RadioButton* radio_polygon = nullptr;
+    Gtk::RadioButton* radio_Bezier_curve = nullptr;
+    Gtk::RadioButton* radio_bspline_curve = nullptr;
 
     // Text entries
     Gtk::Entry* text_input_name = nullptr;
@@ -185,17 +190,26 @@ protected:
             viewport.shapes.push_back(new Line(a, b, name));
         }
 
-        // Curve and Polygon
-        if (points_buffer.size() % 3 - 1 == 0 && checkbox_curve->get_active()) {
+        int buff_size = points_buffer.size();
+
+        // Bezier curve
+        if (buff_size % 3 - 1 == 0 && radio_Bezier_curve->get_active()) {
             BezierCurve* bc = new BezierCurve(points_buffer, 0.005, name);
             viewport.shapes.push_back(bc);
-        } else {
-            Polygon* p = new Polygon(points_buffer, name);
-            p->filled = checkbox_filled->get_active();
-            viewport.shapes.push_back(p);
         }
 
+        // b-spline
+        if (buff_size > 3 && radio_bspline_curve->get_active()) {
+            Spline* bc = new Spline(points_buffer, 0.005, name);
+            viewport.shapes.push_back(bc);
+        }
 
+        // Polygon
+        if (buff_size > 2 && radio_polygon->get_active()) {
+	        Polygon* p = new Polygon(points_buffer, name);
+	        p->filled = checkbox_filled->get_active();
+	        viewport.shapes.push_back(p);
+        }
 
         // Add shape name to combobox
         combobox_shapes->append(name);

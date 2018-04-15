@@ -103,7 +103,7 @@ protected:
 				viewport.window.inflate(1 + zoom);
 				viewport.draw();
 			});
-		
+
 		// Rotation buttons
 		button_rotate_left->signal_clicked().connect(
 			[this]() {
