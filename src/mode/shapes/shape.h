@@ -6,7 +6,7 @@
 
 #include "point.h"
 
-enum class Type2D { Dot, Line, Polygon, BezierCurve };
+enum class Type2D { Dot, Line, Polygon, BezierCurve, Spline };
 
 class Shape {
 public:
