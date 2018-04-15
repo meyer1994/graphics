@@ -113,9 +113,9 @@ protected:
 	}
 
 	void draw_shape_2d(
-		const Cairo::RefPtr<Cairo::Context>& cr, 
+		const Cairo::RefPtr<Cairo::Context>& cr,
 		const Shape* shape)
-	{	
+	{
 
 		// Dot case
 		if (shape->type() == Type2D::Dot) {

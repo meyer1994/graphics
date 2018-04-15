@@ -12,6 +12,7 @@
 #include "../mode/shapes/polygon.h"
 #include "../mode/shapes/shape.h"
 #include "../mode/shapes/bezier_curve.h"
+#include "../mode/shapes/spline.h"
 #include "../mode/window.h"
 #include "../mode/viewport.h"
 
@@ -42,19 +43,25 @@ public:
         shapes.push_back(s);
 
         // Dummy curve (debugging)
-        BezierCurve* bc = new BezierCurve(std::vector<Point>{
+        Spline* bc = new Spline(std::vector<Point>{
+            Point(0, 0),
+            Point(0, 0),
+            Point(0, 0),
             Point(0, 0),
             Point(100, 100),
             Point(200, 0),
             Point(300, 100),
+            Point(400, 300),
+            Point(500, 0),
+            Point(600, 100)
         });
         shapes.push_back(bc);
-        
+
 
         // Add text to combo box
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
-        c->append("poligono");
+        // c->append("poligono");
         c->append("curva");
 
         // Gets size to pass to window
