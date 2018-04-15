@@ -1285,18 +1285,36 @@
                         <property name="name">box_points_added</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkLabel" id="label_points_added">
-                            <property name="name">label_points_added</property>
+                          <object class="GtkRadioButton" id="radio_Bezier_curve">
+                            <property name="label" translatable="yes">Bezier Curve   </property>
+                            <property name="name">radio_Bezier_curve</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Points added:</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="radio_bspline_curve">
+                            <property name="label" translatable="yes">b-Spline curve</property>
+                            <property name="name">radio_bspline_curve</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
@@ -1307,9 +1325,22 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="checkbox_filled">
-                        <property name="label" translatable="yes">Filled</property>
-                        <property name="name">checkbox_filled</property>
+                      <object class="GtkLabel" id="label_points_added">
+                        <property name="name">label_points_added</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Points added:</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">7</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="radio_fill">
+                        <property name="label" translatable="yes">Fill</property>
+                        <property name="name">radio_fill</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -1319,20 +1350,7 @@
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">5</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkCheckButton" id="checkbox_curve">
-                        <property name="label" translatable="yes">Curve</property>
-                        <property name="name">checkbox_curve</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="draw_indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">5</property>
+                        <property name="width">2</property>
                       </packing>
                     </child>
                   </object>
