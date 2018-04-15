@@ -50,19 +50,26 @@ public:
 		}
 	}
 
-	void bezier_curve(Shape* curve) {
+	void curve(Shape* curve) {
+		std::vector<Point> clipped;
 
 		for (int i = 0; i < curve->window.size() - 1; i++) {
-			Point& a = curve->window[i];
-			Point& b = curve->window[i + 1];
+			Point a = curve->window[i];
+			Point b = curve->window[i + 1];
 
-			bool result = cohen_sutherland_aux(a, b);
-			if (!result) {
-				auto iter = curve->window.begin() + i;
-				curve->window.erase(iter);
-				i--;
+			Point na = a;
+			Point nb = b;
+			bool result = cohen_sutherland_aux(na, nb);
+			if (result) {
+				clipped.push_back(na);
+
+				if (nb != b) {
+					clipped.push_back(nb);
+				}
 			}
 		}
+
+		curve->window = clipped;
 	}
 
 	void cohen_sutherland(Shape* line) {

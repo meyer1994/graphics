@@ -61,7 +61,7 @@ public:
         // Add text to combo box
         Gtk::ComboBoxText* c = nullptr;
         b->get_widget("combobox_shapes", c);
-        // c->append("poligono");
+        c->append("poligono");
         c->append("curva");
 
         // Gets size to pass to window

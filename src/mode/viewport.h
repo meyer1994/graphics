@@ -161,13 +161,15 @@ protected:
 
 	void clipper(Shape* shape) {
 
+		Type2D type = shape->type();
+
 		// Dot
-		if (dynamic_cast<Dot*>(shape) != nullptr) {
+		if (type == Type2D::Dot) {
 			return clipping.dot(shape);
 		}
 
 		// Line
-		if (dynamic_cast<Line*>(shape) != nullptr) {
+		if (type == Type2D::Line) {
 			if (line_clipping_method == 0) {
 				return clipping.cohen_sutherland(shape);
 			}
@@ -175,12 +177,12 @@ protected:
 		}
 
 		// Curve
-		if (dynamic_cast<BezierCurve*>(shape) != nullptr) {
-			return clipping.bezier_curve(shape);
+		if (type == Type2D::BezierCurve || type == Type2D::Spline) {
+			return clipping.curve(shape);
 		}
 
 		// Polygon
-		if (dynamic_cast<Polygon*>(shape) != nullptr) {
+		if (type == Type2D::Polygon) {
 			return clipping.sutherland_hodgman(shape);
 		}
 	}
