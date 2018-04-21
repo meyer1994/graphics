@@ -63,6 +63,42 @@ Matrix rotate(double angle) {
     };
 }
 
+Matrix rotatex(double angle) {
+    double radian = (-angle * _MATH_PI) / 180;
+    double c = std::cos(radian);
+    double s = std::sin(radian);
+    return Matrix{
+        Vector{1,  0, 0, 0},
+        Vector{0,  c, s, 0},
+        Vector{0, -s, c, 0},
+        Vector{0,  0, 0, 1}
+    };
+}
+
+Matrix rotatey(double angle) {
+    double radian = (-angle * _MATH_PI) / 180;
+    double c = std::cos(radian);
+    double s = std::sin(radian);
+    return Matrix{
+        Vector{c, 0, -s, 0},
+        Vector{0, 1,  0, 0},
+        Vector{s, 0,  c, 0},
+        Vector{0, 0,  0, 1}
+    };
+}
+
+Matrix rotatez(double angle) {
+    double radian = (-angle * _MATH_PI) / 180;
+    double c = std::cos(radian);
+    double s = std::sin(radian);
+    return Matrix{
+        Vector{c, -s, 0, 0},
+        Vector{s,  c, 0, 0},
+        Vector{0,  0, 1, 0},
+        Vector{0,  0, 0, 1}
+    };
+}
+
 /**
  * @brief Static translate matrix method.
  *
@@ -203,6 +239,22 @@ public:
     Point(double x, double y) : Vector() {
         push_back(x);
         push_back(y);
+    }
+
+    /**
+     * @brief 3D point constructor.
+     *
+     * @details Utility constructor to easily create a 3D point. Is the same as
+     * calling Point(Vector{x, y, z}).
+     *
+     * @param x X coordinate in space.
+     * @param y Y coordinate in space.
+     * @param z Z coordinate in space.
+     */
+    Point(double x, double y, double z) : Vector() {
+        push_back(x);
+        push_back(y);
+        push_back(z);
     }
 
     /**

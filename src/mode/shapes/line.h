@@ -52,6 +52,13 @@ public:
     virtual const Type2D type() const override {
         return Type2D::Line;
     }
+
+    virtual const bool operator==(const Line& l) {
+    	bool pa = real[0] == l.real[0];
+    	bool pb = real[1] == l.real[1];
+
+    	return pa && pb;
+    }
 };
 
 #endif  // LINE_H

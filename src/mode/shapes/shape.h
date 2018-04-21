@@ -70,6 +70,12 @@ public:
         }
     }
 
+    void translate(double x, double y, double z) {
+        for (Point& p : real) {
+            p.translate(Vector{x, y, z});
+        }
+    }
+
     void inflate(double ratio) {
 
     	// Get distance to origin

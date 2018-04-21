@@ -48,7 +48,7 @@ public:
         std::string str = "Polygon(";
 
         for (int i = 0; i < size() - 1; i++) {
-            const Point& p = real.at(i);
+            const Point& p = real[i];
             str += p.to_string() + ", ";
         }
 
