@@ -4,56 +4,35 @@
 #include <string>
 #include <vector>
 
+#include "line.h"
 #include "point.h"
-#include "shape.h"
 
-/**
- * @class Dot class.
- *
- * @details Used to draw dots in the drawing area.
- */
-class Dot : public Shape {
+class Dot : public Line {
 public:
-    /**
-     * @brief Default constructor.
-     */
-    Dot() : Shape(name = "dot") {}
+    Dot() : Line(name = "dot") {}
 
-    Dot(std::string name) : Shape(name) {}
+    explicit Dot(std::string name) : Line(name) {}
 
-    /**
-     * @brief 2D contructor.
-     *
-     * @param x X coordinate.
-     * @param y Y coordinate.
-     */
-    Dot(double x, double y, std::string name = "dot")
-    : Shape(std::vector<Point>{Point(x, y)}, name) {}
+    Dot(double x, double y, double z = 0, std::string name = "dot")
+    : Line(Point(x, y, z), Point(x, y, z), name) {}
 
-    Dot(Point point, std::string name = "dot")
-    : Shape(std::vector<Point>{point}, name) {}
+    Dot(Point point, std::string name = "dot") : Line(point, point, name) {}
 
     virtual ~Dot() {}
 
-    /**
-     * @brief To string method.
-     *
-     * @return An string representing this class.
-     */
     virtual const std::string to_string() const override {
-        if (real.size() == 0) {
-            return "Dot()";
-        }
-
         std::string str = "Dot(";
-        str += real[0].to_string();
+        str += a.to_string();
         str += ")";
-
         return str;
     }
 
     virtual const Type2D type() const override {
         return Type2D::Dot;
+    }
+
+    virtual const bool operator==(const Dot& d) const {
+    	return a == d.a;
     }
 };
 

@@ -4,55 +4,61 @@
 #include <string>
 #include <vector>
 
+#include "line.h"
 #include "point.h"
 #include "shape.h"
 
-/**
- * @brief Polygon class.
- *
- * @details Class used to draw polygons into the drawing area.
- */
 class Polygon : public Shape {
 public:
-    /**
-     * @brief Default constructor.
-     */
     Polygon() : Shape(name = "polygon") {}
 
+    explicit Polygon(std::string name) : Shape(name) {}
 
-    Polygon(std::string name) : Shape(name) {}
-
-    /**
-     * @brief Explicit constructor.
-     *
-     * @details The last point of the vector will be connected with the first
-     * point of the vector.
-     *
-     * @param points Vector of points that make this polygon.
-     */
     Polygon(std::vector<Point> points, std::string name = "polygon")
-    : Shape(points, name) {}
+    : Shape(name) {
+    	// Add lines to shape
+    	for (int i = 0; i < points.size(); i++) {
+    		int k = (i + 1) % points.size();
+    		Point a = points[i];
+    		Point b = points[k];
+    		Line l(a, b);
+    		lines.push_back(l);
+    	}
+
+    	// Sum
+    	for (const Line& l : lines) {
+    		for (int i = 0; i < l.medium.size(); i++) {
+	    		medium[i] += l.medium[i];
+    		}
+    	}
+
+    	// Divide
+    	for (double& d : medium) {
+    		d /= lines.size();
+    	}
+    }
 
     virtual ~Polygon() {}
 
-    /**
-     * @brief To string method.
-     *
-     * @return Representation of this class.
-     */
+	virtual void transform(const Matrix& m) override {
+		for (Line& l : lines) {
+			l.transform(m);
+		}
+
+		medium.transform(m);
+	}
+
     virtual const std::string to_string() const override {
-        if (real.size() == 0) {
+        if (lines.size() == 0) {
             return "Polygon()";
         }
 
         std::string str = "Polygon(";
-
-        for (int i = 0; i < size() - 1; i++) {
-            const Point& p = real[i];
+        for (int i = 0; i < lines.size() - 1; i++) {
+            const Point& p = lines[i].a;
             str += p.to_string() + ", ";
         }
-
-        const Point& p = real.back();
+        const Point& p = lines.back().a;
         str += p.to_string() + ")";
 
         return str;
@@ -61,6 +67,23 @@ public:
     virtual const Type2D type() const override {
         return Type2D::Polygon;
     }
+
+    virtual const bool operator==(const Polygon& p) const {
+    	if (p.lines.size() != lines.size()) {
+    		return false;
+    	}
+
+    	for (int i = 0; i < lines.size(); i++) {
+    		const bool r = lines[i] == p.lines[i];
+    		if (r == false)  {
+    			return false;
+    		}
+    	}
+
+    	return true;
+    }
+
+    std::vector<Line> lines;
 };
 
 #endif  // POLYGON_H

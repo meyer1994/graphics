@@ -14,119 +14,36 @@ public:
 
     explicit Shape(std::string name) : name(name) {}
 
-    Shape(std::vector<Point> p, std::string name = "shape")
-    : real(p),
-      name(name) {}
-
     virtual ~Shape() {}
 
-    Point medium() {
-        if (real.size() == 0) {
-            throw std::domain_error("There are no points in shape");
-        }
+	virtual void rotate(double x, double y, double z) {
+		const Matrix rx = Transformation::rotatex(x);
+		const Matrix ry = Transformation::rotatey(y);
+		const Matrix rz = Transformation::rotatez(z);
 
-        Vector point_medium(real[0].size(), 0);
-        // Sum
-        for (const Point& p : real) {
-            for (int i = 0; i < p.size(); i++) {
-                point_medium[i] += p[i];
-            }
-        }
-        // Divide
-        for (double& d : point_medium) {
-            d /= real.size();
-        }
-        return Point(point_medium);
-    }
+		const Matrix r0 = Transformation::multiply(rx, ry);
+		const Matrix r1 = Transformation::multiply(r0, rz);
 
-    void scale(double ratio) {
-        for (Point& p : real) {
-            p.scale(ratio);
-        }
-    }
+		transform(r1);
+	}
 
-    void rotate(double angle) {
-        for (Point& p : real) {
-            p.rotate(angle);
-        }
-    }
+	virtual void scale(double ratio) {
+		const Matrix s = Transformation::scale(ratio, ratio, ratio);
+		transform(s);
+	}
 
-    void rotate(double angle, Point p) {
-        Vector v;
-    	for (int i = 0; i < p.size(); i++) {
-    		v.push_back(-p[i]);
-    	}
-        Matrix t_mat_go = Transformation::translate(v);
-        Matrix r_mat = Transformation::rotate(angle);
-        Matrix t_mat_come = Transformation::translate(p);
-        Matrix temp = Transformation::combine(t_mat_go, r_mat);
-        Matrix multi = Transformation::combine(temp, t_mat_come);
-        transform(multi);
-    }
+	virtual void translate(double x, double y, double z) {
+		const Matrix t = Transformation::translate(x, y, z);
+		transform(t);
+	}
 
-    void translate(double x, double y) {
-        for (Point& p : real) {
-            p.translate(Vector{x, y});
-        }
-    }
-
-    void translate(double x, double y, double z) {
-        for (Point& p : real) {
-            p.translate(Vector{x, y, z});
-        }
-    }
-
-    void inflate(double ratio) {
-
-    	// Get distance to origin
-        Point m_point = medium();
-
-        Vector v;
-        for (double d : m_point) {
-            v.push_back(-d);
-        }
-    	Matrix m_to_origin = Transformation::translate(v);
-
-    	// Scale matrix
-    	Vector d = Vector(m_point.size(), ratio);
-    	Matrix m_scale = Transformation::scale(d);
-
-    	// Back to start
-    	Matrix m_to_source = Transformation::translate(m_point);
-
-    	// Apply
-    	Matrix temp = Transformation::combine(m_to_origin, m_scale);
-    	Matrix final = Transformation::combine(temp, m_to_source);
-        transform(final);
-    }
-
-    int size() const {
-        return real.size();
-    }
-
-    const Point& operator[](int i) const {
-        return real[i];
-    }
-
-    Point& operator[](int i) {
-        return real[i];
-    }
-
-    void transform(Matrix& m) {
-        for (Point& p : real) {
-            p.transform(m);
-        }
-    }
+    virtual void transform(const Matrix& m) = 0;
 
     virtual const std::string to_string() const = 0;
 
     virtual const Type2D type() const = 0;
 
-    std::vector<Point> real;
-    std::vector<Point> window;
-
-    bool filled = false;
-
+    Point medium;
     std::string name;
 };
 
