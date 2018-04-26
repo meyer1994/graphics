@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+#include <line.h>
+#include <polygon.h>
 #include <vector.h>
 
 bool is_equal(double x, double y) {

@@ -22,18 +22,18 @@ valgrind:
 
 test:
 	cd tests/ && \
-	g++ -o test test.cc -I ../src/mode/shapes -I ../src/mode $(GTKFLAGS) && \
+	g++ -o test test.cc -I ../src/mode/shapes -I ../src/mode && \
 	./test && \
 	rm test
 
 test_debug:
 	cd tests/ && \
-	g++ -o test test.cc -I ../src/mode/shapes -I ../src/mode $(GTKFLAGS) -g && \
+	g++ -o test test.cc -I ../src/mode/shapes -I ../src/mode -g && \
 	gdb ./test && \
 	rm test
 
 test_valgrind:
 	cd tests/ && \
-	g++ -o test test.cc -I ../src/mode/shapes -I ../src/mode $(GTKFLAGS) && \
+	g++ -o test test.cc -I ../src/mode/shapes -I ../src/mode && \
 	valgrind --leak-check=full ./test && \
 	rm test
