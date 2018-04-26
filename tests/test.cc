@@ -301,6 +301,7 @@ void test_polygon() {
 
 
 int main() {
+
 	std::cout << "==================" << std::endl;
 	std::cout << "= STARTING TESTS =" << std::endl;
 	std::cout << "==================" << std::endl;
