@@ -38,6 +38,13 @@ void test_vector() {
 	assert(is_equal(angle, a0.angle(a1)));
 	std::cout << "[Vector]\tOK - Angle" << std::endl;
 
+	// Cross product
+	Vector cr0{12, 35, 2};
+	Vector cr1{90, 1, 3};
+	Vector rc{103.0, 144.0, -3138.0};
+	assert(compare(rc, cr0.cross(cr1)));
+	std::cout << "[Vector]\tOK - Cross product" << std::endl;
+
 	// Operators tests
 
 	// Equals
@@ -288,6 +295,14 @@ int main() {
 	std::cout << "====================" << std::endl;
 	std::cout << "= ALL TESTS PASSED =" << std::endl;
 	std::cout << "====================" << std::endl;
+
+
+	Vector v{5, 5, 5};
+	Vector x{1, 0, 0};
+	double a = 90.0;
+
+	// Vector r = (v * std::cos(a)) + (() * std::sin(a)) + ((x * (x * v)) * 1 - std::cos(a));
+
 
     return 0;
 }

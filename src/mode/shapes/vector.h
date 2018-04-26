@@ -21,19 +21,23 @@ public:
 
 	virtual ~Vector() {}
 
-	const double length() const {
+	static const double length(const Vector& v) {
 		double l = 0;
-		for (int i  = 0; i < size(); i++) {
-			l += at(i) * at(i);
+		for (int i  = 0; i < v.size(); i++) {
+			l += v[i] * v[i];
 		}
 		return std::sqrt(l);
 	}
 
-	const double angle(const Vector& v) const {
+	const double length() const {
+		return length(*this);
+	}
+
+	static const double angle(const Vector& v0, const Vector& v1) {
 		// Vector calculations
-		double dot = (*this) * v;
-		double val = v.length();
-		double vbl = length();
+		double dot = v0 * v1;
+		double val = v1.length();
+		double vbl = v0.length();
 
 		// Apply to formula
 		double cos = dot / (val * vbl);
@@ -43,13 +47,53 @@ public:
 		return (180.0 / std::acos(-1.0)) * a;
 	}
 
-	const Vector unit() const {
-		double len = length();
+	const double angle(const Vector& v) const {
+		return angle(*this, v);
+	}
+
+	static const Vector unit(const Vector& v) {
+		double len = v.length();
 		Vector u;
-		for (int i = 0; i < size(); i++) {
-			u.push_back(at(i) / len);
+		for (int i = 0; i < v.size(); i++) {
+			u.push_back(v[i] / len);
 		}
 		return u;
+	}
+
+	const Vector unit() const {
+		return unit(*this);
+	}
+
+	static const Vector cross(const Vector& v0, const Vector& v1) {
+		if (v1.size() != v0.size()) {
+			throw std::invalid_argument("Vectors should be of same size");
+		}
+
+		if (v1.size() != 3) {
+			throw std::invalid_argument("Vectors should have size 3");
+		}
+
+		Vector result(3, 0);
+		result[0] =   (v0[1] * v1[2]) - (v0[2] * v1[1]);
+		result[1] = -((v0[0] * v1[2]) - (v0[2] * v1[0]));
+		result[2] =   (v0[0] * v1[1]) - (v0[1] * v1[0]);
+		return result;
+	}
+
+	const Vector cross(const Vector& v) const {
+		return cross(*this, v);
+	}
+
+	const Vector operator+(const Vector& v) const {
+		if (size() != v.size()) {
+			throw std::invalid_argument("Vectors should be of same size");
+		}
+
+		Vector result(size(), 0);
+		for (int i = 0; i < size(); i++) {
+			result[i] = at(i) + v[i];
+		}
+		return result;
 	}
 
 	const double operator*(const Vector& v) const {
