@@ -1,10 +1,15 @@
 #ifndef TEST_UTIL_H
 #define TEST_UTIL_H
 
+#include <cmath>
+
+#include <vector.h>
+
 bool is_equal(double x, double y) {
     const double e = 1e-10;
     return std::abs(x - y) <= e;
 }
+
 
 bool compare(const Vector& a, const Vector& b) {
 	if (a.size() != b.size()) {

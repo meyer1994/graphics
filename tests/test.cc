@@ -1,40 +1,173 @@
+
+#include <string>
 #include <iostream>
 #include <assert.h>
 
+// Shapes
 #include <dot.h>
 #include <line.h>
 #include <point.h>
 #include <polygon.h>
 
+// Math
+#include <vector.h>
+#include <transform.h>
+
 #include "util.h"
 
+void test_vector() {
+	// Constructors tests
+	Vector c0(3, 0);
+	Vector c1{0, 0, 0};
+	Vector c2(std::vector<double>{0, 0, 0});
+	assert(compare(c0, c1));
+	assert(compare(c0, c2));
+	assert(compare(c1, c2));
+	std::cout << "[Vector]\tOK - Constructors" << std::endl;
+
+	// Length
+	Vector l{4, 65, 1};
+	double rl = std::sqrt(4242);
+	assert(is_equal(rl, l.length()));
+	std::cout << "[Vector]\tOK - Length" << std::endl;
+
+	// Angle
+	Vector a0{19, 2, 64};
+	Vector a1{3, 6, 101};
+	double angle = 14.913282135635228;
+	assert(is_equal(angle, a0.angle(a1)));
+	std::cout << "[Vector]\tOK - Angle" << std::endl;
+
+	// Operators tests
+
+	// Equals
+	bool e0 = Vector{1, 2, 3} == Vector{1, 2, 3};
+	bool e1 = Vector{1, 2, 3} == Vector{3, 2, 1};
+	assert(e0);
+	assert(!e1);
+	std::cout << "[Vector]\tOK - Operator==" << std::endl;
+
+	// Scalar
+	Vector o0{0, 1, 2, 3};
+	o0 = o0 * 3;
+	Vector r0{0, 3, 6, 9};
+	assert(compare(o0, r0));
+	std::cout << "[Vector]\tOK - Operator* (double)" << std::endl;
+
+	// Vector
+	Vector o1{1, 2, 3, 4};
+	Vector t1{5, 6, 7, 8};
+	double res = 5 + 2*6 + 3*7 + 4*8;
+	assert(is_equal(res, o1 * t1));
+	std::cout << "[Vector]\tOK - Operator* (Vector)" << std::endl;
+
+	// Matrix
+	Vector o2{1, 2, 3};
+	Matrix m2{
+		Vector{2, 3, 4},
+		Vector{5, 6, 7},
+		Vector{8, 9, 0}
+	};
+	Vector r2{36, 42, 18};
+	assert(compare(r2, o2*m2));
+	std::cout << "[Vector]\tOK - Operator* (Matrix)" << std::endl;
+}
+
+void test_matrix() {
+	// Constructors tests
+	Matrix m0(3, Vector(3, 0));
+	Matrix m1{
+		Vector(3, 0),
+		Vector(3, 0),
+		Vector(3, 0)
+	};
+	Matrix m2(std::vector<Vector>(3, Vector(3, 0)));
+	assert(compare(m0, m1));
+	assert(compare(m0, m2));
+	assert(compare(m1, m2));
+	std::cout << "[Matrix]\tOK - Constructors" << std::endl;
+
+	// Operators tests
+
+	// Equals
+	bool e0 = Matrix(1, Vector(2, 0)) == Matrix(1, Vector(2, 0));
+	bool e1 = Matrix(1, Vector(2, 0)) == Matrix(1, Vector(2, 1));
+	assert(e0);
+	assert(!e1);
+	std::cout << "[Matrix]\tOK - Operator==" << std::endl;
+
+	// Scalar
+	Matrix o0{
+		Vector(3, 1),
+		Vector(3, 2),
+		Vector(3, 3)
+	};
+	o0 = o0 * 3;
+	Matrix r0{
+		Vector(3, 3),
+		Vector(3, 6),
+		Vector(3, 9)
+	};
+	assert(compare(r0, o0));
+	std::cout << "[Matrix]\tOK - Operator* (double)" << std::endl;
+
+	// Vector
+	Matrix o1{
+		{2, 3, 4},
+		{5, 6, 7},
+		{8, 9, 0}
+	};
+	Vector t1{1, 2, 3};
+	Vector res1{20, 38, 26};
+	assert(compare(res1, o1 * t1));
+	std::cout << "[Matrix]\tOK - Operator* (Vector)" << std::endl;
+
+	// Matrix
+	Matrix o2{
+		{2, 3, 4},
+		{5, 6, 7},
+		{8, 9, 0}
+	};
+	Matrix t2{
+		{1, 2, 3},
+		{2, 5, 8},
+		{3, 1, 2}
+	};
+	Matrix res0{
+		{20, 23, 38},
+		{38, 47, 77},
+		{26, 61, 96}
+	};
+	assert(compare(res0, o2 * t2));
+	std::cout << "[Matrix]\tOK - Operator* (Matrix)" << std::endl;
+}
 
 void test_point() {
 	// Rotation test
 	Point a(5, 5, 0);
-	const Matrix rx = Transformation::rotatex(90);
+	const Matrix rx = Transform::rotatex(90);
 	a.transform(rx);
 	assert(compare(a, Point(5, 0, 5)));
 
-	const Matrix ry = Transformation::rotatey(90);
+	const Matrix ry = Transform::rotatey(90);
 	a.transform(ry);
 	assert(compare(a, Point(5, 0, -5)));
 
-	const Matrix rz = Transformation::rotatez(90);
+	const Matrix rz = Transform::rotatez(90);
 	a.transform(rz);
 	assert(compare(a, Point(0, 5, -5)));
 	std::cout << "[Point]\t\tOK - Rotate" << std::endl;
 
 	// Scale test
 	Point b(5, 5, 5);
-	const Matrix s = Transformation::scale(2, 2, 2);
+	const Matrix s = Transform::scale(2, 2, 2);
 	b.transform(s);
 	assert(compare(b, Point(10, 10, 10)));
 	std::cout << "[Point]\t\tOK - Scale" << std::endl;
 
 	// Translate test
 	Point c(5, 5, 5);
-	const Matrix t = Transformation::translate(10, -5, 1);
+	const Matrix t = Transform::translate(10, -5, 1);
 	c.transform(t);
 	assert(compare(c, Point(15, 0, 6)));
 	std::cout << "[Point]\t\tOK - Translate" << std::endl;
@@ -138,10 +271,23 @@ void test_polygon() {
 
 
 int main() {
+	std::cout << "==================" << std::endl;
+	std::cout << "= STARTING TESTS =" << std::endl;
+	std::cout << "==================" << std::endl;
+	std::cout << std::endl;
+
+	test_vector();
+	test_matrix();
+
 	test_point();
 	test_line();
 	test_dot();
 	test_polygon();
+
+	std::cout << std::endl;
+	std::cout << "====================" << std::endl;
+	std::cout << "= ALL TESTS PASSED =" << std::endl;
+	std::cout << "====================" << std::endl;
 
     return 0;
 }

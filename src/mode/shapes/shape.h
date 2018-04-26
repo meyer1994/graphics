@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "point.h"
+#include "../transform.h"
 
 enum class Type2D { Dot, Line, Polygon, BezierCurve, Spline };
 
@@ -17,23 +18,21 @@ public:
     virtual ~Shape() {}
 
 	virtual void rotate(double x, double y, double z) {
-		const Matrix rx = Transformation::rotatex(x);
-		const Matrix ry = Transformation::rotatey(y);
-		const Matrix rz = Transformation::rotatez(z);
+		const Matrix rx = Transform::rotatex(x);
+		const Matrix ry = Transform::rotatey(y);
+		const Matrix rz = Transform::rotatez(z);
 
-		const Matrix r0 = Transformation::multiply(rx, ry);
-		const Matrix r1 = Transformation::multiply(r0, rz);
-
-		transform(r1);
+		const Matrix r = rx * ry * rz;
+		transform(r);
 	}
 
 	virtual void scale(double ratio) {
-		const Matrix s = Transformation::scale(ratio, ratio, ratio);
+		const Matrix s = Transform::scale(ratio, ratio, ratio);
 		transform(s);
 	}
 
 	virtual void translate(double x, double y, double z) {
-		const Matrix t = Transformation::translate(x, y, z);
+		const Matrix t = Transform::translate(x, y, z);
 		transform(t);
 	}
 
