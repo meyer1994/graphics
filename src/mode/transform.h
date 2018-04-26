@@ -10,6 +10,19 @@ const double MATH_PI = std::acos(-1.0);
 
 namespace Transform {
 
+const Matrix translate(const double x, const double y, const double z) {
+    return Matrix{
+    	Vector{1.0, 0.0, 0.0, 0.0},
+    	Vector{0.0, 1.0, 0.0, 0.0},
+    	Vector{0.0, 0.0, 1.0, 0.0},
+    	Vector{  x,   y,   z, 1.0}
+    };
+}
+
+const Matrix translate(const Vector& v) {
+	return translate(v[0], v[1], v[2]);
+}
+
 const Matrix scale(const double x, const double y, const double z) {
     return Matrix{
     	Vector{  x, 0.0, 0.0, 0.0},
@@ -56,26 +69,23 @@ const Matrix rotatez(const double angle) {
 }
 
 const Matrix rotate(const double angle, const Vector& v) {
-	double radian = (angle * MATH_PI) / 180.0;
-	return Matrix{
-		Vector{},
-		Vector{},
-		Vector{},
-		Vector{}
-	};
-}
+	double d = v.length();
+	double beta = std::atan(v[0] / v[2]);
+	double alpha = std::atan(v[1] / d);
 
-const Matrix translate(const double x, const double y, const double z) {
-    return Matrix{
-    	Vector{1.0, 0.0, 0.0, 0.0},
-    	Vector{0.0, 1.0, 0.0, 0.0},
-    	Vector{0.0, 0.0, 1.0, 0.0},
-    	Vector{  x,   y,   z, 1.0}
-    };
-}
+	// Convert to degrees
+	beta = (beta * 180) / MATH_PI;
+	alpha = (alpha * 180) / MATH_PI;
 
-const Matrix translate(const Vector& v) {
-	return translate(v[0], v[1], v[2]);
+	Matrix t0  = translate(v * -1.0);
+	Matrix ry0 = rotatey(-beta);
+	Matrix rx0 = rotatex(alpha);
+	Matrix rz  = rotatez(angle);
+	Matrix rx1 = rotatex(-alpha);
+	Matrix ry1 = rotatey(beta);
+	Matrix t1  = translate(v);
+
+	return t0 * ry0 * rx0 * rz * rx1 * ry1 * t1;
 }
 
 }  // namespace Transform

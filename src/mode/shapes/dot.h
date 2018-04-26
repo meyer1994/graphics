@@ -30,10 +30,6 @@ public:
     virtual const Type2D type() const override {
         return Type2D::Dot;
     }
-
-    virtual const bool operator==(const Dot& d) const {
-    	return a == d.a;
-    }
 };
 
 #endif  // DOT_H

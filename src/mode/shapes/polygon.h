@@ -74,13 +74,16 @@ public:
     	}
 
     	for (int i = 0; i < lines.size(); i++) {
-    		const bool r = lines[i] == p.lines[i];
-    		if (r == false)  {
+    		if (lines[i] != p.lines[i])  {
     			return false;
     		}
     	}
 
     	return true;
+    }
+
+    virtual const bool operator!=(const Polygon& p) const {
+    	return !(p == *this);
     }
 
     std::vector<Line> lines;

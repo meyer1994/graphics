@@ -17,7 +17,7 @@ public:
 
     virtual ~Shape() {}
 
-	virtual void rotate(double x, double y, double z) {
+	virtual void rotate(const double x, const double y, const double z) {
 		const Matrix rx = Transform::rotatex(x);
 		const Matrix ry = Transform::rotatey(y);
 		const Matrix rz = Transform::rotatez(z);
@@ -26,12 +26,17 @@ public:
 		transform(r);
 	}
 
-	virtual void scale(double ratio) {
+	virtual void rotate(const double angle, const Vector& v) {
+		const Matrix rot = Transform::rotate(angle, v);
+		transform(rot);
+	}
+
+	virtual void scale(const double ratio) {
 		const Matrix s = Transform::scale(ratio, ratio, ratio);
 		transform(s);
 	}
 
-	virtual void translate(double x, double y, double z) {
+	virtual void translate(const double x, const double y, const double z) {
 		const Matrix t = Transform::translate(x, y, z);
 		transform(t);
 	}

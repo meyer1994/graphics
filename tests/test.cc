@@ -218,6 +218,13 @@ void test_line() {
 	assert(compare(l0, la));
 	std::cout << "[Line]\t\tOK - Rotate" << std::endl;
 
+	// Rotation arbitrary axis test
+	Line r0(Point(0, 0, 5), Point(5, 0, 5));
+	Line r1(Point(0, 0, 5), Point(0, 5, 5));
+	r0.rotate(90, {0, 0, 1});
+	assert(compare(r0, r1));
+	std::cout << "[Line]\t\tOK - Rotate axis" << std::endl;
+
 	// Scale test
 	Line l1(Point(20, 10, 0), Point(15, 10, 0));
 	Line lb(Point(40, 20, 0), Point(30, 20, 0));
@@ -242,7 +249,8 @@ void test_polygon() {
 
 	// Medium test
 	Polygon m(points);
-	assert(compare(m.medium, Point(200.0 / 3.0, 100.0 / 3.0, 200.0 / 3.0)));
+	Point med(200.0, 100.0, 200.0);
+	assert(compare(m.medium, med * (1.0 / 3.0)));
 	std::cout << "[Polygon]\tOK - Medium" << std::endl;
 
 	// Rotate test
@@ -254,6 +262,21 @@ void test_polygon() {
 		Point(100, -100, 100)
 	})));
 	std::cout << "[Polygon]\tOK - Rotate" << std::endl;
+
+	// Rotation arbitrary axis test
+	Polygon r0({
+		Point(0, 0, 0),
+		Point(0, 0, 100),
+		Point(100, 0, 100)
+	});
+	Polygon r1({
+		Point(0, 0, 0),
+		Point(0, 100, 0),
+		Point(100, 100, 0)
+	});
+	r0.rotate(-90, {1, 0, 0});
+	assert(compare(r0, r1));
+	std::cout << "[Polygon]\tOK - Rotate axis" << std::endl;
 
 	// Scale test
 	Polygon s(points);
@@ -295,69 +318,6 @@ int main() {
 	std::cout << "====================" << std::endl;
 	std::cout << "= ALL TESTS PASSED =" << std::endl;
 	std::cout << "====================" << std::endl;
-
-
-	// Working
-	Vector v0{5, 5, 5};
-	Vector x{1, 0, 0};
-	double angle = 90.0;
-	double a = (angle * MATH_PI) / 180.0;
-
-	Vector r0 = (v0 * std::cos(a)) + ((x.cross(v0)) * std::sin(a)) + ((x * (x * v0)) * (1 - std::cos(a)));
-	std::cout << r0.to_string() << std::endl;
-
-	// Not working (but the "right way of doing it")
-	double d = x.length();
-	double ax = v0.angle({0, 1, 0});
-	double ay = v0.angle({1, 0, 0});
-	std::cout << ax << std::endl;
-	std::cout << ay << std::endl;
-
-	Matrix t0  = Transform::translate(x * -1.0);
-	Matrix ry0 = Transform::rotatey(ax);
-	Matrix rx0 = Transform::rotatex(ay);
-	Matrix rz  = Transform::rotatez(angle);
-	Matrix rx1 = Transform::rotatex(-ay);
-	Matrix ry1 = Transform::rotatey(-ax);
-	Matrix t1  = Transform::translate(x);
-
-	Point r1 = Point(v0);
-	r1.transform(t0 * ry0 * rx0 * rz * rx1 * ry1 * t1);
-	std::cout << r1.to_string() << std::endl;
-
-
-	// Also working
-	double u = x[0];
-	double v = x[1];
-	double w = x[2];
-	double u2 = u * u;
-	double v2 = v * v;
-	double w2 = w * w;
-	double L = u2 + v2 + w2;
-	Matrix rot{
-		Vector{
-			(u2 + (v2 + w2) * std::cos(a)) / L,
-			(u * v * (1 - std::cos(a)) - w * std::sqrt(L) * std::sin(a)) / L,
-			(u * w * (1 - std::cos(a)) + v * std::sqrt(L) * std::sin(a)) / L,
-			0
-		},
-		Vector{
-			(u * v * (1 - std::cos(a)) + w * std::sqrt(L) * std::sin(a)) / L,
-			(v2 + (u2 + w2) * std::cos(a)) / L,
-			(v * w * (1 - std::cos(a)) - u * std::sqrt(L) * std::sin(a)) / L,
-			0.0
-		},
-		Vector{
-			(u * w * (1 - std::cos(a)) - v * std::sqrt(L) * std::sin(a)) / L,
-			(v * w * (1 - std::cos(a)) + u * std::sqrt(L) * std::sin(a)) / L,
-			(w2 + (u2 + v2) * std::cos(a)) / L,
-			0.0
-		},
-		Vector{0, 0, 0, 1}
-	};
-	Point r2 = Point(v0);
-	r2.transform(rot);
-	std::cout << r2.to_string() << std::endl;
 
     return 0;
 }

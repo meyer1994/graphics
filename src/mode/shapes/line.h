@@ -53,6 +53,10 @@ public:
 		return pa && pb;
 	}
 
+	virtual const bool operator!=(const Line& l) const {
+		return !(l == *this);
+	}
+
 	// Real points
 	Point a;
 	Point b;
