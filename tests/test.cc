@@ -178,6 +178,13 @@ void test_point() {
 	c.transform(t);
 	assert(compare(c, Point(15, 0, 6)));
 	std::cout << "[Point]\t\tOK - Translate" << std::endl;
+
+	// Distance test
+	Point d0(22, 38, 85);
+	Point d1(71, 3, 29);
+	double distance = 7 * std::sqrt(138);
+	assert(is_equal(distance, d0.distance(d1)));
+	std::cout << "[Point]\t\tOK - Distance" << std::endl;
 }
 
 void test_dot() {

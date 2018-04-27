@@ -12,33 +12,25 @@ class Line : public Shape {
 public:
 	Line() : Shape(name = "line") {}
 
-	explicit Line(std::string name) : Shape(name) {}
+	Line(std::string name) : Shape(name) {}
 
 	Line(Point a, Point b, std::string name = "line")
-	: Shape(name), a(a), b(b) {
+	: Shape({a, b}, name) {
 		if (a.size() != b.size()) {
 			throw std::invalid_argument("Points must have same number of dimensions");
-		}
-
-		// Calculate medium point
-		for (int i = 0; i < a.size(); i++) {
-			double m = (a[i] + b[i]) / 2;
-			medium[i] = m;
 		}
 	}
 
 	virtual ~Line() {}
 
-	virtual void transform(const Matrix& m) override {
-		a.transform(m);
-		b.transform(m);
-		medium.transform(m);
-	}
-
 	virtual const std::string to_string() const override {
+		if (real.empty()) {
+			return std::string("Line()");
+		}
+
 		std::string str = "Line(";
-		str += a.to_string() + ", ";
-		str += b.to_string() + ")";
+		str += real[0].to_string() + ", ";
+		str += real[1].to_string() + ")";
 		return str;
 	}
 
@@ -46,24 +38,12 @@ public:
 		return Type2D::Line;
 	}
 
-	virtual const bool operator==(const Line& l) const {
-		bool pa = a == l.a;
-		bool pb = b == l.b;
-
-		return pa && pb;
+	virtual const bool operator==(const Shape& l) const override {
+		const bool t = l.type() == type();
+		const bool r = real[0] == l.real[0] && real[1] == l.real[1];
+		const bool m = l.medium == medium;
+		return t && r && m;
 	}
-
-	virtual const bool operator!=(const Line& l) const {
-		return !(l == *this);
-	}
-
-	// Real points
-	Point a;
-	Point b;
-
-	// Window points
-	Point aw;
-	Point bw;
 };
 
 #endif  // LINE_H

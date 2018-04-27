@@ -38,6 +38,24 @@ public:
         shrink_to_fit();
     }
 
+    static const double distance(const Point& a, const Point& b) {
+    	if (a.size() != b.size()) {
+    		throw std::invalid_argument("Points must be of same order");
+    	}
+
+    	double res = 0;
+    	for (int i = 0; i < a.size(); i++) {
+    		const double ai = a[i];
+    		const double bi = b[i];
+    		res += ((ai - bi) * (ai - bi));
+    	}
+    	return std::sqrt(res);
+    }
+
+    const double distance(const Point& a) const {
+    	return distance(*this, a);
+    }
+
     const std::string to_string() const {
         if (size() == 0) {
             return "Point()";

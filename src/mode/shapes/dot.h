@@ -4,25 +4,36 @@
 #include <string>
 #include <vector>
 
-#include "line.h"
 #include "point.h"
+#include "shape.h"
 
-class Dot : public Line {
+class Dot : public Shape {
 public:
-    Dot() : Line(name = "dot") {}
+    Dot() : Shape("dot") {}
 
-    explicit Dot(std::string name) : Line(name) {}
+    Dot(std::string name) : Shape(name) {}
 
-    Dot(double x, double y, double z = 0, std::string name = "dot")
-    : Line(Point(x, y, z), Point(x, y, z), name) {}
+    Dot(double x, double y, double z, std::string name = "dot")
+    : Shape({Point(x, y, z)}, name) {}
 
-    Dot(Point point, std::string name = "dot") : Line(point, point, name) {}
+    Dot(Point point, std::string name = "dot") : Shape({point}, name) {}
 
     virtual ~Dot() {}
 
+    virtual const bool operator==(const Shape& d) const override {
+    	const bool t = d.type() == type();
+    	const bool r = d.real[0] == real[0];
+    	const bool m = d.medium == medium;
+    	return t && r && m;
+    }
+
     virtual const std::string to_string() const override {
+    	if (real.empty()) {
+    		return std::string("Dot()");
+    	}
+
         std::string str = "Dot(";
-        str += a.to_string();
+        str += real[0].to_string();
         str += ")";
         return str;
     }

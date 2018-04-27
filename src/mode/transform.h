@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "vector.h"
+#include "shapes/vector.h"
 
 // Constant
 const double MATH_PI = std::acos(-1.0);

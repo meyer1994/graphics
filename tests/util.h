@@ -12,7 +12,6 @@ bool is_equal(double x, double y) {
     return std::abs(x - y) <= e;
 }
 
-
 bool compare(const Vector& a, const Vector& b) {
 	if (a.size() != b.size()) {
 		return false;
@@ -23,6 +22,23 @@ bool compare(const Vector& a, const Vector& b) {
 			return false;
 		}
 	}
+
+	return true;
+}
+
+bool compare(const std::vector<Point>& v0, const std::vector<Point>& v1) {
+	if (v0.size() != v1.size()) {
+		return false;
+	}
+
+	for (int i = 0; i < v0.size(); i++) {
+		const Point& a = v0[i];
+		const Point& b = v1[i];
+		if (!compare(a, b)) {
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -40,29 +56,8 @@ bool compare(const Matrix& m0, const Matrix& m1) {
     return true;
 }
 
-bool compare(const Line& la, const Line& lb) {
-	return compare(la.a, lb.a) && compare(la.b, lb.b) && compare(la.medium, lb.medium);
-}
-
-bool compare(const Polygon& pa, const Polygon& pb) {
-	if (pa.lines.size() != pb.lines.size()) {
-		return false;
-	}
-
-	if (!compare(pa.medium, pb.medium)) {
-		return false;
-	}
-
-	for (int i = 0; i < pa.lines.size(); i++) {
-		const Line& la = pa.lines[i];
-		const Line& lb = pb.lines[i];
-		if (!compare(la, lb)) {
-			return false;
-		}
-	}
-
-
-	return true;
+bool compare(const Shape& s0, const Shape& s1) {
+	return compare(s0.real, s1.real) && compare(s0.medium , s1.medium);
 }
 
 #endif // TEST_UTIL_H

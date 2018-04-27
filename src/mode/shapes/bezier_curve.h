@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <initializer_list>
 
 #include "point.h"
 #include "shape.h"
@@ -14,33 +15,41 @@ public:
 
 	BezierCurve(std::string name) : Shape(name) {}
 
-	BezierCurve(std::vector<Point> points, double t = 0.05, std::string name = "curve")
-	: Shape(points, name),
-	  input(points),
-	  t(t) {
-		if (points.size() % 3 != 1) {
+	BezierCurve(std::initializer_list<Point> d)
+	: Shape(d, "bezier_curve") {
+		int size = real.size();
+		if (size < 4 || size % 3 != 1) {
 			throw std::invalid_argument("Points size must obey { size % 3 == 1 }");
 		}
 
-		blending_function();
+		blending_function(std::vector<Point>(d));
+	}
+
+	BezierCurve(std::vector<Point> points, double t, std::string name = "bezier_curve")
+	: Shape(points, name),
+	  t(t) {
+		int size = real.size();
+		if (size < 4 || size % 3 != 1) {
+			throw std::invalid_argument("Points size must obey { size % 3 == 1 }");
+		}
+
+		blending_function(points);
 	}
 
 	virtual ~BezierCurve() {}
 
 	virtual const std::string to_string() const override {
-		if (input.empty()) {
+		if (real.empty()) {
 			return std::string("BezierCurve()");
 		}
 
 		std::string str = "BezierCurve(";
-
-		for (int i = 0; i < input.size() - 1; i++) {
-			const Point& p = input[i];
+		for (int i = 0; i < real.size() - 1; i++) {
+			const Point& p = real[i];
 			str += p.to_string() + ", ";
 		}
-
-		str += input.back().to_string() + ")";
-
+		const Point& last = real.back();
+		str += last.to_string() + ")";
 		return str;
 	}
 
@@ -48,17 +57,17 @@ public:
         return Type2D::BezierCurve;
     }
 
-	std::vector<Point> input;
-	double t;
-	const Matrix magic{
-		Vector{-1,  3, -3, 1},
-		Vector{ 3, -6,  3, 0},
-		Vector{-3,  3,  0, 0},
-		Vector{ 1,  0,  0, 0}
-	};
+	double t = 0.05;
 
 protected:
-	Vector get_t_vector(double tee) {
+	const Matrix magic{
+		Vector{-1.0,  3.0, -3.0, 1.0},
+		Vector{ 3.0, -6.0,  3.0, 0.0},
+		Vector{-3.0,  3.0,  0.0, 0.0},
+		Vector{ 1.0,  0.0,  0.0, 0.0}
+	};
+
+	const Vector t_vector(const double tee) {
 		return Vector{
 			tee * tee * tee,
 			tee * tee,
@@ -67,46 +76,37 @@ protected:
 		};
 	}
 
-	void blending_function() {
+	void blending_function(const std::vector<Point>& v) {
 		double temp_t = t;
 		real.clear();
 
-		for (int i = 0; i < input.size() - 1; i += 3) {
+		for (int i = 0; i < v.size() - 1; i += 3) {
 			// Get points
-			Point p0 = input[i];
-			Point p1 = input[i + 1];
-			Point p2 = input[i + 2];
-			Point p3 = input[i + 3];
+			const Point& p0 = v[i];
+			const Point& p1 = v[i + 1];
+			const Point& p2 = v[i + 2];
+			const Point& p3 = v[i + 3];
 
-			Vector x_vector{
-				p0[0],
-				p1[0],
-				p2[0],
-				p3[0]
-			};
-			Vector y_vector{
-				p0[1],
-				p1[1],
-				p2[1],
-				p3[1]
-			};
+			// Vectors
+			const Vector x_vector{p0[0], p1[0], p2[0], p3[0]};
+			const Vector y_vector{p0[1], p1[1], p2[1], p3[1]};
 
 			while (temp_t <= 1) {
-				Vector t_vector = get_t_vector(temp_t);
-				Vector t_magic = Transformation::multiply(t_vector, magic);
+				const Vector t_vec = t_vector(temp_t);
+				const Vector t_magic = t_vec * magic;
 
-				double x = Transformation::multiply(t_magic, x_vector);
-				double y = Transformation::multiply(t_magic, y_vector);
-
-				// std::cout << x << "\n" << y << "\n\n";
+				double x = t_magic * x_vector;
+				double y = t_magic * y_vector;
 
 				real.push_back(Point(x, y));
-
 				temp_t += t;
 			}
 
 			temp_t = t;
 		}
+
+		// No need to waste space
+		real.shrink_to_fit();
 	}
 };
 

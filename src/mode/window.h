@@ -8,93 +8,69 @@
 
 namespace Mode {
 
-/**
- * @brief Window class.
- *
- * @details This object represents the window view of the real coordinates. The
- * coordinates inside this view are normalized in a way that the center of the
- * window is located at the point (0, 0) and the extremes are (-1, -1) and
- * (1, 1).
- *
- * @param s [description]
- */
+
 class Window : public Polygon {
 public:
     Window() : Polygon("window") {}
-    /**
-     * @brief Constructor.
-     *
-     * @param s Vector of shapes that are drawn into the viewport.
-     */
+
 	Window(double width, double heigth)
-    : Polygon(std::vector<Point>{
+    : Polygon({
         Point(0, 0),
         Point(width, 0),
         Point(width, heigth),
         Point(0, heigth)
-    },  "window") {}
+      }, "window") {}
 
 	virtual ~Window() {}
 
-    /**
-     * @brief Gets the width of the window.
-     *
-     * @return Double representing the width of the window in real world
-     * coordinates.
-     */
     const double width() const {
-    	Point p0 = real[0];
-    	Point p1 = real[1];
-    	double x = p0[0] - p1[0];
-    	double y = p0[1] - p1[1];
-    	return std::sqrt(x * x + y * y);
+    	return Point::distance(real[0], real[1]);
     }
 
-    /**
-     * @brief Gets the height of the window.
-     *
-     * @return Returns double representing the height of the window.
-     */
     const double height() const {
-    	Point p0 = real[0];
-    	Point p1 = real[3];
-    	double x = p0[0] - p1[0];
-    	double y = p0[1] - p1[1];
-    	return std::sqrt(x * x + y * y);
+    	return Point::distance(real[0], real[3]);
     }
 
-    /**
-     * @brief Gets the angle of the window related to the Y axis of the real
-     * world.
-     *
-     * @return Double representing the angle, in degrees.
-     */
     const double y_angle() const {
-    	double x_vup = real[3][0] - real[0][0];
-        double y_vup = real[3][1] - real[0][1];
-        double cos = y_vup / std::sqrt(x_vup * x_vup + y_vup * y_vup);
-        double radian = std::acos(cos);
-        if(x_vup < 0) {
-        	radian = -radian;
-        }
-        return (radian * 180.0) / _MATH_PI;
+    	const Vector h = real[3] - real[0];
+        return h.angle({0.0, 1.0, 0.0});
     }
 
-    /**
-     * @brief Same as y_angle, but for the X axis.
-     */
     const double x_angle() const {
-    	return 90 - y_angle();
+    	const Vector w = real[1] - real[0];
+    	return w.angle({1.0, 0.0, 0.0});
     }
 
-    const Matrix normalization_matrix() {
+    const Matrix parallel_matrix() const {
+		// Normal
+		const Point a = real[0];
+		const Point b = real[1];
+		const Point m = medium;
+		const Vector normal = Vector::cross(m - a, b - m);
+
+		// Rotation
+		double tetax = std::atan(normal[1] / normal[2]);
+		double tetay = std::atan(normal[0] / normal[2]);
+
+		// Convert to degrees
+		tetax = (tetax * 180.0) / MATH_PI;
+		tetay = (tetay * 180.0) / MATH_PI;
+
+		// Translate
+		const Matrix tran = Transform::translate(-medium);
+		// Rotate
+		const Matrix rotx = Transform::rotatex(tetax);
+		const Matrix roty = Transform::rotatey(tetay);
+
+		return tran * rotx * roty;
+    }
+
+    const Matrix normalization_matrix() const {
         // Translation matrix
-        Point med = medium();
-        Vector t{-med[0], -med[1]};
-        Matrix translate = Transformation::translate(t);
+        const Matrix translate = Transform::translate(-medium);
 
         // Rotation matrix
-        Matrix rotate = Transformation::rotate(y_angle());
+        const Matrix rotate = Transform::rotatey(y_angle());
 
         // Scale matrix
         double x_ratio = 1.0 / (width() / 2.0);
@@ -104,13 +80,10 @@ public:
         x_ratio *= 0.9;
         y_ratio *= 0.9;
 
-        Vector r{x_ratio, y_ratio};
-        Matrix scale = Transformation::scale(r);
+        const Matrix scale = Transform::scale(x_ratio, y_ratio, 1);
 
         // Combine transformations
-        Matrix temp = Transformation::combine(translate, rotate);
-        Matrix final = Transformation::combine(temp, scale);
-        return final;
+        return translate * rotate * scale;
     }
 };
 

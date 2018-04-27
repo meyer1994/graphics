@@ -96,6 +96,14 @@ public:
 		return result;
 	}
 
+	const Vector operator-(const Vector& v) const {
+		return (*this) + (v * -1.0);
+	}
+
+	const Vector operator-() const {
+		return (*this) * -1.0;
+	}
+
 	const double operator*(const Vector& v) const {
 		if (size() != v.size()) {
 			throw std::invalid_argument("Vectors should be of same size");
@@ -114,6 +122,10 @@ public:
 			i *= d;
 		}
 		return v;
+	}
+
+	const Vector operator/(const double d) const {
+		return (*this) * (1.0 / d);
 	}
 
 	const Vector operator*(const Matrix& m) const;

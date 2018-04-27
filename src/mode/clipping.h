@@ -7,27 +7,25 @@
 #include "shapes/line.h"
 #include "shapes/point.h"
 #include "shapes/shape.h"
+#include "shapes/vector.h"
 #include "shapes/polygon.h"
 
-const short INSIDE = 0; // 0000
-const short LEFT = 1;   // 0001
-const short RIGHT = 2;  // 0010
-const short BOTTOM = 4; // 0100
-const short TOP = 8;    // 1000
+const short INSIDE = 0;  // 0000
+const short LEFT   = 1;  // 0001
+const short RIGHT  = 2;  // 0010
+const short BOTTOM = 4;  // 0100
+const short TOP    = 8;  // 1000
 
 class Clipping {
 public:
 	Clipping(Polygon& clip_region)
 	: clip_region(clip_region),
-	xmax(0.9),
-	ymax(0.9),
-	xmin(-0.9),
-	ymin(-0.9)
-	{
-		if (clip_region.size() != 4) {
-			throw std::invalid_argument("Clip region shape should be a "
-				"rectangle. The sizes used will be the first point and the "
-				"third point of it");
+	  xmax(0.9),
+	  ymax(0.9),
+	  xmin(-0.9),
+	  ymin(-0.9) {
+		if (clip_region.real.size() != 4) {
+			throw std::invalid_argument("Clip region shape should be a rectangle. The sizes used will be the first point and the third point of it");
 		}
 
 		// Not used because the teacher wants to see the clipping working

@@ -112,15 +112,11 @@ protected:
 		return true;
 	}
 
-	void draw_shape_2d(
-		const Cairo::RefPtr<Cairo::Context>& cr,
-		const Shape* shape)
-	{
-
+	void draw_shape_2d(const Cairo::RefPtr<Cairo::Context>& cr, const Shape* shape) {
 		// Dot case
 		if (shape->type() == Type2D::Dot) {
 			const Point& p = shape->window.front();
-			Cairo::LineCap cap = cr->get_line_cap();
+			const Cairo::LineCap cap = cr->get_line_cap();
 			cr->set_line_cap(Cairo::LINE_CAP_ROUND);
 			cr->move_to(p[0], p[1]);
 			cr->line_to(p[0], p[1]);
@@ -149,41 +145,36 @@ protected:
 		}
 	}
 
-	Point vp_transform(const Point& p) {
+	const Point vp_transform(const Point& p) {
 		Gtk::Allocation alloc = drawing_area.get_allocation();
-		double xvmax = alloc.get_width();
-		double yvmax = alloc.get_height();
+		const double xvmax = alloc.get_width();
+		const double yvmax = alloc.get_height();
 
-		double x = ((p[0] + 1) / 2) * (xvmax);
-		double y = (1 - (p[1] + 1) / 2) * (yvmax);
+		const double x = ((p[0] + 1) / 2) * (xvmax);
+		const double y = (1 - (p[1] + 1) / 2) * (yvmax);
 		return Point(x, y);
 	}
 
 	void clipper(Shape* shape) {
-
 		Type2D type = shape->type();
+		switch(type) {
+			case Type2D::Dot:
+				return clipping.dot(shape);
 
-		// Dot
-		if (type == Type2D::Dot) {
-			return clipping.dot(shape);
-		}
-
-		// Line
-		if (type == Type2D::Line) {
-			if (line_clipping_method == 0) {
-				return clipping.cohen_sutherland(shape);
+			case Type2D::Line:
+			{
+				if (line_clipping_method == 0) {
+					return clipping.cohen_sutherland(shape);
+				}
+				return clipping.liang_barsky(shape);
 			}
-			return clipping.liang_barsky(shape);
-		}
 
-		// Curve
-		if (type == Type2D::BezierCurve || type == Type2D::Spline) {
-			return clipping.curve(shape);
-		}
+			case Type2D::BezierCurve:
+			case Type2D::Spline:
+				return clipping.curve(shape);
 
-		// Polygon
-		if (type == Type2D::Polygon) {
-			return clipping.sutherland_hodgman(shape);
+			default:
+				return clipping.sutherland_hodgman(shape);
 		}
 	}
 
