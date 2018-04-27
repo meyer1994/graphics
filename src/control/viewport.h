@@ -63,43 +63,47 @@ protected:
 		// Movement buttons
 		button_up->signal_clicked().connect(
 			[this]() {
-				double x = get_x_movement();
-				double y = get_y_movement();
-				viewport.window.translate(x, y);
+				const double x = get_x_movement();
+				const double y = get_y_movement();
+				const double z = get_z_movement();
+				viewport.window.translate(x, y, z);
 				viewport.draw();
 			});
 		button_down->signal_clicked().connect(
 			[this]() {
-				double x = get_x_movement();
-				double y = get_y_movement();
-				viewport.window.translate(-x, -y);
+				const double x = get_x_movement();
+				const double y = get_y_movement();
+				const double z = get_z_movement();
+				viewport.window.translate(-x, -y, z);
 				viewport.draw();
 			});
 		button_left->signal_clicked().connect(
 			[this]() {
-				double x = get_x_movement();
-				double y = get_y_movement();
-				viewport.window.translate(-y, x);
+				const double x = get_x_movement();
+				const double y = get_y_movement();
+				const double z = get_z_movement();
+				viewport.window.translate(-y, x, z);
 				viewport.draw();
 			});
 		button_right->signal_clicked().connect(
 			[this]() {
-				double x = get_x_movement();
-				double y = get_y_movement();
-				viewport.window.translate(y, -x);
+				const double x = get_x_movement();
+				const double y = get_y_movement();
+				const double z = get_z_movement();
+				viewport.window.translate(y, -x, z);
 				viewport.draw();
 			});
 
 		// Zoom buttons
 		button_in->signal_clicked().connect(
 			[this]() {
-				double zoom = get_zoom_input() / 100;
+				const double zoom = get_zoom_input() / 100;
 				viewport.window.inflate(1 - zoom);
 				viewport.draw();
 			});
 		button_out->signal_clicked().connect(
 			[this]() {
-				double zoom = get_zoom_input() / 100;
+				const double zoom = get_zoom_input() / 100;
 				viewport.window.inflate(1 + zoom);
 				viewport.draw();
 			});
@@ -107,21 +111,21 @@ protected:
 		// Rotation buttons
 		button_rotate_left->signal_clicked().connect(
 			[this]() {
-				double angle = get_angle_input();
-				Point medium = viewport.window.medium();
+				const double angle = get_angle_input();
+				const Point& medium = viewport.window.medium;
 				viewport.window.rotate(-angle, medium);
 				viewport.draw();
 			});
 		button_rotate_right->signal_clicked().connect(
 			[this]() {
-				double angle = get_angle_input();
-				Point medium = viewport.window.medium();
+				const double angle = get_angle_input();
+				const Point& medium = viewport.window.medium;
 				viewport.window.rotate(angle, medium);
 				viewport.draw();
 			});
 	}
 
-	double get_move_input() {
+	const double get_move_input() {
 		double move_size = 10;
 		try {
 			std::string move_input = input_viewport_move->get_text();
@@ -133,19 +137,25 @@ protected:
 		return move_size;
 	}
 
-	double get_y_movement() {
-		double move = get_move_input();
-		double y_angle = viewport.window.y_angle();
-		return std::cos(y_angle * _MATH_PI / 180) * move;
+	const double get_y_movement() {
+		const double move = get_move_input();
+		const double y_angle = viewport.window.y_angle();
+		return std::cos(y_angle * MATH_PI / 180) * move;
 	}
 
-	double get_x_movement() {
-		double move = get_move_input();
-		double y_angle = viewport.window.y_angle();
-		return std::sin(y_angle * _MATH_PI / 180) * move;
+	const double get_x_movement() {
+		const double move = get_move_input();
+		const double y_angle = viewport.window.y_angle();
+		return std::sin(y_angle * MATH_PI / 180) * move;
 	}
 
-	double get_zoom_input() {
+	const double get_z_movement() {
+		const double move = get_move_input();
+		const double y_angle = viewport.window.y_angle();
+		return std::sin(y_angle * MATH_PI / 180) * move;
+	}
+
+	const double get_zoom_input() {
 		double zoom_size = 10;
 		try {
 			std::string zoom_input = input_viewport_zoom->get_text();
@@ -157,7 +167,7 @@ protected:
 		return zoom_size;
 	}
 
-	double get_angle_input() {
+	const double get_angle_input() {
 		double angle = 30;
 		try {
 			std::string angle_input = input_angle->get_text();

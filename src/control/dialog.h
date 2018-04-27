@@ -28,14 +28,6 @@ namespace Control {
 
 class Dialog {
 public:
-    /**
-     * @brief Constructor.
-     *
-     * @param b Builder of the GTK application. Used to get all the widgets
-     * that are related to this control.
-     *
-     * @param s Shapes vector. Will add new shapes to this vector.
-     */
     Dialog(Glib::RefPtr<Gtk::Builder>& b, Mode::Viewport& viewport)
     : viewport(viewport) {
 
@@ -57,6 +49,7 @@ public:
         b->get_widget("text_input_name", text_input_name);
         b->get_widget("text_input_x", text_input_x);
         b->get_widget("text_input_y", text_input_y);
+        b->get_widget("text_input_z", text_input_z);
 
         // Combo box
         b->get_widget("combobox_shapes", combobox_shapes);
@@ -65,11 +58,6 @@ public:
         connect_buttons();
     }
 
-    /**
-     * @brief Destructor.
-     *
-     * @details The destructor for top-level widgets must be called explicitly.
-     */
     ~Dialog() {
         delete dialog_input;
         clear_labels();
@@ -110,16 +98,11 @@ protected:
     Gtk::Entry* text_input_name = nullptr;
     Gtk::Entry* text_input_x = nullptr;
     Gtk::Entry* text_input_y = nullptr;
+    Gtk::Entry* text_input_z = nullptr;
 
     // Hold labels of the points added
     Gtk::Box* box_points_added = nullptr;
 
-    /**
-     * @brief Connects all buttons to it's functions.
-     *
-     * @details Will connect all the button signals to the methods they are
-     * supposed to call.
-     */
     void connect_buttons() {
         button_finish
             ->signal_clicked()
@@ -135,37 +118,21 @@ protected:
             .connect(sigc::mem_fun(*dialog_input, &Gtk::Dialog::show));
     }
 
-    /**
-     * @brief Get point.
-     *
-     * @details Gets the input from the user and convert to doubles.
-     *
-     * @return Point inputted by user.
-     *
-     * @throws std::invalid_argument If the input is "wrong". Wrong in the
-     * sense of std::stod(double) not accepting it.
-     */
-    Point get_point() {
+    const Point get_point() {
         // Get text input
-        std::string sx = text_input_x->get_text();
-        std::string sy = text_input_y->get_text();
+        const std::string sx = text_input_x->get_text();
+        const std::string sy = text_input_y->get_text();
+        const std::string sz = text_input_z->get_text();
 
         // Convert to double
-        double x = std::stod(sx);
-        double y = std::stod(sy);
+        const double x = std::stod(sx);
+        const double y = std::stod(sy);
+        const double z = std::stod(sz);
 
-        return Point(x, y);
+        return Point(x, y, z);
     }
 
-    /**
-     * @brief Adds new shape to shapes list and shapes combobox.
-     *
-     * @details If there is no points in points_buffer or no name has been set,
-     * it won't do anything and it will return false.
-     *
-     * @return true if the shape was added. False otherwise.
-     */
-    bool add_shape() {
+    const bool add_shape() {
         // No points no shape
         if (points_buffer.empty()) {
             return false;
@@ -179,14 +146,14 @@ protected:
 
         // Dot
         if (points_buffer.size() == 1) {
-            Point p = points_buffer[0];
-            viewport.shapes.push_back(new Dot(p[0], p[1], name));
+            const Point p = points_buffer[0];
+            viewport.shapes.push_back(new Dot(p, name));
         }
 
         // Line
         if (points_buffer.size() == 2) {
-            Point a = points_buffer[0];
-            Point b = points_buffer[1];
+            const Point a = points_buffer[0];
+            const Point b = points_buffer[1];
             viewport.shapes.push_back(new Line(a, b, name));
         }
 
@@ -194,13 +161,13 @@ protected:
 
         // Bezier curve
         if (buff_size % 3 - 1 == 0 && radio_Bezier_curve->get_active()) {
-            BezierCurve* bc = new BezierCurve(points_buffer, 0.005, name);
+            BezierCurve* bc = new BezierCurve(points_buffer, 0.05, name);
             viewport.shapes.push_back(bc);
         }
 
         // b-spline
         if (buff_size > 3 && radio_bspline_curve->get_active()) {
-            Spline* bc = new Spline(points_buffer, 0.005, name);
+            Spline* bc = new Spline(points_buffer, 0.05, name);
             viewport.shapes.push_back(bc);
         }
 
@@ -211,7 +178,7 @@ protected:
 	        viewport.shapes.push_back(p);
         }
 
-        // Add shape name to combobox
+        // Add shape name to combo box
         combobox_shapes->append(name);
 
         // Redraw drawing area
@@ -220,16 +187,12 @@ protected:
         return true;
     }
 
-    /**
-     * @brief Cancel the adding of shape.
-     *
-     * @details Clear all the inputs and buffers and hides the dialog.
-     */
     void cancel() {
         // Clear everything
         text_input_name->set_text("");
         text_input_x->set_text("");
         text_input_y->set_text("");
+        text_input_z->set_text("");
         clear_labels();
 
         // Hide dialog
@@ -239,33 +202,22 @@ protected:
         points_buffer.clear();
     }
 
-    /**
-     * @brief Add shape to memory and close the dialog.
-     *
-     * @details Will only close the dialog and add the shape if add_shape()
-     * returns true.
-     */
     void finish() {
         if (add_shape()) {
             cancel();
         }
     }
 
-    /**
-     * @brief Add point to the point_buffer.
-     *
-     * @details Will only add the point if the inputs are correct numbers that
-     * do not throw any kind of exception when passed to std::stod().
-     */
     void add_point() {
         try {
             // Get point
-            Point p = get_point();
+            const Point p = get_point();
             points_buffer.push_back(p);
 
             // Clear text inputs
             text_input_x->set_text("");
             text_input_y->set_text("");
+            text_input_z->set_text("");
 
             // Update text view
             update_added_points(p);
@@ -274,30 +226,16 @@ protected:
         }
     }
 
-    /**
-     * @brief Clear labels vector.
-     *
-     * @details The labels must be initialized with new when adding them to the
-     * vector. So this method is just to clean them up. It also removes all the
-     * references from the box_points_added widget by calling remove() on each
-     * one of the labels in it.
-     */
     void clear_labels() {
         for (int i = 0; i < points_labels_buffer.size(); i++) {
             box_points_added->remove(*points_labels_buffer[i]);
             delete points_labels_buffer[i];
         }
         points_labels_buffer.clear();
+        points_labels_buffer.shrink_to_fit();
     }
 
-    /**
-     * @brief Updates box with added points.
-     *
-     * @details Simply adds a label with the point to the box.
-     *
-     * @param p Point to be added.
-     */
-    void update_added_points(Point& p) {
+    void update_added_points(const Point& p) {
         Gtk::Label* l = new Gtk::Label(p.to_string());
         points_labels_buffer.push_back(l);
         box_points_added->add(*l);

@@ -19,7 +19,7 @@
 #include "dialog.h"
 #include "shapes.h"
 #include "viewport.h"
-#include "filechooser.h"
+// #include "filechooser.h"
 
 namespace Control {
 
@@ -43,7 +43,7 @@ public:
         shapes.push_back(s);
 
         // Dummy curve (debugging)
-        Spline* bc = new Spline(std::vector<Point>{
+        Spline* bc = new Spline{
             Point(0, 0),
             Point(0, 0),
             Point(0, 0),
@@ -54,7 +54,7 @@ public:
             Point(400, 300),
             Point(500, 0),
             Point(600, 100)
-        });
+        };
         shapes.push_back(bc);
 
 
@@ -79,7 +79,7 @@ public:
         control_viewport = new Control::Viewport(b, *mode_viewport);
         control_dialog = new Control::Dialog(b, *mode_viewport);
         control_shapes = new Control::Shapes(b, *mode_viewport);
-        control_filechooser = new Control::FileChooser(b, *mode_viewport);
+        // control_filechooser = new Control::FileChooser(b, *mode_viewport);
     }
 
     virtual ~Main() {
@@ -89,7 +89,7 @@ public:
         // Control
         delete control_viewport;
         delete control_dialog;
-        delete control_filechooser;
+        // delete control_filechooser;
 
         // Mode
         delete mode_viewport;
@@ -113,7 +113,7 @@ protected:
     Control::Viewport* control_viewport = nullptr;
     Control::Dialog* control_dialog = nullptr;
     Control::Shapes* control_shapes = nullptr;
-    Control::FileChooser* control_filechooser = nullptr;
+    // Control::FileChooser* control_filechooser = nullptr;
 };
 
 } // namespace Control

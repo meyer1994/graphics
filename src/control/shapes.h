@@ -51,7 +51,7 @@ public:
 		// Clipping widgets
 		b->get_widget("checkbox_shape_clipping", check_clipping);
 		b->get_widget("radio_shape_clipping_cohen", radio_cohen);
-		b->get_widget("radio_shape_clipping_liang", radio_liang);	
+		b->get_widget("radio_shape_clipping_liang", radio_liang);
 
 		connect_buttons();
 	}
@@ -98,29 +98,29 @@ protected:
 		button_move_up
 			->signal_clicked()
 			.connect([this]() {
-				double m = get_move_input();
-				move(0, m);
+				const double m = get_move_input();
+				move(0.0, m, 0.0);
 				viewport.draw();
 			});
 		button_move_down
 			->signal_clicked()
 			.connect([this]() {
-				double m = get_move_input();
-				move(0, -m);
+				const double m = get_move_input();
+				move(0.0, -m, 0.0);
 				viewport.draw();
 			});
 		button_move_left
 			->signal_clicked()
 			.connect([this]() {
-				double m = get_move_input();
-				move(-m, 0);
+				const double m = get_move_input();
+				move(-m, 0.0, 0.0);
 				viewport.draw();
 			});
 		button_move_right
 			->signal_clicked()
 			.connect([this]() {
-				double m = get_move_input();
-				move(m, 0);
+				const double m = get_move_input();
+				move(m, 0.0, 0.0);
 				viewport.draw();
 			});
 
@@ -128,14 +128,14 @@ protected:
 		button_inflate_plus
 			->signal_clicked()
 			.connect([this]() {
-				double ratio = get_inflate_input();
+				const double ratio = get_inflate_input();
 				inflate(ratio);
 				viewport.draw();
 			});
 		button_inflate_minus
 			->signal_clicked()
 			.connect([this]() {
-				double ratio = get_inflate_input();
+				const double ratio = get_inflate_input();
 				inflate(1 / ratio);
 				viewport.draw();
 			});
@@ -144,14 +144,14 @@ protected:
 		button_rotate_left
 			->signal_clicked()
 			.connect([this]() {
-				double angle = get_rotate_input();
+				const double angle = get_rotate_input();
 				rotate(angle);
 				viewport.draw();
 			});
 		button_rotate_right
 			->signal_clicked()
 			.connect([this]() {
-				double angle = get_rotate_input();
+				const double angle = get_rotate_input();
 				rotate(-angle);
 				viewport.draw();
 			});
@@ -186,19 +186,21 @@ protected:
 		return viewport.shapes[index];
 	}
 
-	Point get_point(){
-		double x,y,z;
+	const Point get_point() {
+		double x;
+		double y;
+		double z;
 		try {
 			x = std::stod(input_rotate_x->get_text());
 			y = std::stod(input_rotate_y->get_text());
-			// z = std::stod(input_rotate_z->get_text());
+			z = std::stod(input_rotate_z->get_text());
 		} catch (std::exception& e) {
 			// pass
 		}
 		return Point(x, y);
 	}
 
-	double get_move_input() const {
+	const double get_move_input() const {
 		double move_size = 10;
 		try {
 			std::string move_input = input_move->get_text();
@@ -209,7 +211,7 @@ protected:
 		return move_size;
 	}
 
-	double get_inflate_input() const {
+	const double get_inflate_input() const {
 		double inflate_size = 1.5;
 		try {
 			std::string inflate_input = input_inflate->get_text();
@@ -220,7 +222,7 @@ protected:
 		return inflate_size;
 	}
 
-	double get_rotate_input() const {
+	const double get_rotate_input() const {
 		double angle_value = 30;
 		try {
 			std::string angle_input = input_angle->get_text();
@@ -231,16 +233,16 @@ protected:
 		return angle_value;
 	}
 
-	void move(double x, double y) {
+	void move(const double x, const double y, const double z) {
 		try {
 			Shape* s = get_shape();
-			s->translate(x, y);
+			s->translate(x, y, z);
 		} catch(std::exception& e) {
 			// nothing
 		}
 	}
 
-	void inflate(double ratio) {
+	void inflate(const double ratio) {
 		try {
 			Shape* s = get_shape();
 			s->inflate(ratio);
@@ -249,22 +251,26 @@ protected:
 		}
 	}
 
-	void rotate(double angle) {
+	void rotate(const double angle) {
 		try {
 			Shape* s = get_shape();
+
 			// Rotate to any point
 			if(radio_coord->get_active()) {
-				Point p = get_point();
+				const Point p = get_point();
 				s->rotate(angle, p);
 			}
+
 			// Rotate to center of viewport
 			if(radio_viewport->get_active()) {
-				s->rotate(angle);
+				s->rotate(angle, 0, 0);
 			}
+
 			// Rotate from it's center
 			if(radio_shape->get_active()) {
-				s->rotate(angle, s->medium());
+				s->rotate(angle, s->medium);
 			}
+
 			viewport.draw();
 		} catch(std::exception& e) {
 			return;
