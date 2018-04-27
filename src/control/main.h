@@ -67,9 +67,9 @@ public:
         // Gets size to pass to window
         Gtk::DrawingArea* drawing_area = nullptr;
         b->get_widget("drawing_area", drawing_area);
-        Gtk::Allocation alloc = drawing_area->get_allocation();
-        double width = alloc.get_width();
-        double height = alloc.get_height();
+        const Gtk::Allocation alloc = drawing_area->get_allocation();
+        const double width = alloc.get_width();
+        const double height = alloc.get_height();
 
         // Modes
         window = Mode::Window(width, height);

@@ -69,8 +69,15 @@ protected:
 		cr->set_source_rgb(1, 1, 1);
 		cr->paint();
 
-		// Transformation matrix
-		Matrix m = window.normalization_matrix();
+		// Parallel projection matrix
+		const Matrix parallel_proj = window.parallel_matrix();
+
+		// Normalization matrix
+		const Matrix m = window.normalization_matrix();
+
+		// Transform window points
+		window.window = window.real;
+		window.w_transform(parallel_proj);
 
 		// Changes color to red
 		cr->set_source_rgb(0.8, 0, 0);
@@ -78,12 +85,14 @@ protected:
 		// Draw all shapes
 		for (Shape* shape : shapes) {
 
+			// Copy real points to window
+			shape->window = shape->real;
+
+			// Parallel projection
+			shape->w_transform(parallel_proj);
+
 			// Normalize points
-			shape->window.clear();
-			for (Point p : shape->real) {
-				p.transform(m);
-				shape->window.push_back(p);
-			}
+			shape->w_transform(m);
 
 			// Clipping
 			if (clipping_active) {
@@ -101,11 +110,8 @@ protected:
 		cr->set_source_rgb(0, 1, 1);
 
 		// Draw clipping region for debugging
-		window.window.clear();
-		for (Point p : window.real) {
-			p.transform(m);
-			window.window.push_back(p);
-		}
+		window.window = window.real;
+		window.w_transform(m);
 		draw_shape_2d(cr, &window);
 		cr->stroke();
 

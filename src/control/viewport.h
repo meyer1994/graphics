@@ -113,14 +113,16 @@ protected:
 			[this]() {
 				const double angle = get_angle_input();
 				const Point& medium = viewport.window.medium;
-				viewport.window.rotate(-angle, medium);
+				const Vector norm = viewport.window.normal();
+				viewport.window.rotate(-angle, norm);
 				viewport.draw();
 			});
 		button_rotate_right->signal_clicked().connect(
 			[this]() {
 				const double angle = get_angle_input();
 				const Point& medium = viewport.window.medium;
-				viewport.window.rotate(angle, medium);
+				const Vector norm = viewport.window.normal();
+				viewport.window.rotate(angle, norm);
 				viewport.draw();
 			});
 	}

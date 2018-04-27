@@ -70,6 +70,12 @@ public:
     	medium.transform(m);
     }
 
+    virtual void w_transform(const Matrix& m) {
+    	for (Point& p : window) {
+    		p.transform(m);
+    	}
+    }
+
     virtual const bool operator==(const Shape& s) const {
 		if (s.type() != type()) {
 			return false;

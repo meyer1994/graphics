@@ -41,16 +41,24 @@ public:
     	return w.angle({1.0, 0.0, 0.0});
     }
 
-    const Matrix parallel_matrix() const {
-		// Normal
-		const Point a = real[0];
+    const double z_angle() const {
+    	const Vector w = normal();
+    	return w.angle({1.0, 0.0, 0.0});
+    }
+
+    const Vector normal() const {
+    	const Point a = real[0];
 		const Point b = real[1];
 		const Point m = medium;
-		const Vector normal = Vector::cross(m - a, b - m);
+		return Vector::cross(m - a, b - m);
+    }
+
+    const Matrix parallel_matrix() const {
+		const Vector norm = normal();
 
 		// Rotation
-		double tetax = std::atan(normal[1] / normal[2]);
-		double tetay = std::atan(normal[0] / normal[2]);
+		double tetax = std::atan(norm[1] / norm[2]);
+		double tetay = std::atan(norm[0] / norm[2]);
 
 		// Convert to degrees
 		tetax = (tetax * 180.0) / MATH_PI;
@@ -80,7 +88,7 @@ public:
         x_ratio *= 0.9;
         y_ratio *= 0.9;
 
-        const Matrix scale = Transform::scale(x_ratio, y_ratio, 1);
+        const Matrix scale = Transform::scale(x_ratio, y_ratio, 1.0);
 
         // Combine transformations
         return translate * rotate * scale;
