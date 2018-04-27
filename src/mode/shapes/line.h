@@ -37,13 +37,6 @@ public:
 	virtual const Type2D type() const override {
 		return Type2D::Line;
 	}
-
-	virtual const bool operator==(const Shape& l) const override {
-		const bool t = l.type() == type();
-		const bool r = real[0] == l.real[0] && real[1] == l.real[1];
-		const bool m = l.medium == medium;
-		return t && r && m;
-	}
 };
 
 #endif  // LINE_H

@@ -40,26 +40,6 @@ public:
     virtual const Type2D type() const override {
         return Type2D::Polygon;
     }
-
-    virtual const bool operator==(const Shape& p) const override {
-    	if (p.type() != type()) {
-    		return false;
-    	}
-
-    	if (p.real.size() != real.size()) {
-    		return false;
-    	}
-
-    	for (int i = 0; i < real.size(); i++) {
-    		if (p.real[i] != real[i]) {
-    			return false;
-    		}
-    	}
-
-    	return true;
-    }
-
-    bool filled = false;
 };
 
 #endif  // POLYGON_H

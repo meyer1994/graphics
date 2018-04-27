@@ -76,7 +76,7 @@ protected:
 		};
 	}
 
-	void blending_function(const std::vector<Point>& v) {
+	void blending_function(const std::vector<Point> v) {
 		double temp_t = t;
 		real.clear();
 

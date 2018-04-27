@@ -50,6 +50,14 @@ public:
 		transform(s);
 	}
 
+	virtual void inflate(const double ratio) {
+		const Matrix t0 = Transform::translate(-medium);
+		const Matrix r  = Transform::scale(ratio, ratio, ratio);
+		const Matrix t1	= Transform::translate(medium);
+
+		transform(t0 * r * t1);
+	}
+
 	virtual void translate(const double x, const double y, const double z) {
 		const Matrix t = Transform::translate(x, y, z);
 		transform(t);
@@ -62,7 +70,29 @@ public:
     	medium.transform(m);
     }
 
-    virtual const bool operator==(const Shape& s) const = 0;
+    virtual const bool operator==(const Shape& s) const {
+		if (s.type() != type()) {
+			return false;
+		}
+
+		if (s.real.size() != real.size()) {
+			return false;
+		}
+
+		if (medium != s.medium) {
+			return false;
+		}
+
+		for (int i = 0; i < s.real.size(); i++) {
+			const Point& a = s.real[i];
+			const Point& b = real[i];
+			if (a != b) {
+				return false;
+			}
+		}
+
+		return true;
+    }
 
     virtual const bool operator!=(const Shape& s) const {
     	return !((*this) == s);
@@ -80,7 +110,7 @@ public:
     std::vector<Point> window;
 
 protected:
-	Point calculate_medium() {
+	const Point calculate_medium() {
 		Vector m{0, 0, 0};
 		for (Point& p : real) {
 			m = m + p;
@@ -88,6 +118,7 @@ protected:
 		m = m / real.size();
 		return Point(m);
 	}
+
 };
 
 #endif  // SHAPE_H

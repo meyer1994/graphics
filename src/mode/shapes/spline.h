@@ -74,15 +74,15 @@ protected:
 		};
 	}
 
-	void blending_function(const std::vector<Point>& v) {
+	void blending_function(const std::vector<Point> v) {
 		real.clear();
 
-		for (int i = 0; i + 3 < real.size(); i++) {
+		for (int i = 0; i + 3 < v.size(); i++) {
 			// Get points
-			const Point& p0 = real[i];
-			const Point& p1 = real[i + 1];
-			const Point& p2 = real[i + 2];
-			const Point& p3 = real[i + 3];
+			const Point& p0 = v[i];
+			const Point& p1 = v[i + 1];
+			const Point& p2 = v[i + 2];
+			const Point& p3 = v[i + 3];
 
 			const Vector gx{p0[0], p1[0], p2[0], p3[0]};
 			const Vector gy{p0[1], p1[1], p2[1], p3[1]};
