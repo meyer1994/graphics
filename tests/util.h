@@ -8,7 +8,7 @@
 #include <vector.h>
 
 bool is_equal(double x, double y) {
-    const double e = 1e-10;
+    const double e = 1e-5;
     return std::abs(x - y) <= e;
 }
 

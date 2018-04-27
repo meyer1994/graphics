@@ -33,6 +33,15 @@ public:
 		return length(*this);
 	}
 
+	const double norm() const {
+		double n = 0;
+		for (int i = 0; i < size(); i++) {
+			n += std::pow(at(i), 2);
+		}
+		n = std::sqrt(n);
+		return std::abs(n);
+	}
+
 	static const double angle(const Vector& v0, const Vector& v1) {
 		// Vector calculations
 		double dot = v0 * v1;
@@ -144,6 +153,10 @@ public:
 		return true;
 	}
 
+	const bool operator!=(const Vector& v) const  {
+		return !((*this) == v);
+	}
+
 	const std::string to_string() const {
 		if (empty()) {
 			return std::string("Vector()");
@@ -170,6 +183,27 @@ public:
 	Matrix(std::vector<Vector> v) : std::vector<Vector>(v) {}
 
 	virtual ~Matrix() {}
+
+	const Matrix operator+(const Matrix& m) const {
+		if (m.size() != size()) {
+			throw std::invalid_argument("Matrices should be of same size");
+		}
+
+		Matrix r(size(), Vector(3, 0));
+		for (int i = 0; i < size(); i++) {
+			r[i] = m[i] + at(i);
+		}
+
+		return r;
+	}
+
+	const Matrix operator-(const Matrix& m) const {
+		return (*this) + (m * -1);
+	}
+
+	const Matrix operator-() const {
+		return (*this) * -1.0;
+	}
 
 	const Vector operator*(const Vector& v) const {
 		if (size() != v.size()) {

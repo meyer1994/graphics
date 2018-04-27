@@ -17,136 +17,244 @@
 
 void test_vector() {
 	// Constructors tests
-	Vector c0(3, 0);
-	Vector c1{0, 0, 0};
-	Vector c2(std::vector<double>{0, 0, 0});
-	assert(compare(c0, c1));
-	assert(compare(c0, c2));
-	assert(compare(c1, c2));
+	const Vector constr0 = Vector(3, 0);
+	const Vector constr1 = Vector{0, 0, 0};
+	const Vector constr2 = Vector(std::vector<double>{0, 0, 0});
+	assert(constr0.size() == 3);
+	assert(constr1.size() == 3);
+	assert(constr2.size() == 3);
+	assert(constr0 ==  constr1);
+	assert(constr0 ==  constr2);
+	assert(constr2 ==  constr1);
 	std::cout << "[Vector]\tOK - Constructors" << std::endl;
 
 	// Length
-	Vector l{4, 65, 1};
-	double rl = std::sqrt(4242);
-	assert(is_equal(rl, l.length()));
+	const Vector length0{123, 353, 76, 5353, 34};
+	const Vector length1{945, 128, -123, 123, 0};
+	const Vector length2{0, 0, 0, 0, 0};
+	assert(length0.length() == std::sqrt(28801279));
+	assert(length1.length() == std::sqrt(939667));
+	assert(length2.length() == 0);
 	std::cout << "[Vector]\tOK - Length" << std::endl;
 
 	// Angle
-	Vector a0{19, 2, 64};
-	Vector a1{3, 6, 101};
-	double angle = 14.913282135635228;
-	assert(is_equal(angle, a0.angle(a1)));
+	const Vector angle0{281, 0, 123};
+	const Vector angle1{0, 231, 0};
+	const Vector angle2{7, 53, 121231};
+	assert(is_equal(Vector::angle(angle0, angle1), 90));
+	assert(is_equal(Vector::angle(angle1, angle2), 89.97495132337));
+	assert(is_equal(Vector::angle(angle0, angle2), 66.35662085317));
 	std::cout << "[Vector]\tOK - Angle" << std::endl;
 
+	// Unit
+	const Vector unit0{232, 897, 0, 0};
+	const Vector unit1{232 / std::sqrt(858433), 897 / std::sqrt(858433), 0, 0};
+	const Vector unit2{9, 5, 7, 1, 2, 3};
+	const Vector unit3{9.0/13.0, 5.0/13.0, 7.0/13.0, 1.0/13.0, 2.0/13.0, 3.0/13.0};
+	assert(compare(unit0.unit(), unit1));
+	assert(compare(unit2.unit(), unit3));
+	std::cout << "[Vector]\tOK - Unit vector" << std::endl;
+
+	// Norm
+	const Vector norm0{2323, 9890, 10238};
+	const Vector norm1{0, 0, 0};
+	const Vector norm2{36, 1930, 917273};
+	assert(is_equal(norm0.norm(), 14423.0743255382));
+	assert(is_equal(norm1.norm(), 0));
+	assert(is_equal(norm2.norm(), 917275.0311247984));
+	std::cout << "[Vector]\tOK - Norm" << std::endl;
+
 	// Cross product
-	Vector cr0{12, 35, 2};
-	Vector cr1{90, 1, 3};
-	Vector rc{103.0, 144.0, -3138.0};
-	assert(compare(rc, cr0.cross(cr1)));
+	const Vector cross0{12, 35, 2};
+	const Vector cross1{90, 1, 3};
+	const Vector cross2{1, 1, 1};
+	assert(compare(Vector::cross(cross0, cross1), {103, 144, -3138}));
+	assert(compare(Vector::cross(cross0, cross2), {33, -10, -23}));
+	assert(compare(Vector::cross(cross1, cross2), {-2, -87, 89}));
 	std::cout << "[Vector]\tOK - Cross product" << std::endl;
 
 	// Operators tests
 
 	// Equals
-	bool e0 = Vector{1, 2, 3} == Vector{1, 2, 3};
-	bool e1 = Vector{1, 2, 3} == Vector{3, 2, 1};
-	assert(e0);
-	assert(!e1);
-	std::cout << "[Vector]\tOK - Operator==" << std::endl;
+	const Vector equals0{1, 1, 1};
+	const Vector equals1{1, 5, 2};
+	const Vector equals2{1, -1, 2};
+	assert(equals0 == equals0);
+	assert(equals1 == equals1);
+	assert(equals2 == equals2);
+	std::cout << "[Vector]\tOK - Operator ==" << std::endl;
+
+	// Not equals
+	const Vector nequals0{1, 1, 0};
+	const Vector nequals1{1, 5, 231};
+	const Vector nequals2{1, -1, 999999};
+	assert(nequals0 != nequals1);
+	assert(nequals0 != nequals2);
+	assert(nequals2 != nequals1);
+	std::cout << "[Vector]\tOK - Operator !=" << std::endl;
+
+	// Sum
+	const Vector sum0{5, 5, 5};
+	const Vector sum1{10, 10, 10};
+	const Vector sum2{15, 15, 15};
+	assert(sum0 + sum0 == sum1);
+	assert(sum0 + sum1 == sum2);
+	assert(sum0 + sum0 + sum0 == sum2);
+	std::cout << "[Vector]\tOK - Operator +" << std::endl;
+
+	// Minus
+	const Vector minus0{-5, -5, -5};
+	const Vector minus1{-15, -15, -15};
+	const Vector minus2{10, 10, 10};
+	assert(minus0 - minus2 == minus1);
+	assert(minus0 - minus1 == minus2);
+	std::cout << "[Vector]\tOK - Operator -" << std::endl;
+
+	// Inverse
+	const Vector inverse0{5, 5, 5};
+	const Vector inverse1{-5, -5, -5};
+	assert(inverse0 == -inverse1);
+	assert(inverse1 == -inverse0);
+	std::cout << "[Vector]\tOK - Operator - (inverse)" << std::endl;
 
 	// Scalar
-	Vector o0{0, 1, 2, 3};
-	o0 = o0 * 3;
-	Vector r0{0, 3, 6, 9};
-	assert(compare(o0, r0));
-	std::cout << "[Vector]\tOK - Operator* (double)" << std::endl;
+	const Vector scalar0{5, 10, 15};
+	const Vector scalar1{10, 20, 30};
+	const Vector scalar2{15, 30, 45};
+	assert(compare(scalar0 * 2.0, scalar1));
+	assert(compare(scalar1 * 0.5, scalar0));
+	assert(compare(scalar1 * 1.5, scalar2));
+	std::cout << "[Vector]\tOK - Operator * (double)" << std::endl;
 
 	// Vector
-	Vector o1{1, 2, 3, 4};
-	Vector t1{5, 6, 7, 8};
-	double res = 5 + 2*6 + 3*7 + 4*8;
-	assert(is_equal(res, o1 * t1));
-	std::cout << "[Vector]\tOK - Operator* (Vector)" << std::endl;
+	const Vector vector0{1, 2, 3, 4};
+	const Vector vector1{5, 6, 7, 8};
+	const Vector vector2{-231, -123, -312, -12};
+	assert((vector0 * vector1) == 70);
+	assert((vector0 * vector2) == -1461);
+	assert((vector1 * vector2) == -4173);
+	std::cout << "[Vector]\tOK - Operator * (Vector)" << std::endl;
 
 	// Matrix
-	Vector o2{1, 2, 3};
-	Matrix m2{
+	const Vector matrix0{1, 2, 3};
+	const Matrix matrix1{
 		Vector{2, 3, 4},
 		Vector{5, 6, 7},
 		Vector{8, 9, 0}
 	};
-	Vector r2{36, 42, 18};
-	assert(compare(r2, o2*m2));
-	std::cout << "[Vector]\tOK - Operator* (Matrix)" << std::endl;
+	const Vector matrix2{36, 42, 18};
+	assert((matrix0 * matrix1) == matrix2);
+	std::cout << "[Vector]\tOK - Operator * (Matrix)" << std::endl;
 }
 
 void test_matrix() {
-	// Constructors tests
-	Matrix m0(3, Vector(3, 0));
-	Matrix m1{
-		Vector(3, 0),
-		Vector(3, 0),
-		Vector(3, 0)
-	};
-	Matrix m2(std::vector<Vector>(3, Vector(3, 0)));
-	assert(compare(m0, m1));
-	assert(compare(m0, m2));
-	assert(compare(m1, m2));
+	// Constructors
+	const Matrix constr0{ Vector(3, 0), Vector(3, 0), Vector(3, 0) };
+	const Matrix constr1(3, Vector(3, 0));
+	const Matrix constr2(std::vector<Vector>{ Vector(3, 0), Vector(3, 0), Vector(3, 0) });
+	assert(constr0.size() == 3);
+	assert(constr1.size() == 3);
+	assert(constr2.size() == 3);
+	assert(constr0 == constr1);
+	assert(constr0 == constr2);
+	assert(constr2 == constr1);
 	std::cout << "[Matrix]\tOK - Constructors" << std::endl;
 
 	// Operators tests
 
-	// Equals
-	bool e0 = Matrix(1, Vector(2, 0)) == Matrix(1, Vector(2, 0));
-	bool e1 = Matrix(1, Vector(2, 0)) == Matrix(1, Vector(2, 1));
-	assert(e0);
-	assert(!e1);
-	std::cout << "[Matrix]\tOK - Operator==" << std::endl;
+	// Equals tested above (in constructors)
+	std::cout << "[Matrix]\tOK - Operator ==" << std::endl;
+
+	// Not equals
+	const Matrix nequals0{
+		Vector{0, 0, 1},
+		Vector{0, 0, 1},
+		Vector{0, 0, 1}
+	};
+	const Matrix nequals1{
+		Vector{1, 0, 0},
+		Vector{1, 0, 0},
+		Vector{1, 0, 0}
+	};
+	const Matrix nequals2{
+		Vector{0, 1, 0},
+		Vector{0, 1, 0},
+		Vector{0, 1, 0}
+	};
+	assert(nequals0 != nequals1);
+	assert(nequals0 != nequals2);
+	assert(nequals1 != nequals2);
+	std::cout << "[Matrix]\tOK - Operator !=" << std::endl;
+
 
 	// Scalar
-	Matrix o0{
-		Vector(3, 1),
-		Vector(3, 2),
-		Vector(3, 3)
+	const Matrix scalar0{
+		Vector{-5, -5, -5},
+		Vector{-5, -5, -5},
+		Vector{-5, -5, -5}
 	};
-	o0 = o0 * 3;
-	Matrix r0{
-		Vector(3, 3),
-		Vector(3, 6),
-		Vector(3, 9)
+	const Matrix scalar1{
+		Vector{5, 5, 5},
+		Vector{5, 5, 5},
+		Vector{5, 5, 5}
 	};
-	assert(compare(r0, o0));
-	std::cout << "[Matrix]\tOK - Operator* (double)" << std::endl;
+	const Matrix scalar2{
+		Vector{10, 10, 10},
+		Vector{10, 10, 10},
+		Vector{10, 10, 10}
+	};
+	assert(scalar0 * -1 == scalar1);
+	assert(scalar1 * -1 == scalar0);
+	assert(scalar1 * 2 == scalar2);
+	assert(scalar2 * 0.5 == scalar1);
+	assert(scalar2 * -0.5 == scalar0);
+	std::cout << "[Matrix]\tOK - Operator * (double)" << std::endl;
 
 	// Vector
-	Matrix o1{
-		{2, 3, 4},
-		{5, 6, 7},
-		{8, 9, 0}
+	const Matrix vector0{
+		Vector{1, 2, 3},
+		Vector{4, 5, 6},
+		Vector{7, 8, 9}
 	};
-	Vector t1{1, 2, 3};
-	Vector res1{20, 38, 26};
-	assert(compare(res1, o1 * t1));
-	std::cout << "[Matrix]\tOK - Operator* (Vector)" << std::endl;
+	const Vector vector1{16, 0, 3};
+	const Vector vector2{-1, -2, 0};
+	const Vector vector3{1, 1, 1};
+	// Results
+	const Vector vector4{25, 82, 139};
+	const Vector vector5{-5, -14, -23};
+	const Vector vector6{6, 15, 24};
+	assert(compare(vector0 * vector1, vector4));
+	assert(compare(vector0 * vector2, vector5));
+	assert(compare(vector0 * vector3, vector6));
+	std::cout << "[Matrix]\tOK - Operator * (Vector)" << std::endl;
 
 	// Matrix
-	Matrix o2{
-		{2, 3, 4},
-		{5, 6, 7},
-		{8, 9, 0}
+	const Matrix matrix0{
+		Vector{2, 3, 4},
+		Vector{5, 6, 7},
+		Vector{8, 9, 0}
 	};
-	Matrix t2{
-		{1, 2, 3},
-		{2, 5, 8},
-		{3, 1, 2}
+	const Matrix matrix1{
+		Vector{1, 2, 3},
+		Vector{2, 5, 8},
+		Vector{3, 1, 2}
 	};
-	Matrix res0{
-		{20, 23, 38},
-		{38, 47, 77},
-		{26, 61, 96}
+	const Matrix matrix2{
+		Vector{1, 0, 0},
+		Vector{0, 1, 0},
+		Vector{0, 0, 1}
 	};
-	assert(compare(res0, o2 * t2));
-	std::cout << "[Matrix]\tOK - Operator* (Matrix)" << std::endl;
+	// Result of matrix0 * matrix1
+	const Matrix matrix3{
+		Vector{20, 23, 38},
+		Vector{38, 47, 77},
+		Vector{26, 61, 96},
+	};
+	assert(compare(matrix0 * matrix1, matrix3));
+	assert(compare(matrix0 * matrix2, matrix0));
+	assert(compare(matrix1 * matrix2, matrix1));
+	assert(compare(matrix3 * matrix2, matrix3));
+	std::cout << "[Matrix]\tOK - Operator * (Matrix)" << std::endl;
 }
 
 void test_point() {
