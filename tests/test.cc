@@ -8,6 +8,7 @@
 #include <line.h>
 #include <point.h>
 #include <polygon.h>
+#include <polyhedron.h>
 
 // Math
 #include <vector.h>
@@ -17,9 +18,9 @@
 
 void test_vector() {
 	// Constructors tests
-	const Vector constr0 = Vector(3, 0);
-	const Vector constr1 = Vector{0, 0, 0};
-	const Vector constr2 = Vector(std::vector<double>{0, 0, 0});
+	const Vector constr0(3, 0);
+	const Vector constr1{0, 0, 0};
+	const Vector constr2(std::vector<double>{0, 0, 0});
 	assert(constr0.size() == 3);
 	assert(constr1.size() == 3);
 	assert(constr2.size() == 3);
@@ -41,9 +42,9 @@ void test_vector() {
 	const Vector angle0{281, 0, 123};
 	const Vector angle1{0, 231, 0};
 	const Vector angle2{7, 53, 121231};
-	assert(is_equal(Vector::angle(angle0, angle1), 90));
-	assert(is_equal(Vector::angle(angle1, angle2), 89.97495132337));
-	assert(is_equal(Vector::angle(angle0, angle2), 66.35662085317));
+	assert(compare(Vector::angle(angle0, angle1), 90));
+	assert(compare(Vector::angle(angle1, angle2), 89.97495132337));
+	assert(compare(Vector::angle(angle0, angle2), 66.35662085317));
 	std::cout << "[Vector]\tOK - Angle" << std::endl;
 
 	// Unit
@@ -59,9 +60,9 @@ void test_vector() {
 	const Vector norm0{2323, 9890, 10238};
 	const Vector norm1{0, 0, 0};
 	const Vector norm2{36, 1930, 917273};
-	assert(is_equal(norm0.norm(), 14423.0743255382));
-	assert(is_equal(norm1.norm(), 0));
-	assert(is_equal(norm2.norm(), 917275.0311247984));
+	assert(compare(norm0.norm(), 14423.0743255382));
+	assert(compare(norm1.norm(), 0));
+	assert(compare(norm2.norm(), 917275.0311247984));
 	std::cout << "[Vector]\tOK - Norm" << std::endl;
 
 	// Cross product
@@ -255,68 +256,123 @@ void test_matrix() {
 	assert(compare(matrix1 * matrix2, matrix1));
 	assert(compare(matrix3 * matrix2, matrix3));
 	std::cout << "[Matrix]\tOK - Operator * (Matrix)" << std::endl;
+
+	const Matrix id0 = Matrix::identity(1);
+	const Matrix id1 = Matrix::identity(3);
+	const Matrix id2 = Matrix::identity(5);
+	assert(id0[0][0] == 1);
+	for (int i = 0; i < id1.size(); i++) {
+		assert(id1[i][i] == 1);
+	}
+	for (int i = 0; i < id2.size(); i++) {
+		assert(id2[i][i] == 1);
+	}
+	std::cout << "[Matrix]\tOK - Identity" << std::endl;
 }
 
 void test_point() {
-	// Rotation test
-	Point a(5, 5, 0);
-	const Matrix rx = Transform::rotatex(90);
-	a.transform(rx);
-	assert(compare(a, Point(5, 0, 5)));
+	// Constructors
+	const Point constr0{1, 2, 3};
+	const Point constr1(1, 2, 3);
+	const Point constr2({1, 2, 3});
+	const Point constr3;
+	assert(constr0.size() == 3);
+	assert(constr1.size() == 3);
+	assert(constr2.size() == 3);
+	assert(constr3.size() == 3);
+	std::cout << "[Point]\t\tOK - Constructors" << std::endl;
 
-	const Matrix ry = Transform::rotatey(90);
-	a.transform(ry);
-	assert(compare(a, Point(5, 0, -5)));
+	// Transform
+	Point trans0{10, 0, 0};
+	const Matrix trans1 = Transform::scale(2, 2, 2);
+	const Matrix trans2 = Transform::rotatey(90);
+	const Matrix trans3 = Transform::translate(0, 0, 20);
+	trans0.transform(trans1);
+	assert(compare(trans0, Point(20, 0, 0)));
+	trans0.transform(trans2);
+	assert(compare(trans0, Point(0, 0, -20)));
+	trans0.transform(trans3);
+	assert(compare(trans0, Point(0, 0, 0)));
+	std::cout << "[Point]\t\tOK - Transform" << std::endl;
 
-	const Matrix rz = Transform::rotatez(90);
-	a.transform(rz);
-	assert(compare(a, Point(0, 5, -5)));
-	std::cout << "[Point]\t\tOK - Rotate" << std::endl;
-
-	// Scale test
-	Point b(5, 5, 5);
-	const Matrix s = Transform::scale(2, 2, 2);
-	b.transform(s);
-	assert(compare(b, Point(10, 10, 10)));
-	std::cout << "[Point]\t\tOK - Scale" << std::endl;
-
-	// Translate test
-	Point c(5, 5, 5);
-	const Matrix t = Transform::translate(10, -5, 1);
-	c.transform(t);
-	assert(compare(c, Point(15, 0, 6)));
-	std::cout << "[Point]\t\tOK - Translate" << std::endl;
-
-	// Distance test
-	Point d0(22, 38, 85);
-	Point d1(71, 3, 29);
-	double distance = 7 * std::sqrt(138);
-	assert(is_equal(distance, d0.distance(d1)));
+	// Distance
+	const Point dist0{12, -322, 11};
+	const Point dist1{1, 65, 0};
+	const Point dist2{1, 1, 0};
+	// Result
+	const double dist01_res = Point::distance(dist1, dist0);
+	assert(compare(dist0.distance(dist1), std::sqrt(150011)));
+	assert(compare(dist1.distance(dist0), std::sqrt(150011)));
+	assert(compare(dist01_res, std::sqrt(150011)));
+	assert(compare(dist2.distance(dist1), 64));
 	std::cout << "[Point]\t\tOK - Distance" << std::endl;
 }
 
 void test_dot() {
+	// Constructors
+	const Dot constr0;
+	const Dot constr1 = Dot(1, 2, 3);
+	const Dot constr2 = Dot(Point(1, 2, 3));
+	assert(constr0.real.size() == 1);
+	assert(constr1.real.size() == 1);
+	assert(constr2.real.size() == 1);
+	std::cout << "[Dot]\t\tOK - Constructors" << std::endl;
+
 	// Medium test
-	Dot m(50, 50, 50);
-	assert(compare(m, Dot(50, 50, 50)));
+	const Dot med0(50, 50, 50);
+	const Dot med1(100, 100, 100);
+	const Dot med2(-10, -10, -10);
+	assert(compare(med0.medium, Point(50, 50, 50)));
+	assert(compare(med1.medium, Point(100, 100, 100)));
+	assert(compare(med2.medium, Point(-10, -10, -10)));
 	std::cout << "[Dot]\t\tOK - Medium" << std::endl;
 
 	// Rotation test
-	Dot a(5, 5, 5);
-	a.rotate(-90, -90, 0);
-	assert(compare(a, Dot(5, 5, 5)));
+	Dot rot0(5, 5, 5);
+	Dot rot1(10, 5, 0);
+	Dot rot2(-1, -1, -1);
+	rot0.rotate(90, 0, 0);
+	rot1.rotate(0, -90, 0);
+	rot2.rotate(0, 0, 180);
+	assert(compare(rot0, Dot(5, -5, 5)));
+	assert(compare(rot1, Dot(0, 5, 10)));
+	assert(compare(rot2, Dot(1, 1, -1)));
 	std::cout << "[Dot]\t\tOK - Rotate" << std::endl;
 
 	// Scale test
-	Dot b(5, 5, 5);
-	b.scale(2);
-	assert(compare(b, Dot(10, 10, 10)));
+	Dot scale0(1, 2, 3);
+	Dot scale1(5, 5, 5);
+	Dot scale2(-1, -1, -1);
+	scale0.scale(3);
+	scale1.scale(-2);
+	scale2.scale(0.5);
+	assert(compare(scale0, Dot(3, 6, 9)));
+	assert(compare(scale1, Dot(-10, -10, -10)));
+	assert(compare(scale2, Dot(-0.5, -0.5, -0.5)));
 	std::cout << "[Dot]\t\tOK - Scale" << std::endl;
 
+	// Inflate
+	Dot infl0(0, 5, 5);
+	Dot infl1(5, 0, 5);
+	Dot infl2(5, 5, 0);
+	infl0.inflate(1);
+	infl1.inflate(2);
+	infl2.inflate(3);
+	assert(infl0 == Dot(0, 5, 5));
+	assert(infl1 == Dot(5, 0, 5));
+	assert(infl2 == Dot(5, 5, 0));
+	std::cout << "[Dot]\t\tOK - Inflate" << std::endl;
+
 	// Translate test
-	Dot c(5, 5, 5);
-	c.translate(10, -5, 11);
-	assert(compare(c, Dot(15, 0, 16)));
+	Dot trans0(5, 5, 5);
+	Dot trans1(-5, 0, 1);
+	Dot trans2(0, 0, 0);
+	trans0.translate(5, 5, -5);
+	trans1.translate(1, 2, -0.5);
+	trans2.translate(-3, 1, 100);
+	assert(compare(trans0, Dot(10, 10, 0)));
+	assert(compare(trans1, Dot(-4, 2, 0.5)));
+	assert(compare(trans2, Dot(-3, 1, 100)));
 	std::cout << "[Dot]\t\tOK - Translate" << std::endl;
 }
 
@@ -414,6 +470,45 @@ void test_polygon() {
 	std::cout << "[Polygon]\tOK - Translate" << std::endl;
 }
 
+void test_polyhedron() {
+	// Faces to be used
+	// It is, basically, a pyramid
+	const std::vector<Polygon> faces{
+		// Base
+		Polygon{
+			Point(0, 0, 0),
+			Point(100, 0, 0),
+			Point(0, 0, 100)
+		},
+		// Sides
+		Polygon{
+			Point(0, 0, 0),
+			Point(100, 0, 0),
+			Point(0, 100, 0),
+		},
+		Polygon{
+			Point(0, 0, 0),
+			Point(0, 0, 100),
+			Point(0, 100, 0)
+		},
+		Polygon{
+			Point(100, 0, 0),
+			Point(0, 0, 100),
+			Point(0, 100, 0)
+		}
+	};
+
+	// Constructors
+	const Polyhedron constr0{ faces[0], faces[1], faces[2], faces[3] };
+	const Polyhedron constr1(faces);
+	assert(constr0.faces.size() == 4);
+	assert(constr1.faces.size() == 4);
+	assert(constr0.medium != Vector(3, 0));
+	std::cout << "[Polyhedron]\tOK - Constructors" << std::endl;
+
+
+	std::cout << "[Polyhedron]\tOK - Constructors" << std::endl;
+}
 
 int main() {
 
@@ -429,6 +524,7 @@ int main() {
 	test_line();
 	test_dot();
 	test_polygon();
+	test_polyhedron();
 
 	std::cout << std::endl;
 	std::cout << "====================" << std::endl;

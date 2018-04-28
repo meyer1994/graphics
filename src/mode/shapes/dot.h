@@ -9,9 +9,9 @@
 
 class Dot : public Shape {
 public:
-    Dot() : Shape("dot") {}
+    Dot() : Shape({Point(0, 0, 0)}, "dot") {}
 
-    Dot(std::string name) : Shape(name) {}
+    Dot(std::string name) : Shape({Point(0, 0, 0)}, name) {}
 
     Dot(double x, double y, double z, std::string name = "dot")
     : Shape({Point(x, y, z)}, name) {}
@@ -19,6 +19,11 @@ public:
     Dot(Point point, std::string name = "dot") : Shape({point}, name) {}
 
     virtual ~Dot() {}
+
+    virtual void inflate(const double ratio) override {
+    	// Nothing
+    	return;
+    }
 
     virtual const std::string to_string() const override {
     	if (real.empty()) {

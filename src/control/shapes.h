@@ -233,6 +233,27 @@ protected:
 		return angle_value;
 	}
 
+	const std::vector<double> get_rotation_axis() const {
+		// Defaults
+		double x = 0.0;
+		double y = 0.0;
+		double z = 1.0;
+
+		// Convert everything
+		try {
+			std::string x_input = input_rotate_x->get_text();
+			std::string y_input = input_rotate_y->get_text();
+			std::string z_input = input_rotate_z->get_text();
+			x = std::stod(x_input);
+			y = std::stod(y_input);
+			z = std::stod(z_input);
+		} catch (const std::exception& e) {
+			// Nothing
+		}
+
+		return {x, y, z};
+	}
+
 	void move(const double x, const double y, const double z) {
 		try {
 			Shape* s = get_shape();
@@ -257,18 +278,21 @@ protected:
 
 			// Rotate to any point
 			if(radio_coord->get_active()) {
-				const Point p = get_point();
-				s->rotate(angle, p);
+				const std::vector<double> axis = get_rotation_axis();
+				s->rotate(angle, axis);
 			}
 
-			// Rotate to center of viewport
+			// Rotate to center of window
 			if(radio_viewport->get_active()) {
-				s->rotate(angle, 0, 0);
+				s->rotate(angle, viewport.window.medium);
 			}
 
 			// Rotate from it's center
 			if(radio_shape->get_active()) {
-				s->rotate(angle, s->medium);
+				const Matrix t0 = Transform::translate(-s->medium);
+				const Matrix r  = Transform::rotatez(angle);
+				const Matrix t1 = Transform::translate(s->medium);
+				s->transform(t0 * r * t1);
 			}
 
 			viewport.draw();

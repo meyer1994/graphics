@@ -7,9 +7,10 @@
 
 
 #include "point.h"
+#include "vector.h"
 #include "../transform.h"
 
-enum class Type2D { Dot, Line, Polygon, BezierCurve, Spline };
+enum class Type2D { Dot, Line, Polygon, BezierCurve, Spline, Polyhedron };
 
 class Shape {
 public:
@@ -116,7 +117,7 @@ public:
     std::vector<Point> window;
 
 protected:
-	const Point calculate_medium() {
+	virtual const Point calculate_medium() {
 		Vector m{0, 0, 0};
 		for (Point& p : real) {
 			m = m + p;
@@ -124,7 +125,6 @@ protected:
 		m = m / real.size();
 		return Point(m);
 	}
-
 };
 
 #endif  // SHAPE_H

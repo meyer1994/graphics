@@ -2,6 +2,7 @@
 #define CONTROL_VIEWPORT_H
 
 #include <string>
+#include <vector>
 #include <exception>
 
 #include <gtkmm/entry.h>
@@ -21,6 +22,9 @@ public:
 		b->get_widget("input_angle", input_angle);
 		b->get_widget("button_rotate_left", button_rotate_left);
 		b->get_widget("button_rotate_right", button_rotate_right);
+		b->get_widget("viewport_input_x", input_x);
+		b->get_widget("viewport_input_y", input_y);
+		b->get_widget("viewport_input_z", input_z);
 
 		// Movement controls
 		b->get_widget("button_up", button_up);
@@ -46,6 +50,9 @@ protected:
 	Gtk::Entry* input_angle = nullptr;
 	Gtk::Button* button_rotate_right = nullptr;
 	Gtk::Button* button_rotate_left = nullptr;
+	Gtk::Entry* input_x = nullptr;
+	Gtk::Entry* input_y = nullptr;
+	Gtk::Entry* input_z = nullptr;
 
 	// Movement controls
 	Gtk::Button* button_up = nullptr;
@@ -65,32 +72,28 @@ protected:
 			[this]() {
 				const double x = get_x_movement();
 				const double y = get_y_movement();
-				const double z = get_z_movement();
-				viewport.window.translate(x, y, z);
+				viewport.window.translate(x, y, 0);
 				viewport.draw();
 			});
 		button_down->signal_clicked().connect(
 			[this]() {
 				const double x = get_x_movement();
 				const double y = get_y_movement();
-				const double z = get_z_movement();
-				viewport.window.translate(-x, -y, z);
+				viewport.window.translate(-x, -y, 0);
 				viewport.draw();
 			});
 		button_left->signal_clicked().connect(
 			[this]() {
 				const double x = get_x_movement();
 				const double y = get_y_movement();
-				const double z = get_z_movement();
-				viewport.window.translate(-y, x, z);
+				viewport.window.translate(-y, x, 0);
 				viewport.draw();
 			});
 		button_right->signal_clicked().connect(
 			[this]() {
 				const double x = get_x_movement();
 				const double y = get_y_movement();
-				const double z = get_z_movement();
-				viewport.window.translate(y, -x, z);
+				viewport.window.translate(y, -x, 0);
 				viewport.draw();
 			});
 
@@ -112,17 +115,15 @@ protected:
 		button_rotate_left->signal_clicked().connect(
 			[this]() {
 				const double angle = get_angle_input();
-				const Point& medium = viewport.window.medium;
-				const Vector norm = viewport.window.normal();
-				viewport.window.rotate(-angle, norm);
+				const std::vector<double> axis = get_rotation_axis();
+				viewport.window.rotate(-angle, axis);
 				viewport.draw();
 			});
 		button_rotate_right->signal_clicked().connect(
 			[this]() {
 				const double angle = get_angle_input();
-				const Point& medium = viewport.window.medium;
-				const Vector norm = viewport.window.normal();
-				viewport.window.rotate(angle, norm);
+				const std::vector<double> axis = get_rotation_axis();
+				viewport.window.rotate(angle, axis);
 				viewport.draw();
 			});
 	}
@@ -151,10 +152,28 @@ protected:
 		return std::sin(y_angle * MATH_PI / 180) * move;
 	}
 
-	const double get_z_movement() {
-		const double move = get_move_input();
-		const double y_angle = viewport.window.y_angle();
-		return std::sin(y_angle * MATH_PI / 180) * move;
+	const std::vector<double> get_rotation_axis() {
+		// Defaults
+		double x = 0.0;
+		double y = 0.0;
+		double z = 1.0;
+
+		// Convert everything
+		try {
+			std::string x_input = input_x->get_text();
+			std::string y_input = input_y->get_text();
+			std::string z_input = input_z->get_text();
+			x = std::stod(x_input);
+			y = std::stod(y_input);
+			z = std::stod(z_input);
+			if (x == 0 && y == 0 && z == 0) {
+				return {0, 0, 1};
+			}
+		} catch (const std::exception& e) {
+			// Nothing
+		}
+
+		return {x, y, z};
 	}
 
 	const double get_zoom_input() {

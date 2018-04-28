@@ -70,14 +70,9 @@ protected:
 		cr->paint();
 
 		// Parallel projection matrix
-		const Matrix parallel_proj = window.parallel_matrix();
+		const Matrix m = window.parallel_matrix();
 
-		// Normalization matrix
-		const Matrix m = window.normalization_matrix();
-
-		// Transform window points
-		window.window = window.real;
-		window.w_transform(parallel_proj);
+		const Matrix trans = m;
 
 		// Changes color to red
 		cr->set_source_rgb(0.8, 0, 0);
@@ -87,9 +82,6 @@ protected:
 
 			// Copy real points to window
 			shape->window = shape->real;
-
-			// Parallel projection
-			shape->w_transform(parallel_proj);
 
 			// Normalize points
 			shape->w_transform(m);
@@ -109,9 +101,11 @@ protected:
 		// Change color to blue
 		cr->set_source_rgb(0, 1, 1);
 
-		// Draw clipping region for debugging
+		// Normalization matrix
+		const Matrix n = window.normalization_matrix();
+
 		window.window = window.real;
-		window.w_transform(m);
+		window.w_transform(n);
 		draw_shape_2d(cr, &window);
 		cr->stroke();
 

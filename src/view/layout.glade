@@ -416,7 +416,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label_xalign">0</property>
-                            <property name="shadow_type">none</property>
+                            <property name="shadow_type">out</property>
                             <child>
                               <object class="GtkAlignment" id="align_viewport_rotation">
                                 <property name="name">align_viewport_rotation</property>
@@ -424,13 +424,12 @@
                                 <property name="can_focus">False</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkBox" id="rotate_box">
-                                    <property name="name">rotate_box</property>
+                                  <object class="GtkGrid" id="grid_viewport_movement_rotation">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">center</property>
-                                    <property name="spacing">2</property>
+                                    <property name="row_spacing">2</property>
+                                    <property name="column_spacing">2</property>
+                                    <property name="column_homogeneous">True</property>
                                     <child>
                                       <object class="GtkButton" id="button_rotate_left">
                                         <property name="label" translatable="yes">Left</property>
@@ -440,9 +439,8 @@
                                         <property name="receives_default">True</property>
                                       </object>
                                       <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -454,9 +452,8 @@
                                         <property name="text" translatable="yes">10</property>
                                       </object>
                                       <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -468,9 +465,59 @@
                                         <property name="receives_default">True</property>
                                       </object>
                                       <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="viewport_movement_rotation_axis_label">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Axis</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="viewport_input_x">
+                                        <property name="name">viewport_input_x</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="width_chars">0</property>
+                                        <property name="text" translatable="yes">X</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="viewport_input_y">
+                                        <property name="name">viewport_input_y</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="width_chars">0</property>
+                                        <property name="text" translatable="yes">Y</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="viewport_input_z">
+                                        <property name="name">viewport_input_z</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="width_chars">0</property>
+                                        <property name="text" translatable="yes">Z</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -734,7 +781,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label_xalign">0</property>
-                            <property name="shadow_type">none</property>
+                            <property name="shadow_type">out</property>
                             <child>
                               <object class="GtkAlignment" id="align_shape_control_rotation">
                                 <property name="name">align_shape_control_rotation</property>
@@ -786,7 +833,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkRadioButton" id="radiobutton_shape_point_rotate">
-                                        <property name="label" translatable="yes">Coord</property>
+                                        <property name="label" translatable="yes">Axis</property>
                                         <property name="name">radiobutton_shape_point_rotate</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -874,6 +921,7 @@
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="top_attach">1</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -885,12 +933,9 @@
                                         <property name="receives_default">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">2</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">2</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -920,7 +965,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label_xalign">0</property>
-                            <property name="shadow_type">none</property>
+                            <property name="shadow_type">out</property>
                             <child>
                               <object class="GtkAlignment" id="align_shape_control_clipping">
                                 <property name="name">align_shape_control_clipping</property>
@@ -1026,7 +1071,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label_xalign">0</property>
-                <property name="shadow_type">none</property>
+                <property name="shadow_type">out</property>
                 <child>
                   <object class="GtkAlignment" id="align_shape_list">
                     <property name="name">align_shape_list</property>

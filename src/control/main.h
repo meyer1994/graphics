@@ -63,6 +63,7 @@ public:
         b->get_widget("combobox_shapes", c);
         c->append("poligono");
         c->append("curva");
+        c->append("cube");
 
         // Gets size to pass to window
         Gtk::DrawingArea* drawing_area = nullptr;
@@ -72,7 +73,18 @@ public:
         const double height = alloc.get_height();
 
         // Modes
-        window = Mode::Window(width, height);
+        // window = Mode::Window(std::vector<Point>{
+        // 	Point(0.5, 2.0, 2.5),
+        // 	Point(2.5, 2.0, 0.5),
+        // 	Point(3.0, 0.0, 1.0),
+        // 	Point(1.0, 0.0, 3.0)
+        // });
+        window = Mode::Window(std::vector<Point>{
+        	Point(0, 0, 0),
+        	Point(width, 0, 0),
+        	Point(width, height, 0),
+        	Point(0, height, 0)
+        });
         mode_viewport = new Mode::Viewport(window, shapes, *drawing_area);
 
         // Controllers

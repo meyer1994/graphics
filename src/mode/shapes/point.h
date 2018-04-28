@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <initializer_list>
 
 #include "vector.h"
 
@@ -12,9 +13,13 @@ class Point : public Vector {
 public:
     Point() : Vector{0, 0, 0} {}
 
-    explicit Point(Vector coords) : Vector(coords) {}
+    Point(Vector coords) : Vector(coords) {}
+
+    Point(std::initializer_list<double> d) : Vector(d) {}
 
     Point(double x, double y, double z = 0) : Vector{x, y, z} {}
+
+    virtual ~Point() {}
 
     void transform(const Matrix& m) {
         // Temporary point to store new values

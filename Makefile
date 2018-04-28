@@ -14,7 +14,6 @@ clean:
 
 debug:
 	g++ -o main main.cc -I $(GTKFLAGS) -g --std=c++11
-	gdb ./main
 
 valgrind:
 	make

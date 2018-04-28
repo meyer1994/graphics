@@ -4,10 +4,10 @@
 #include <cmath>
 
 #include <line.h>
-#include <polygon.h>
+#include <shape.h>
 #include <vector.h>
 
-bool is_equal(double x, double y) {
+bool compare(double x, double y) {
     const double e = 1e-5;
     return std::abs(x - y) <= e;
 }
@@ -18,7 +18,7 @@ bool compare(const Vector& a, const Vector& b) {
 	}
 
 	for (int i = 0; i < a.size(); i++) {
-		if (!is_equal(a[i], b[i])) {
+		if (!compare(a[i], b[i])) {
 			return false;
 		}
 	}
@@ -57,7 +57,10 @@ bool compare(const Matrix& m0, const Matrix& m1) {
 }
 
 bool compare(const Shape& s0, const Shape& s1) {
-	return compare(s0.real, s1.real) && compare(s0.medium , s1.medium);
+	const bool type = s0.type() == s1.type();
+	const bool real = compare(s0.real, s1.real);
+	const bool medium = compare(s0.medium, s1.medium);
+	return type && real && medium;
 }
 
 #endif // TEST_UTIL_H

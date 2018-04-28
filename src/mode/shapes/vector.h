@@ -98,9 +98,9 @@ public:
 			throw std::invalid_argument("Vectors should be of same size");
 		}
 
-		Vector result(size(), 0);
+		Vector result = *this;
 		for (int i = 0; i < size(); i++) {
-			result[i] = at(i) + v[i];
+			result[i] += v[i];
 		}
 		return result;
 	}
@@ -126,7 +126,7 @@ public:
 	}
 
 	const Vector operator*(const double d) const {
-		Vector v(*this);
+		Vector v = *this;
 		for (double& i : v) {
 			i *= d;
 		}
@@ -189,16 +189,16 @@ public:
 			throw std::invalid_argument("Matrices should be of same size");
 		}
 
-		Matrix r(size(), Vector(3, 0));
+		Matrix res = *this;
 		for (int i = 0; i < size(); i++) {
-			r[i] = m[i] + at(i);
+			res[i] = m[i] + at(i);
 		}
 
-		return r;
+		return res;
 	}
 
 	const Matrix operator-(const Matrix& m) const {
-		return (*this) + (m * -1);
+		return (*this) + (m * -1.0);
 	}
 
 	const Matrix operator-() const {
@@ -250,6 +250,10 @@ public:
 		return res;
 	}
 
+	const Matrix operator/(const double d) const {
+		return (*this) * (1.0 / d);
+	}
+
 	const bool operator==(const Matrix& m) const {
 		if (size() != m.size()) {
 			return false;
@@ -276,6 +280,14 @@ public:
 		}
 		const Vector& last = back();
 		return str + last.to_string() + ")";
+	}
+
+	static const Matrix identity(const int dim) {
+		Matrix id(dim, Vector(dim, 0));
+		for (int i = 0; i < dim; i++) {
+			id[i][i] = 1;
+		}
+		return id;
 	}
 };
 
