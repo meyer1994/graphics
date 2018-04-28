@@ -99,8 +99,12 @@ protected:
 		// Change color to blue
 		cr->set_source_rgb(0, 1, 1);
 
-		window.window = window.real;
-		window.w_transform(m);
+		window.window = {
+			{-0.9, -0.9, 0},
+			{ 0.9, -0.9, 0},
+			{ 0.9,  0.9, 0},
+			{-0.9,  0.9, 0}
+		};
 		draw_shape_2d(cr, &window);
 		cr->stroke();
 

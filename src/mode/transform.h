@@ -83,8 +83,8 @@ const Matrix rotate(const double angle, const Vector& v) {
 	// Convert to radians
 	const double radian = angle * (MATH_PI / 180.0);
 
-	const double angleY = Vector({0, v[1], v[2]}).angle({0, 0, 1});
-	const double angleX = Vector({v[0], 0, v[2]}).angle({0, 0, 1});
+	const double angleY = Vector::angle(v, {0, 1, 0});
+	const double angleX = Vector::angle(v, {1, 0, 0});
 
 	const Matrix t0  = translate(-v);
 	const Matrix rx0 = rotatex(angleY);
