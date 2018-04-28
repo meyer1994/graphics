@@ -187,6 +187,61 @@ void test_matrix() {
 	assert(nequals1 != nequals2);
 	std::cout << "[Matrix]\tOK - Operator !=" << std::endl;
 
+	// Sum
+	const Matrix plus0{
+		{5, 5, 5},
+		{5, 5, 5},
+		{5, 5, 5}
+	};
+	const Matrix plus1{
+		{10, 10, 10},
+		{10, 10, 10},
+		{10, 10, 10}
+	};
+	const Matrix plus2{
+		{15, 15, 15},
+		{15, 15, 15},
+		{15, 15, 15}
+	};
+	assert(plus0 + plus1 == plus2);
+	assert(plus1 + plus0 == plus2);
+	assert(plus0 + plus0 + plus0 == plus2);
+	assert(plus0 + plus0 == plus1);
+	std::cout << "[Matrix]\tOK - Operator +" << std::endl;
+
+	// Minus
+	// Using the matrices from above test
+	assert(plus2 - plus1 == plus0);
+	assert(plus1 - plus0 == plus0);
+	assert(plus2 - plus0 - plus0 == plus0);
+	assert(plus2 - plus0 == plus1);
+	std::cout << "[Matrix]\tOK - Operator -" << std::endl;
+
+	// Inverse
+	// Again, using the matrices declared in the operator + test
+	const Matrix inver0{
+		{-5, -5, -5},
+		{-5, -5, -5},
+		{-5, -5, -5}
+	};
+	const Matrix inver1{
+		{-10, -10, -10},
+		{-10, -10, -10},
+		{-10, -10, -10}
+	};
+	const Matrix inver2{
+		{-15, -15, -15},
+		{-15, -15, -15},
+		{-15, -15, -15}
+	};
+	assert(inver0 == -plus0);
+	assert(-inver0 == plus0);
+	assert(inver1 == -plus1);
+	assert(-inver1 == plus1);
+	assert(inver2 == -plus2);
+	assert(-inver2 == plus2);
+	std::cout << "[Matrix]\tOK - Operator - (inverse)" << std::endl;
+
 
 	// Scalar
 	const Matrix scalar0{
@@ -521,8 +576,9 @@ int main() {
 	test_matrix();
 
 	test_point();
-	test_line();
+
 	test_dot();
+	test_line();
 	test_polygon();
 	test_polyhedron();
 
