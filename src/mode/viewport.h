@@ -72,8 +72,6 @@ protected:
 		// Parallel projection matrix
 		const Matrix m = window.parallel_matrix();
 
-		const Matrix trans = m;
-
 		// Changes color to red
 		cr->set_source_rgb(0.8, 0, 0);
 
@@ -101,11 +99,8 @@ protected:
 		// Change color to blue
 		cr->set_source_rgb(0, 1, 1);
 
-		// Normalization matrix
-		const Matrix n = window.normalization_matrix();
-
 		window.window = window.real;
-		window.w_transform(n);
+		window.w_transform(m);
 		draw_shape_2d(cr, &window);
 		cr->stroke();
 

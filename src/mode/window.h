@@ -45,7 +45,6 @@ public:
 		const Point b = real[1];
 		const Point c = real[2];
 		return -Vector::cross(b - a, c - a) / 2;
-
     }
 
     const Matrix parallel_matrix() const {
@@ -66,7 +65,6 @@ public:
         x_ratio *= 0.9;
         y_ratio *= 0.9;
 
-
 		// Translate
 		const Matrix tran = Transform::translate(-medium);
 		const Matrix rotx = Transform::rotatex(tetax);
@@ -77,26 +75,6 @@ public:
 		return tran * rotx * roty * scale;
     }
 
-    const Matrix normalization_matrix() const {
-        // Translation matrix
-        const Matrix translate = Transform::translate(-medium);
-
-        // Rotation matrix
-        const Matrix rotate = Transform::rotatey(y_angle());
-
-        // Scale matrix
-        double x_ratio = 1.0 / (width() / 2.0);
-        double y_ratio = 1.0 / (height() / 2.0);
-
-        // Just to draw the shape for easier clipping validation
-        x_ratio *= 0.9;
-        y_ratio *= 0.9;
-
-        const Matrix scale = Transform::scale(x_ratio, y_ratio, 1.0);
-
-        // Combine transformations
-        return translate * rotate * scale;
-    }
 };
 
 }  // namespace Mode
