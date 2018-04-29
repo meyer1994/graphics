@@ -18,7 +18,7 @@ namespace Mode {
 
 class Viewport {
 public:
-	Viewport(Mode::Window& window, std::vector<Shape*>& shapes, Gtk::DrawingArea& drawing_area)
+	Viewport(Mode::Window& window, std::vector<BaseShape*>& shapes, Gtk::DrawingArea& drawing_area)
 	: window(window),
 	  shapes(shapes),
 	  clipping(window),
@@ -58,7 +58,7 @@ public:
 	}
 
 	Mode::Window& window;
-	std::vector<Shape*>& shapes;
+	std::vector<BaseShape*>& shapes;
 
 	static const int COHEN_SUTHERLAND = 0;
 	static const int LIANG_BARSKY = 1;
@@ -76,44 +76,51 @@ protected:
 		cr->set_source_rgb(0.8, 0, 0);
 
 		// Draw all shapes
-		for (Shape* shape : shapes) {
+		for (BaseShape* shape : shapes) {
 
-			// Copy real points to window
-			shape->window = shape->real;
-
-			// Normalize points
+			// Normalize and project points
 			shape->w_transform(m);
 
 			// Clipping
-			if (clipping_active) {
-				clipper(shape);
-			}
+			clipper(shape);
 
 			// Draw it
-			if (!shape->window.empty()) {
-				draw_shape_2d(cr, shape);
-			}
+			draw_shape(cr, shape);
+
 			cr->stroke();
 		}
 
 		// Change color to blue
 		cr->set_source_rgb(0, 1, 1);
-
-		window.window = {
-			{-0.9, -0.9, 0},
-			{ 0.9, -0.9, 0},
-			{ 0.9,  0.9, 0},
-			{-0.9,  0.9, 0}
-		};
 		draw_shape_2d(cr, &window);
 		cr->stroke();
 
 		return true;
 	}
 
-	void draw_shape_2d(const Cairo::RefPtr<Cairo::Context>& cr, const Shape* shape) {
+	void draw_shape(const Cairo::RefPtr<Cairo::Context>& cr, BaseShape* shape) {
+		// Common shape
+		Shape* s = dynamic_cast<Shape*>(shape);
+		if (s != nullptr) {
+			if (!s->window.empty()) {
+				draw_shape_2d(cr, s);
+			}
+			return;
+		}
+
+		// Polyhedron type
+		Polyhedron* p = dynamic_cast<Polyhedron*>(shape);
+		if (p != nullptr) {
+			if (!p->faces.empty()) {
+				draw_shape_3d(cr, p);
+			}
+			return;
+		}
+	}
+
+	void draw_shape_2d(const Cairo::RefPtr<Cairo::Context>& cr, Shape* shape) {
 		// Dot case
-		if (shape->type() == Type2D::Dot) {
+		if (shape->type() == ShapeType::Dot) {
 			const Point& p = shape->window.front();
 			const Cairo::LineCap cap = cr->get_line_cap();
 			cr->set_line_cap(Cairo::LINE_CAP_ROUND);
@@ -134,13 +141,19 @@ protected:
 		}
 
 		// Polygon, close drawing
-		if (shape->type() == Type2D::Polygon) {
+		if (shape->type() == ShapeType::Polygon) {
 			cr->close_path();
 
 			// Fill it
 			if (shape->filled) {
 				cr->fill();
 			}
+		}
+	}
+
+	void draw_shape_3d(const Cairo::RefPtr<Cairo::Context>& cr, Polyhedron* shape) {
+		for (Polygon& f : shape->faces) {
+			draw_shape_2d(cr, dynamic_cast<Shape*>(&f));
 		}
 	}
 
@@ -154,13 +167,22 @@ protected:
 		return Point(x, y);
 	}
 
-	void clipper(Shape* shape) {
-		Type2D type = shape->type();
+	void clipper(BaseShape* s) {
+		if (!clipping_active) {
+			return;
+		}
+
+		ShapeType type = s->type();
+		Shape* shape = nullptr;
+		if (type != ShapeType::Polyhedron) {
+			shape = dynamic_cast<Shape*>(s);
+		}
+
 		switch(type) {
-			case Type2D::Dot:
+			case ShapeType::Dot:
 				return clipping.dot(shape);
 
-			case Type2D::Line:
+			case ShapeType::Line:
 			{
 				if (line_clipping_method == 0) {
 					return clipping.cohen_sutherland(shape);
@@ -168,12 +190,21 @@ protected:
 				return clipping.liang_barsky(shape);
 			}
 
-			case Type2D::BezierCurve:
-			case Type2D::Spline:
+			case ShapeType::BezierCurve:
+			case ShapeType::Spline:
 				return clipping.curve(shape);
 
-			default:
+			case ShapeType::Polygon:
 				return clipping.sutherland_hodgman(shape);
+
+			case ShapeType::Polyhedron:
+			{	
+				Polyhedron* p = dynamic_cast<Polyhedron*>(s);
+				for (Polygon& f : p->faces) {
+					clipping.sutherland_hodgman(&f);
+				}
+				return;
+			}
 		}
 	}
 

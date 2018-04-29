@@ -29,7 +29,7 @@ public:
 	 * @param s The vector where to append the shapes to, or get the info to
 	 * write them to the disk.
 	 */
-	explicit ObjDescriptor(std::vector<Shape*>& s) : shapes(s) {}
+	explicit ObjDescriptor(std::vector<BaseShape*>& s) : shapes(s) {}
 
 	virtual ~ObjDescriptor() {}
 
@@ -99,7 +99,7 @@ public:
 		}
 	}
 
-	std::vector<Shape*>& shapes;
+	std::vector<BaseShape*>& shapes;
 
 protected:
 	std::string points_to_obj(const Shape& shape) {

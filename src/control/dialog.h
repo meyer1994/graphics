@@ -21,6 +21,7 @@
 #include "../mode/shapes/point.h"
 #include "../mode/shapes/shape.h"
 #include "../mode/shapes/polygon.h"
+#include "../mode/shapes/base_shape.h"
 #include "../mode/shapes/bezier_curve.h"
 #include "../mode/viewport.h"
 

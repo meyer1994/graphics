@@ -9,10 +9,13 @@
 #include <gtkmm/application.h>
 #include <gtkmm/comboboxtext.h>
 
-#include "../mode/shapes/polygon.h"
 #include "../mode/shapes/shape.h"
-#include "../mode/shapes/bezier_curve.h"
 #include "../mode/shapes/spline.h"
+#include "../mode/shapes/polygon.h"
+#include "../mode/shapes/polyhedron.h"
+#include "../mode/shapes/base_shape.h"
+#include "../mode/shapes/bezier_curve.h"
+
 #include "../mode/window.h"
 #include "../mode/viewport.h"
 
@@ -57,6 +60,32 @@ public:
         };
         shapes.push_back(bc);
 
+        // Dummy polyhedron
+        Polyhedron* poly = new Polyhedron{
+            // Base
+            Polygon{
+                Point(0, 0, 0),
+                Point(100, 0, 0),
+                Point(0, 0, 100)
+            },
+            // Sides
+            Polygon{
+                Point(0, 0, 0),
+                Point(100, 0, 0),
+                Point(0, 100, 0),
+            },
+            Polygon{
+                Point(0, 0, 0),
+                Point(0, 0, 100),
+                Point(0, 100, 0)
+            },
+            Polygon{
+                Point(100, 0, 0),
+                Point(0, 0, 100),
+                Point(0, 100, 0)
+            }
+        };
+        shapes.push_back(poly);
 
         // Add text to combo box
         Gtk::ComboBoxText* c = nullptr;
@@ -107,7 +136,7 @@ public:
         delete mode_viewport;
 
         // Clear shapes
-        for (Shape* s : shapes) {
+        for (BaseShape* s : shapes) {
             delete s;
         }
     }
@@ -118,7 +147,7 @@ public:
 protected:
     // Mode
     Mode::Viewport* mode_viewport = nullptr;
-    std::vector<Shape*> shapes;
+    std::vector<BaseShape*> shapes;
     Mode::Window window;
 
     // Controllers

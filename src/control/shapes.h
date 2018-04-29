@@ -177,7 +177,7 @@ protected:
 			});
 	}
 
-	Shape* get_shape() {
+	BaseShape* get_shape() {
 		int index = combobox_shapes->get_active_row_number();
 		// get_active_row_number returns -1 when there is nothing selected
 		if (index == -1) {
@@ -256,7 +256,7 @@ protected:
 
 	void move(const double x, const double y, const double z) {
 		try {
-			Shape* s = get_shape();
+			BaseShape* s = get_shape();
 			s->translate(x, y, z);
 		} catch(std::exception& e) {
 			// nothing
@@ -265,7 +265,7 @@ protected:
 
 	void inflate(const double ratio) {
 		try {
-			Shape* s = get_shape();
+			BaseShape* s = get_shape();
 			s->inflate(ratio);
 		} catch(std::exception& e) {
 			return;
@@ -274,7 +274,7 @@ protected:
 
 	void rotate(const double angle) {
 		try {
-			Shape* s = get_shape();
+			BaseShape* s = get_shape();
 
 			// Rotate to any point
 			if(radio_coord->get_active()) {

@@ -51,8 +51,8 @@ public:
 		return str;
 	}
 
-	const Type2D type() const override {
-		return Type2D::Spline;
+	const ShapeType type() const override {
+		return ShapeType::Spline;
 	}
 
 	double t = 0.1;

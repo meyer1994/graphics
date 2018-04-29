@@ -34,8 +34,8 @@ public:
 		return str;
 	}
 
-	virtual const Type2D type() const override {
-		return Type2D::Line;
+	virtual const ShapeType type() const override {
+		return ShapeType::Line;
 	}
 };
 

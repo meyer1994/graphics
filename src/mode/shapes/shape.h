@@ -5,30 +5,29 @@
 #include <vector>
 #include <initializer_list>
 
-
 #include "point.h"
 #include "vector.h"
+#include "base_shape.h"
 #include "../transform.h"
 
-enum class Type2D { Dot, Line, Polygon, BezierCurve, Spline, Polyhedron };
 
-class Shape {
+class Shape : public BaseShape {
 public:
-    Shape() : name("shape") {}
+    Shape() : BaseShape("shape") {}
 
-    Shape(std::string name) : name(name) {}
+    Shape(std::string name) : BaseShape(name) {}
 
     Shape(std::initializer_list<Point> d)
-    : real(d),
-      name("shape") {
+    : BaseShape("shape"),
+      real(d) {
       	medium = calculate_medium();
-      }
+    }
 
     Shape(std::vector<Point> p, std::string name = "shape")
-    : real(p),
-      name(name) {
+    : BaseShape(name),
+      real(p) {
       	medium = calculate_medium();
-      }
+    }
 
     virtual ~Shape() {}
 
@@ -72,6 +71,7 @@ public:
     }
 
     virtual void w_transform(const Matrix& m) {
+    	window = real;
     	for (Point& p : window) {
     		p.transform(m);
     	}
@@ -107,12 +107,8 @@ public:
 
     virtual const std::string to_string() const = 0;
 
-    virtual const Type2D type() const = 0;
-
-    std::string name;
     bool filled = false;
 
-    Point medium;
     std::vector<Point> real;
     std::vector<Point> window;
 
