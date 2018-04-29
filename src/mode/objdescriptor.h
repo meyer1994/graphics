@@ -1,6 +1,7 @@
 #ifndef OBJ_DESCRIPTOR_H
 #define OBJ_DESCRIPTOR_H
 
+#include <regex>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -11,16 +12,14 @@
 #include "shapes/line.h"
 #include "shapes/shape.h"
 #include "shapes/polygon.h"
+#include "shapes/polyhedron.h"
+
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
 
 namespace Mode {
 
-/**
- * @brief Obj descriptor class.
- * 
- * @details This class is used to write and read files in the form of .obj. The
- * file stored in this pattern can be loaded into the software for use.
- * @return [description]
- */
+
 class ObjDescriptor {
 public:
 	/**
@@ -42,30 +41,46 @@ public:
 	 * @param fname File name to write to.
 	 */
 	void write(std::string fname) {
-		std::ofstream file(fname);
-		int line_counter = 1;
+		// std::ofstream file(fname);
+		// int line_counter = 1;
 
-		std::string points;
-		std::string objects;
+		// std::string points;
+		// std::string objects;
 
-		for (Shape* s : shapes) {
-			points += points_to_obj(*s);
+		// for (BaseShape* s : shapes) {
+		// 	// Get object points
+		// 	points += points_to_obj(s);
 
-			objects += "o meu_objeto" + std::to_string(line_counter);
-			objects += "\n";
+		// 	// Get name
+		// 	objects += "o " + s->name;
+		// 	objects += "\n";
 
-			objects += get_type(*s);
-			for (int i = 0; i < s->size(); i++) {
-				objects += " " + std::to_string(line_counter + i);
-			}
-			line_counter += s->size();
-			objects += "\n";
-		}
+		// 	// Get type
+		// 	objects += get_type(s);
 
-		file << points;
-		file << objects;
+		// 	// Polyhedron
+		// 	if (s->type() == ShapeType::Polyhedron) {
+		// 		const Polyhedron* poly = dynamic_cast<const Polyhedron*>(s);
+		// 		for (const Polygon& p : s->faces) {
+		// 			for (const Point& f : p.real) {
+		// 				objects += " " + std::to_string(line_counter + i);
+		// 			}
+				
+		// 		}			
 
-		file.close();
+		// 	// Regular shape
+		// 	} else {
+				
+		// 	}
+
+		// 	line_counter += s->size();
+		// 	objects += "\n";
+		// }
+
+		// file << points;
+		// file << objects;
+
+		// file.close();
 	}
 
 	/**
@@ -77,155 +92,207 @@ public:
 	 * @param fname File name to read from.
 	 */
 	void read(std::string fname) {
-		std::ifstream file(fname);
-		std::stringstream buffer;
-		buffer << file.rdbuf();
+		std::string inputfile = fname;
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes_tiny;
+		std::vector<tinyobj::material_t> materials;
 
-		std::string contents = buffer.str();
-		std::vector<Point> points;
+		std::string err;
+		bool ret = tinyobj::LoadObj(&attrib, &shapes_tiny, &materials, &err, inputfile.c_str());
 
-		int index = 0;
-		while (index < contents.size()) {
-			char c = contents[index];
+		// `err` may contain warning message.
+		if (!err.empty()) { 
+			std::cerr << err << std::endl;
+		}
 
-			// Points
-			if (c == 'v') {
-				points.push_back(get_point(contents, index));
+		if (!ret) {
+			return;
+		}
 
-			// Objects
-			} else if (c == 'o') {
-				shapes.push_back(get_shape(contents, points, index));
+		// Loop over shapes
+		for (size_t s = 0; s < shapes_tiny.size(); s++) {
+			const std::string shape_name = shapes_tiny[s].name;
+			std::vector<Polygon> polys;
+
+			// Loop over faces(polygon)
+			size_t index_offset = 0;
+			for (size_t f = 0; f < shapes_tiny[s].mesh.num_face_vertices.size(); f++) {
+				int fv = shapes_tiny[s].mesh.num_face_vertices[f];
+
+				std::vector<Point> points;
+
+				// Loop over vertices in the face.
+				for (size_t v = 0; v < fv; v++) {
+					// access to vertex
+					tinyobj::index_t idx = shapes_tiny[s].mesh.indices[index_offset + v];
+					tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
+					tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
+					tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
+
+					points.push_back(Point{vx, vy, vz});
+				}
+
+				polys.push_back(Polygon(points));
+				index_offset += fv;
 			}
+			
+			// Add to display file
+			shapes.push_back(new Polyhedron(polys, shape_name));
 		}
 	}
+
 
 	std::vector<BaseShape*>& shapes;
 
 protected:
-	std::string points_to_obj(const Shape& shape) {
-		std::string str;
-		for (const Point& p : shape.real) {
-			str += "v";
-			for (double d : p) {
-				str += " " + std::to_string(d);
-			}
-			str += "\n";
-		}
-		return str;
-	}
 
-	std::string get_type(const Shape& shape) {
-		int size = shape.size();
-		if (size == 1) {
-			return "p";
-		}
+	// const std::string get_points() {
+	// 	int line = 1;
+	// 	std::string points;
+	// 	for (const BaseShape* base : shapes) {
+	// 		points += points_to_obj(base);
+	// 	}
 
-		return "l";
-	}
+	// 	return points;
+	// }
 
-	Point get_point(const std::string& line, int& index) {
-		// Goes to first char of values
-		index += 2;
+	// const std::string points_to_obj(const BaseShape* s) {
+	// 	std::string str;
 
-		std::vector<double> values;
-		std::string buffer;
+	// 	// Regular shapes
+	// 	const Shape* shape = dynamic_cast<const Shape*>(s);
+	// 	if (shape != nullptr) {
+	// 		for (const Point& p : shape->real) {
+	// 			str += "v";
+	// 			for (double d : p) {
+	// 				str += " " + std::to_string(d);
+	// 			}
+	// 			str += "\n";
+	// 		}
+	// 		return str;
+	// 	}
 
-		while (index < line.size()) {
-			char c = line[index];
+	// 	// Polyhedron
+	// 	const Polyhedron* poly = dynamic_cast<const Polyhedron*>(s);
+	// 	if (poly != nullptr) {
+	// 		for (const Shape& sh : poly->faces) {
+	// 			str += points_to_obj(&sh);
+	// 		}
+	// 		return str;
+	// 	}
 
-			// End of this point
-			if (c == '\n') {
-				break;
-			}
+	// 	return "";
+	// }
 
-			// End of value
-			if (c == ' ') {
-				values.push_back(std::stod(buffer));
-				buffer.clear();
-				index++;
-				continue;
-			}
+	// const std::string get_type(const BaseShape& shape) {
+	// 	const ShapeType type == shape->type();
+	// 	if (type == ShapeType::Dot) {
+	// 		return "p";
+	// 	}
+	// 	return "l";
+	// }
 
-			buffer += c;
+	// Point get_point(const std::string& line, int& index) {
+	// 	// Goes to first char of values
+	// 	index += 2;
 
-			// Next char
-			index++;
-		}
+	// 	std::vector<double> values;
+	// 	std::string buffer;
 
-		// Append last value and return point
-		index++;
-		values.push_back(std::stod(buffer));
-		return Point(values);
-	}
+	// 	while (index < line.size()) {
+	// 		char c = line[index];
 
-	Shape* get_shape(const std::string& contents,
-					const std::vector<Point>& p,
-					int& index) {
-		// Goes to first char of object name
-		index += 1;
+	// 		// End of this point
+	// 		if (c == '\n') {
+	// 			break;
+	// 		}
 
-		// Gets name
-		std::string name;
-		while (index < contents.size()) {
-			char c = contents[index];
+	// 		// End of value
+	// 		if (c == ' ') {
+	// 			values.push_back(std::stod(buffer));
+	// 			buffer.clear();
+	// 			index++;
+	// 			continue;
+	// 		}
 
-			// End of name
-			if (c == '\n') {
-				break;
-			}
+	// 		buffer += c;
 
-			name += c;
-			index++;
-		}
+	// 		// Next char
+	// 		index++;
+	// 	}
 
-		// Next line
-		index += 3;
+	// 	// Append last value and return point
+	// 	index++;
+	// 	values.push_back(std::stod(buffer));
+	// 	return Point(values);
+	// }
 
-		std::vector<Point> points;
-		std::string buffer;
-		while (index < contents.size()) {
-			char c = contents[index];
+	// Shape* get_shape(const std::string& contents, const std::vector<Point>& p, int& index) {
+	// 	// Goes to first char of object name
+	// 	index += 1;
 
-			// End of point list
-			if (c == '\n') {
-				break;
-			}
+	// 	// Gets name
+	// 	std::string name;
+	// 	while (index < contents.size()) {
+	// 		char c = contents[index];
 
-			if (c == ' ') {
-				int point_i = std::stoi(buffer);
-				buffer.clear();
-				points.push_back(p[point_i - 1]);
-				index++;
-				continue;
-			}
+	// 		// End of name
+	// 		if (c == '\n') {
+	// 			break;
+	// 		}
 
-			buffer += c;
+	// 		name += c;
+	// 		index++;
+	// 	}
 
-			index++;
-		}
+	// 	// Next line
+	// 	index += 3;
 
-		index++;
-		int point_i = std::stoi(buffer);
-		points.push_back(p[point_i - 1]);
+	// 	std::vector<Point> points;
+	// 	std::string buffer;
+	// 	while (index < contents.size()) {
+	// 		char c = contents[index];
 
-		int size = points.size();
-		switch (size) {
-			case 1:
-			{
-				return new Dot(points[0], "dot");
-			}
-			case 2:
-			{	
-				Point a = points[0];
-				Point b = points[1];
-				return new Line(a, b);
-			}
-			default:
-			{
-				return new Polygon(points);
-			}
-		}
-	}
+	// 		// End of point list
+	// 		if (c == '\n') {
+	// 			break;
+	// 		}
+
+	// 		if (c == ' ') {
+	// 			int point_i = std::stoi(buffer);
+	// 			buffer.clear();
+	// 			points.push_back(p[point_i - 1]);
+	// 			index++;
+	// 			continue;
+	// 		}
+
+	// 		buffer += c;
+
+	// 		index++;
+	// 	}
+
+	// 	index++;
+	// 	int point_i = std::stoi(buffer);
+	// 	points.push_back(p[point_i - 1]);
+
+	// 	int size = points.size();
+	// 	switch (size) {
+	// 		case 1:
+	// 		{
+	// 			return new Dot(points[0], "dot");
+	// 		}
+	// 		case 2:
+	// 		{	
+	// 			Point a = points[0];
+	// 			Point b = points[1];
+	// 			return new Line(a, b);
+	// 		}
+	// 		default:
+	// 		{
+	// 			return new Polygon(points);
+	// 		}
+	// 	}
+	// }
 };
 
 }  // namespace Mode

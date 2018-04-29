@@ -22,7 +22,7 @@
 #include "dialog.h"
 #include "shapes.h"
 #include "viewport.h"
-// #include "filechooser.h"
+#include "filechooser.h"
 
 namespace Control {
 
@@ -120,7 +120,7 @@ public:
         control_viewport = new Control::Viewport(b, *mode_viewport);
         control_dialog = new Control::Dialog(b, *mode_viewport);
         control_shapes = new Control::Shapes(b, *mode_viewport);
-        // control_filechooser = new Control::FileChooser(b, *mode_viewport);
+        control_filechooser = new Control::FileChooser(b, *mode_viewport);
     }
 
     virtual ~Main() {
@@ -130,7 +130,7 @@ public:
         // Control
         delete control_viewport;
         delete control_dialog;
-        // delete control_filechooser;
+        delete control_filechooser;
 
         // Mode
         delete mode_viewport;
@@ -154,7 +154,7 @@ protected:
     Control::Viewport* control_viewport = nullptr;
     Control::Dialog* control_dialog = nullptr;
     Control::Shapes* control_shapes = nullptr;
-    // Control::FileChooser* control_filechooser = nullptr;
+    Control::FileChooser* control_filechooser = nullptr;
 };
 
 } // namespace Control

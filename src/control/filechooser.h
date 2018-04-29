@@ -81,7 +81,7 @@ protected:
                 descriptor.read(filename);
                 combobox_shapes->remove_all();
 
-                for (Shape* s : viewport.shapes) {
+                for (BaseShape* s : viewport.shapes) {
                     combobox_shapes->append(s->name);
                 }
 
