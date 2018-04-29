@@ -119,6 +119,7 @@ protected:
 	}
 
 	void draw_shape_2d(const Cairo::RefPtr<Cairo::Context>& cr, Shape* shape) {
+
 		// Dot case
 		if (shape->type() == ShapeType::Dot) {
 			const Point& p = shape->window.front();

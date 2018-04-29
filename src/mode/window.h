@@ -47,6 +47,16 @@ public:
 		return -Vector::cross(b - a, c - a) / 2;
     }
 
+    const Matrix perspective_matrix() const {
+        const double d = Point::distance(proj, medium);
+        return Matrix{
+            {1.0, 0.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0, 0.0},
+            {0.0, 0.0, 1.0, 0.0},
+            {0.0, 0.0, 1.0/d, 0.0}
+        };
+    }
+
     const Matrix parallel_matrix() const {
 		const Vector norm = normal();
 
@@ -65,16 +75,15 @@ public:
         x_ratio *= 0.9;
         y_ratio *= 0.9;
 
-		// Translate
-		const Matrix tran = Transform::translate(-medium);
-		const Matrix rotx = Transform::rotatex(tetax);
-		const Matrix roty = Transform::rotatey(tetay);
+        const Matrix tran = Transform::translate(-medium);
+        const Matrix rotx = Transform::rotatex(tetax);
+        const Matrix roty = Transform::rotatey(tetay);
         const Matrix scale = Transform::scale(x_ratio, y_ratio, 1.0);
 
-
-		return tran * rotx * roty * scale;
+		return tran * rotx * roty* scale;
     }
 
+    Point proj{medium[0], medium[1], 100, 1};
 };
 
 }  // namespace Mode

@@ -11,22 +11,19 @@
 
 class Point : public Vector {
 public:
-    Point() : Vector{0, 0, 0} {}
+    Point() : Vector{0, 0, 0, 1} {}
 
     Point(Vector coords) : Vector(coords) {}
 
     Point(std::initializer_list<double> d) : Vector(d) {}
 
-    Point(double x, double y, double z = 0) : Vector{x, y, z} {}
+    Point(double x, double y, double z = 0, double w = 1) : Vector{x, y, z, w} {}
 
     virtual ~Point() {}
 
     void transform(const Matrix& m) {
         // Temporary point to store new values
-        Vector temp{0, 0, 0, 1};
-
-        // Add one to end
-        push_back(1);
+        Vector temp(size(), 0);
 
         // Apply Transform matrix to point (multiply the matrices)
         for (int i = 0; i < size(); i++) {
@@ -36,11 +33,7 @@ public:
         }
 
         // Copy new values to this point
-        *this = Point(temp);
-
-        // Remove 1 from end
-        pop_back();
-        shrink_to_fit();
+        *this = (temp / back());
     }
 
     static const double distance(const Point& a, const Point& b) {

@@ -78,10 +78,6 @@ public:
 			throw std::invalid_argument("Vectors should be of same size");
 		}
 
-		if (v1.size() != 3) {
-			throw std::invalid_argument("Vectors should have size 3");
-		}
-
 		Vector result(3, 0);
 		result[0] =   (v0[1] * v1[2]) - (v0[2] * v1[1]);
 		result[1] = -((v0[0] * v1[2]) - (v0[2] * v1[0]));

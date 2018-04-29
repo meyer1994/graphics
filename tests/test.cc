@@ -328,18 +328,18 @@ void test_matrix() {
 
 void test_point() {
 	// Constructors
-	const Point constr0{1, 2, 3};
-	const Point constr1(1, 2, 3);
-	const Point constr2({1, 2, 3});
+	const Point constr0{1, 2, 3, 1};
+	const Point constr1(1, 2, 3, 1);
+	const Point constr2({1, 2, 3, 1});
 	const Point constr3;
-	assert(constr0.size() == 3);
-	assert(constr1.size() == 3);
-	assert(constr2.size() == 3);
-	assert(constr3.size() == 3);
+	assert(constr0.size() == 4);
+	assert(constr1.size() == 4);
+	assert(constr2.size() == 4);
+	assert(constr3.size() == 4);
 	std::cout << "[Point]\t\tOK - Constructors" << std::endl;
 
 	// Transform
-	Point trans0{10, 0, 0};
+	Point trans0(10, 0, 0);
 	const Matrix trans1 = Transform::scale(2, 2, 2);
 	const Matrix trans2 = Transform::rotatey(90);
 	const Matrix trans3 = Transform::translate(0, 0, 20);
@@ -352,9 +352,9 @@ void test_point() {
 	std::cout << "[Point]\t\tOK - Transform" << std::endl;
 
 	// Distance
-	const Point dist0{12, -322, 11};
-	const Point dist1{1, 65, 0};
-	const Point dist2{1, 1, 0};
+	const Point dist0(12, -322, 11);
+	const Point dist1(1, 65, 0);
+	const Point dist2(1, 1, 0);
 	// Result
 	const double dist01_res = Point::distance(dist1, dist0);
 	assert(compare(dist0.distance(dist1), std::sqrt(150011)));
@@ -367,8 +367,8 @@ void test_point() {
 void test_dot() {
 	// Constructors
 	const Dot constr0;
-	const Dot constr1 = Dot(1, 2, 3);
-	const Dot constr2 = Dot(Point(1, 2, 3));
+	const Dot constr1(1, 2, 3);
+	const Dot constr2(Point(1, 2, 3));
 	assert(constr0.real.size() == 1);
 	assert(constr1.real.size() == 1);
 	assert(constr2.real.size() == 1);
@@ -468,61 +468,113 @@ void test_line() {
 }
 
 void test_polygon() {
-	std::vector<Point> points{
+	// Constructors
+	const Polygon constr0;
+	const Polygon constr1(std::vector<Point>{
+		Point(0, 0, 0),
+		Point(100, 0, 100),
+		Point(100, 100, 100)
+	});
+	const Polygon constr2{
 		Point(0, 0, 0),
 		Point(100, 0, 100),
 		Point(100, 100, 100)
 	};
+	assert(constr0.real.size() == 0);
+	assert(constr1.real.size() == 3);
+	assert(constr2.real.size() == 3);
+	std::cout << "[Polygon]\tOK - Constructors" << std::endl;
+
 
 	// Medium test
-	Polygon m(points);
-	Point med(200.0, 100.0, 200.0);
-	assert(compare(m.medium, med * (1.0 / 3.0)));
+	const Polygon med0{
+		Point(100, 100, 100),
+		Point(200, 200, 200),
+		Point(0, 0, 0)
+	};
+	const Polygon med1{
+		Point(1, 0),
+		Point(1, 0),
+		Point(1, 0)
+	};
+	const Polygon med2{
+		Point(10, 10, 10),
+		Point(10, 10, 10),
+		Point(10, 10, 10),
+		Point(10, 10, 10),
+		Point(10, 10, 10),
+		Point(-50, -50, -50)
+	};
+	assert(compare(med0.medium, Point(100, 100, 100)));
+	assert(compare(med1.medium, Point(1, 0)));
+	assert(compare(med2.medium, Point(0, 0, 0)));
 	std::cout << "[Polygon]\tOK - Medium" << std::endl;
 
 	// Rotate test
-	Polygon r(points);
-	r.rotate(0, -90, -180);
-	assert(compare(r, Polygon({
-		Point(0, 0, 0),
-		Point(100, 0, 100),
-		Point(100, -100, 100)
-	})));
+	Polygon rot0{
+		Point(100, 0, 0), 
+		Point(100, 100, 0),
+		Point(0, 0, 100)
+	};
+	// Result
+	const Polygon rot1{
+		Point(0, 0, 100),
+		Point(0, -100, 100),
+		Point(100, 0, 0)
+	};
+	rot0.rotate(0, -90, -180);
+	assert(compare(rot0, rot1));
 	std::cout << "[Polygon]\tOK - Rotate" << std::endl;
 
 	// Rotation arbitrary axis test
-	Polygon r0({
+	Polygon r0{
 		Point(0, 0, 0),
 		Point(0, 0, 100),
 		Point(100, 0, 100)
-	});
-	Polygon r1({
+	};
+	// Result
+	const Polygon r1{
 		Point(0, 0, 0),
 		Point(0, 100, 0),
 		Point(100, 100, 0)
-	});
+	};
 	r0.rotate(-90, {1, 0, 0});
 	assert(compare(r0, r1));
 	std::cout << "[Polygon]\tOK - Rotate axis" << std::endl;
 
 	// Scale test
-	Polygon s(points);
-	s.scale(2);
-	assert(compare(s, Polygon({
-		Point(0, 0, 0),
-		Point(200, 0, 200),
-		Point(200, 200, 200)
-	})));
+	Polygon scale0{
+		Point(0, 0, 0), 
+		Point(-1, -1, -1), 
+		Point(50, 50, 50), 
+		Point(1, 2, 3)
+	};
+	// Result
+	const Polygon scale1{
+		Point(0, 0, 0), 
+		Point(-2, -2, -2), 
+		Point(100, 100, 100), 
+		Point(2, 4, 6)
+	};
+	scale0.scale(2);
+	assert(compare(scale0, scale1));
 	std::cout << "[Polygon]\tOK - Scale" << std::endl;
 
 	// Translate test
-	Polygon t(points);
-	t.translate(10, 11, 13.2);
-	assert(compare(t, Polygon({
+	Polygon trans0{
+		Point(0, 0, 0), 
+		Point(-1, -1, -1), 
+		Point(50, 50, 50), 
+		Point(1, 2, 3)
+	};
+	const Polygon trans1{
 		Point(10, 11, 13.2),
-		Point(110, 11, 113.2),
-		Point(110, 111, 113.2)
-	})));
+		Point(9, 10, 12.2),
+		Point(60, 61, 63.2), 
+		Point(11, 13, 16.2)
+	};
+	trans0.translate(10, 11, 13.2);
+	assert(compare(trans0, trans1));
 	std::cout << "[Polygon]\tOK - Translate" << std::endl;
 }
 
@@ -563,7 +615,7 @@ void test_polyhedron() {
 	std::cout << "[Polyhedron]\tOK - Constructors" << std::endl;
 
 
-	std::cout << "[Polyhedron]\tOK - Constructors" << std::endl;
+	// std::cout << "[Polyhedron]\tOK - Constructors" << std::endl;
 }
 
 int main() {
@@ -587,6 +639,20 @@ int main() {
 	std::cout << "====================" << std::endl;
 	std::cout << "= ALL TESTS PASSED =" << std::endl;
 	std::cout << "====================" << std::endl;
+
+	const double d  = -100;
+    const Matrix pers{
+        {1, 0,   0, 0},
+        {0, 1,   0, 0},
+        {0, 0,   1, 0},
+        {0, 0, 1/d, 0}
+    };
+    Point p0(10, 10, 100);
+    Point p1(10, 10, 5);
+
+    std::cout << (pers * p0).to_string() << std::endl;
+    std::cout << (pers * p1).to_string() << std::endl;
+
 
     return 0;
 }

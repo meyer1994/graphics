@@ -107,7 +107,7 @@ public:
 
 protected:
 	virtual const Point calculate_medium() {
-		Vector m{0, 0, 0};
+		Vector m(4, 0);
 		for (Polygon& p : faces) {
 			m = m + p.medium;
 		}
