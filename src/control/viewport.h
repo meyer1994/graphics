@@ -6,6 +6,7 @@
 #include <exception>
 
 #include <gtkmm/entry.h>
+#include <gtkmm/scale.h>
 #include <gtkmm/button.h>
 #include <gtkmm/builder.h>
 
@@ -32,6 +33,10 @@ public:
 		b->get_widget("button_left", button_left);
 		b->get_widget("button_right", button_right);
 		b->get_widget("input_viewport_move", input_viewport_move);
+
+		// Perspective control
+		b->get_widget("viewport_perspective_scale", scale_perspective);
+		
 
 		// Zoom controls
 		b->get_widget("button_in", button_in);
@@ -60,6 +65,9 @@ protected:
 	Gtk::Button* button_right = nullptr;
 	Gtk::Button* button_down = nullptr;
 	Gtk::Entry* input_viewport_move = nullptr;
+
+	// Perspective control
+	Gtk::Scale* scale_perspective = nullptr;
 
 	// Zoom controls
 	Gtk::Button* button_in = nullptr;
@@ -118,6 +126,16 @@ protected:
 				viewport.window.inflate(1 + zoom);
 				viewport.draw();
 			});
+
+		// Perpective scale
+		scale_perspective->signal_value_changed().connect(
+			[this]() {
+				double value = scale_perspective->get_value();
+				value = Mode::Window::MIN_PERSPECTIVE * value;
+				viewport.window.set_perspective(value);
+				viewport.draw();
+			});
+		
 
 		// Rotation buttons
 		button_rotate_left->signal_clicked().connect(
