@@ -129,7 +129,7 @@ public:
 					tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
 					tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
 
-					points.push_back(Point{vx, vy, vz});
+					points.push_back(Point(vx, vy, vz));
 				}
 
 				polys.push_back(Polygon(points));
