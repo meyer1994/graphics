@@ -26,12 +26,14 @@ public:
     }
 
     const double y_angle() const {
-    	const Vector h = real[3] - real[0];
+    	Vector h = real[3] - real[0];
+        h.pop_back();
         return h.angle({0.0, 1.0, 0.0});
     }
 
     const double x_angle() const {
-    	const Vector w = real[1] - real[0];
+    	Vector w = real[1] - real[0];
+        w.pop_back();
     	return w.angle({1.0, 0.0, 0.0});
     }
 

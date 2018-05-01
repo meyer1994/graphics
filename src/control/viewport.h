@@ -72,28 +72,36 @@ protected:
 			[this]() {
 				const double x = get_x_movement();
 				const double y = get_y_movement();
-				viewport.window.translate(x, y, 0);
+				const Matrix t = Transform::translate(x, y, 0);
+				viewport.window.transform(t);
+				viewport.window.proj.transform(t);
 				viewport.draw();
 			});
 		button_down->signal_clicked().connect(
 			[this]() {
 				const double x = get_x_movement();
 				const double y = get_y_movement();
-				viewport.window.translate(-x, -y, 0);
+				const Matrix t = Transform::translate(-x, -y, 0);
+				viewport.window.transform(t);
+				viewport.window.proj.transform(t);
 				viewport.draw();
 			});
 		button_left->signal_clicked().connect(
 			[this]() {
 				const double x = get_x_movement();
 				const double y = get_y_movement();
-				viewport.window.translate(-y, x, 0);
+				const Matrix t = Transform::translate(-y, x, 0);
+				viewport.window.transform(t);
+				viewport.window.proj.transform(t);
 				viewport.draw();
 			});
 		button_right->signal_clicked().connect(
 			[this]() {
 				const double x = get_x_movement();
 				const double y = get_y_movement();
-				viewport.window.translate(y, -x, 0);
+				const Matrix t = Transform::translate(y, -x, 0);
+				viewport.window.transform(t);
+				viewport.window.proj.transform(t);
 				viewport.draw();
 			});
 
