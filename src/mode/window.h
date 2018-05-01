@@ -54,38 +54,42 @@ public:
         return Matrix{
             {1.0, 0.0, 0.0, 0.0},
             {0.0, 1.0, 0.0, 0.0},
-            {0.0, 0.0, 1.0, 0.0},
-            {0.0, 0.0, 1.0/d, 0.0}
+            {0.0, 0.0, 1.0, 1.0/d},
+            {0.0, 0.0, 0.0, 0.0}
         };
     }
 
-    const Matrix parallel_matrix() const {
-		const Vector norm = normal();
+    const Matrix projection_matrix() const {
+        const Vector norm = normal();
 
-		// Rotation
-		double tetax = std::atan(norm[1] / norm[2]);
-		double tetay = std::atan(norm[0] / norm[2]);
+        // Rotation
+        double tetax = std::atan(norm[1] / norm[2]);
+        double tetay = std::atan(norm[0] / norm[2]);
 
-		tetax = (180.0 / MATH_PI) * tetax;
-		tetay = (180.0 / MATH_PI) * tetay;
+        tetax = (180.0 / MATH_PI) * tetax;
+        tetay = (180.0 / MATH_PI) * tetay;
 
-		// Scale matrix
-        double x_ratio = 1.0 / (width() / 2.0);
-        double y_ratio = 1.0 / (height() / 2.0);
+        // Scale matrix
+        const double w = width();
+        const double h = height();
+
+        double x_ratio = 1.0 / (w / 2.0);
+        double y_ratio = 1.0 / (h / 2.0);
 
         // Just to draw the shape for easier clipping validation
         x_ratio *= 0.9;
         y_ratio *= 0.9;
 
-        const Matrix tran = Transform::translate(-medium);
+        const Matrix tran = Transform::translate(-proj);
         const Matrix rotx = Transform::rotatex(tetax);
         const Matrix roty = Transform::rotatey(tetay);
+        const Matrix pers = perspective_matrix();
         const Matrix scale = Transform::scale(x_ratio, y_ratio, 1.0);
 
-		return tran * rotx * roty* scale;
+        return tran * rotx * roty * pers * scale;
     }
 
-    Point proj{medium[0], medium[1], 100, 1};
+    Point proj{medium[0], medium[1], -1000, 1};
 };
 
 }  // namespace Mode

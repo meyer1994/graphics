@@ -70,7 +70,7 @@ protected:
 		cr->paint();
 
 		// Parallel projection matrix
-		const Matrix m = window.parallel_matrix();
+		const Matrix m = window.projection_matrix();
 
 		// Changes color to red
 		cr->set_source_rgb(0.8, 0, 0);

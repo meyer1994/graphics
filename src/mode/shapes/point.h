@@ -33,7 +33,7 @@ public:
         }
 
         // Copy new values to this point
-        *this = (temp / back());
+        *this = (temp / temp.back());
     }
 
     static const double distance(const Point& a, const Point& b) {
