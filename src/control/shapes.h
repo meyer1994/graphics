@@ -166,13 +166,13 @@ protected:
 		radio_liang
 			->signal_toggled()
 			.connect([this]() {
-				viewport.set_line_clipping_method(0);
+				viewport.clipping.line_method = LineClipMethod::LIANG_BARSKY;
 				viewport.draw();
 			});
 		radio_cohen
 			->signal_toggled()
 			.connect([this]() {
-				viewport.set_line_clipping_method(1);
+				viewport.clipping.line_method = LineClipMethod::COHEN_SUTHERLAND;
 				viewport.draw();
 			});
 	}
@@ -197,7 +197,7 @@ protected:
 		} catch (std::exception& e) {
 			// pass
 		}
-		return Point(x, y);
+		return Point(x, y, z);
 	}
 
 	const double get_move_input() const {

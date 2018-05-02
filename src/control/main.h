@@ -34,31 +34,31 @@ public:
 		window_main->set_default_size(1000, 600);
 		window_main->show_all();
 
-   //      // Dummy polygon (debugging)
-   //      Polygon* s = new Polygon(std::vector<Point>{
-			// Point(0, 100),
-			// Point(100, 100),
-			// Point(100, 0),
-			// Point(50, 50),
-			// Point(0, 0)
-   //      });
-   //      s->filled = true;
-   //      shapes.push_back(s);
+        // Dummy polygon (debugging)
+        Polygon* s = new Polygon(std::vector<Point>{
+			Point(0, 100),
+			Point(100, 100),
+			Point(100, 0),
+			Point(50, 50),
+			Point(0, 0)
+        });
+        s->filled = true;
+        shapes.push_back(s);
 
-   //      // Dummy curve (debugging)
-   //      Spline* bc = new Spline{
-   //          Point(0, 0),
-   //          Point(0, 0),
-   //          Point(0, 0),
-   //          Point(0, 0),
-   //          Point(100, 100),
-   //          Point(200, 0),
-   //          Point(300, 100),
-   //          Point(400, 300),
-   //          Point(500, 0),
-   //          Point(600, 100)
-   //      };
-   //      shapes.push_back(bc);
+        // Dummy curve (debugging)
+        BezierCurve* bc = new BezierCurve{
+            Point(0, 0),
+            Point(0, 0),
+            Point(0, 0),
+            Point(0, 0),
+            Point(100, 100),
+            Point(200, 0),
+            Point(300, 100),
+            Point(400, 300),
+            Point(500, 0),
+            Point(600, 100)
+        };
+        shapes.push_back(bc);
 
 		// Dummy polyhedron
 		Polyhedron* poly = new Polyhedron{
@@ -110,8 +110,8 @@ public:
 		// Add text to combo box
 		Gtk::ComboBoxText* c = nullptr;
 		b->get_widget("combobox_shapes", c);
-		// c->append("poligono");
-		// c->append("curva");
+		c->append("poligono");
+		c->append("curva");
 		c->append("cube");
 
 		// Gets size to pass to window

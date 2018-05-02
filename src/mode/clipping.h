@@ -16,6 +16,12 @@ const short RIGHT  = 2;  // 0010
 const short BOTTOM = 4;  // 0100
 const short TOP    = 8;  // 1000
 
+enum class LineClipMethod {
+	COHEN_SUTHERLAND,
+	LIANG_BARSKY
+};
+
+
 class Clipping {
 public:
 	Clipping(Polygon& clip_region)
@@ -37,20 +43,50 @@ public:
 
 	virtual ~Clipping() {}
 
-	void dot(Shape* dot) {
-		Point& point = dot->window[0];
+	void clip_it(BaseShape* shape) {
+		const ShapeType type = shape->type();
 
-		bool x_inside = point[0] < -1 || point[0] > 1;
-		bool y_inside = point[1] < -1 || point[1] > 1;
+		switch (type) {
+			case ShapeType::Dot:
+				return dot(shape);
+
+			case ShapeType::Line:
+				return line(shape);
+
+			case ShapeType::Spline:
+			case ShapeType::BezierCurve:
+				return curve(shape);
+
+			case ShapeType::Polygon:
+				return polygon(shape);
+
+			case ShapeType::Polyhedron:
+				return polyhedron(shape);
+		}
+	}
+
+	void dot(BaseShape* dotp) {
+		Shape* dot = dynamic_cast<Shape*>(dot);
+		if (dot == nullptr) {
+			return;
+		}
+
+		Point& point = dot->window[0];
+		bool x_inside = point[0] > -1 || point[0] < 1;
+		bool y_inside = point[1] > -1 || point[1] < 1;
 
 		if (!x_inside || !y_inside) {
 			dot->window.clear();
 		}
 	}
 
-	void curve(Shape* curve) {
-		std::vector<Point> clipped;
+	void curve(BaseShape* curvep) {
+		Shape* curve = dynamic_cast<Shape*>(curvep);
+		if (curve == nullptr) {
+			return;
+		}
 
+		std::vector<Point> clipped;
 		for (int i = 0; i < curve->window.size() - 1; i++) {
 			Point a = curve->window[i];
 			Point b = curve->window[i + 1];
@@ -70,6 +106,44 @@ public:
 		curve->window = clipped;
 	}
 
+	void line(BaseShape* linep) {
+		Shape* line = dynamic_cast<Shape*>(linep);
+		if (line == nullptr) {
+			return;
+		}
+
+		cohen_sutherland(line);
+	}
+
+	void polygon(BaseShape* polygonp) {
+		Shape* shape = dynamic_cast<Shape*>(polygonp);
+		if (shape == nullptr) {
+			return;
+		}
+		sutherland_hodgman(shape);
+	}
+
+	void polyhedron(BaseShape* polyhedronp) {
+		Polyhedron* polyhedron = dynamic_cast<Polyhedron*>(polyhedronp);
+		if (polyhedron == nullptr) {
+			return;
+		}
+
+		for (Polygon& p : polyhedron->faces) {
+			polygon(&p);
+		}
+	}
+
+	LineClipMethod line_method = LineClipMethod::COHEN_SUTHERLAND;
+
+protected:
+	// Window values (normalized)
+	Polygon& clip_region;
+	double xmax;
+	double ymax;
+	double xmin;
+	double ymin;
+	
 	void cohen_sutherland(Shape* line) {
 		Point& a = line->window[0];
 		Point& b = line->window[1];
@@ -222,14 +296,6 @@ public:
 	    }
 	}
 
-protected:
-	// Window values (normalized)
-	Polygon& clip_region;
-	double xmax;
-	double ymax;
-	double xmin;
-	double ymin;
-
 	const short out_code(const Point& point) const {
 		// Point values
 		double x = point[0];
@@ -252,7 +318,7 @@ protected:
 		return code;
 	}
 
-	double max(double v[], int n) {
+	const double max(double v[], int n) {
 		double max = v[0];
 		for (int i = 0; i < n; i++) {
 			if (v[i] > max) {
@@ -262,7 +328,7 @@ protected:
 		return max;
 	}
 
-	double min(double v[], int n) {
+	const double min(double v[], int n) {
 		double min = v[0];
 		for (int i = 0; i < n; i++) {
 			if (v[i] < min) {
@@ -325,7 +391,7 @@ protected:
 		}
 	}
 
-	Point intersection(Point& p1, Point& p2, Point& p3, Point& p4) {
+	const Point intersection(Point& p1, Point& p2, Point& p3, Point& p4) {
 		// Easier understanding
 		double x1 = p1[0];
 		double x2 = p2[0];
