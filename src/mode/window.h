@@ -89,26 +89,25 @@ public:
         return tran * rotx * roty * pers * scale;
     }
 
-
-    void set_perspective(double value) {
-        if (value < MAX_PERSPECTIVE) {
-            proj[2] = MAX_PERSPECTIVE;
+    // Value must be between 0 and 100
+    void set_perspective(const double value) {
+        if (value <= 0) {
+            proj[2] = BASIS_PERSPECTIVE;
             return;
         }
 
-        if (value > MIN_PERSPECTIVE) {
-            proj[2] = MIN_PERSPECTIVE;
+        if (value >= 100) {
+            proj[2] = BASIS_PERSPECTIVE * 100;
             return;
         }
 
-        proj[2] = value;
+        proj[2] = BASIS_PERSPECTIVE * value;
     }
 
     Point proj{medium[0], medium[1], -1000, 1};
 
     // constexpr because of reasons (cpp)
-    static constexpr double MAX_PERSPECTIVE = (-10000);
-    static constexpr double MIN_PERSPECTIVE = (-100);
+    static constexpr double BASIS_PERSPECTIVE = -100;
 };
 
 }  // namespace Mode

@@ -36,7 +36,6 @@ public:
 
 		// Perspective control
 		b->get_widget("viewport_perspective_scale", scale_perspective);
-		
 
 		// Zoom controls
 		b->get_widget("button_in", button_in);
@@ -130,8 +129,7 @@ protected:
 		// Perpective scale
 		scale_perspective->signal_value_changed().connect(
 			[this]() {
-				double value = scale_perspective->get_value();
-				value = Mode::Window::MIN_PERSPECTIVE * value;
+				const double value = scale_perspective->get_value();
 				viewport.window.set_perspective(value);
 				viewport.draw();
 			});
