@@ -90,15 +90,17 @@ protected:
 			// Vectors
 			const Vector x_vector{p0[0], p1[0], p2[0], p3[0]};
 			const Vector y_vector{p0[1], p1[1], p2[1], p3[1]};
+			const Vector z_vector{p0[2], p2[2], p2[2], p3[2]};
 
 			while (temp_t <= 1) {
 				const Vector t_vec = t_vector(temp_t);
 				const Vector t_magic = t_vec * magic;
 
-				double x = t_magic * x_vector;
-				double y = t_magic * y_vector;
+				const double x = t_magic * x_vector;
+				const double y = t_magic * y_vector;
+				const double z = t_magic * z_vector;
 
-				real.push_back(Point(x, y));
+				real.push_back(Point(x, y, z));
 				temp_t += t;
 			}
 

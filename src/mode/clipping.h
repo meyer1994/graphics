@@ -61,7 +61,10 @@ public:
 				return polygon(shape);
 
 			case ShapeType::Polyhedron:
-				return polyhedron(shape);
+				return complex(shape);
+
+			default:
+				return;
 		}
 	}
 
@@ -123,14 +126,14 @@ public:
 		sutherland_hodgman(shape);
 	}
 
-	void polyhedron(BaseShape* polyhedronp) {
-		Polyhedron* polyhedron = dynamic_cast<Polyhedron*>(polyhedronp);
-		if (polyhedron == nullptr) {
+	void complex(BaseShape* complexp) {
+		ShapeComplex* complex = dynamic_cast<ShapeComplex*>(complexp);
+		if (complex == nullptr) {
 			return;
 		}
 
-		for (Polygon& p : polyhedron->faces) {
-			polygon(&p);
+		for (Shape* p : complex->faces) {
+			clip_it(p);
 		}
 	}
 
@@ -143,7 +146,7 @@ protected:
 	double ymax;
 	double xmin;
 	double ymin;
-	
+
 	void cohen_sutherland(Shape* line) {
 		Point& a = line->window[0];
 		Point& b = line->window[1];

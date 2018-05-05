@@ -7,12 +7,9 @@
 
 #include "window.h"
 #include "clipping.h"
-#include "shapes/dot.h"
-#include "shapes/line.h"
 #include "shapes/shape.h"
 #include "shapes/point.h"
-#include "shapes/polygon.h"
-#include "shapes/bezier_curve.h"
+#include "shapes/shape_complex.h"
 
 namespace Mode {
 
@@ -89,9 +86,12 @@ protected:
 	}
 
 	void draw_it(const Cairo::RefPtr<Cairo::Context>& cr, BaseShape* s) {
-		// Polyhedron
-		if (s->type() == ShapeType::Polyhedron) {
-			draw_polyhedron(cr, s);
+		ShapeComplex* complex = dynamic_cast<ShapeComplex*>(s);
+		if (complex != nullptr) {
+			for (Shape* p : complex->faces) {
+				draw_shape(cr, p);
+			}
+			return;
 		}
 
 		// Everything else
@@ -122,17 +122,6 @@ protected:
 		// Fill it
 		if (shape->filled) {
 			cr->fill();
-		}
-	}
-
-	void draw_polyhedron(const Cairo::RefPtr<Cairo::Context>& cr, BaseShape* s) {
-		Polyhedron* poly = dynamic_cast<Polyhedron*>(s);
-		if (poly == nullptr) {
-			return;
-		}
-
-		for (Polygon& p : poly->faces) {
-			draw_shape(cr, &p);
 		}
 	}
 

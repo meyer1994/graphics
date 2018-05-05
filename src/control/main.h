@@ -15,6 +15,7 @@
 #include "../mode/shapes/polyhedron.h"
 #include "../mode/shapes/base_shape.h"
 #include "../mode/shapes/bezier_curve.h"
+#include "../mode/shapes/surface_bezier.h"
 
 #include "../mode/window.h"
 #include "../mode/viewport.h"
@@ -61,49 +62,11 @@ public:
         shapes.push_back(bc);
 
 		// Dummy polyhedron
-		Polyhedron* poly = new Polyhedron{
-			// Base
-			Polygon{
-				Point(0, 0, 0),
-				Point(100, 0, 0),
-				Point(100, 0, 100),
-				Point(0, 0, 100)
-			},
-			// Right face
-			Polygon{
-				Point(100, 0, 0),
-				Point(100, 0, 100),
-				Point(100, 100, 100),
-				Point(100, 100, 0)
-			},
-			// Back face
-			Polygon{
-				Point(0, 0, 1000),
-				Point(100, 0, 1000),
-				Point(100, 100, 1000),
-				Point(0, 100, 1000)
-			},
-			// Left face
-			Polygon{
-				Point(0, 0, 0),
-				Point(0, 0, 100),
-				Point(0, 100, 100),
-				Point(0, 100, 0)
-			},
-			// Front face
-			Polygon{
-				Point(0, 0, 100),
-				Point(100, 0, 100),
-				Point(100, 100, 100),
-				Point(0, 100, 100)
-			},
-			// Top face
-			Polygon{
-				Point(0, 100, 0),
-				Point(100, 100, 0),
-				Point(100, 100, 100),
-				Point(0, 100, 100)
-			}
+		SurfaceBezier* poly = new SurfaceBezier{
+			{Point(0,  0,  0), Point(0,  0,  25),  Point(0,  0,  50), Point(0,  0,  75)},
+			{Point(25, 50, 0), Point(25, 25, 25),  Point(25, 25, 50), Point(25, 25, 75)},
+			{Point(50, 50, 0), Point(50, 50, 25),  Point(50, 50, 50), Point(50, 50, 75)},
+			{Point(75, 25, 0), Point(75, 0,  25),  Point(75, 0,  50), Point(75, 0,  75)}
 		};
 		shapes.push_back(poly);
 

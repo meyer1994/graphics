@@ -7,12 +7,20 @@
 #include "point.h"
 #include "vector.h"
 
-enum class ShapeType { Dot, Line, Polygon, BezierCurve, Spline, Polyhedron };
+enum class ShapeType {
+	Dot,
+	Line,
+	Polygon,
+	BezierCurve,
+	Spline,
+	Polyhedron,
+	BezierSurface
+};
 
 class BaseShape {
 public:
     BaseShape() : medium(0, 0, 0), name("base_shape") {}
-    
+
     BaseShape(std::string name) : medium(0, 0, 0), name(name) {}
 
     virtual ~BaseShape() {}

@@ -24,7 +24,7 @@ class ObjDescriptor {
 public:
 	/**
 	 * @brief Explicit constructor.
-	 * 
+	 *
 	 * @param s The vector where to append the shapes to, or get the info to
 	 * write them to the disk.
 	 */
@@ -34,10 +34,10 @@ public:
 
 	/**
 	 * @brief Write the shapes to disk.
-	 * 
+	 *
 	 * @details The shapes referenced in the vector passed in the contructor
 	 * will be written in the disk.
-	 * 
+	 *
 	 * @param fname File name to write to.
 	 */
 	void write(std::string fname) {
@@ -65,12 +65,12 @@ public:
 		// 			for (const Point& f : p.real) {
 		// 				objects += " " + std::to_string(line_counter + i);
 		// 			}
-				
-		// 		}			
+
+		// 		}
 
 		// 	// Regular shape
 		// 	} else {
-				
+
 		// 	}
 
 		// 	line_counter += s->size();
@@ -85,10 +85,10 @@ public:
 
 	/**
 	 * @brief Reads .obj from file.
-	 * 
+	 *
 	 * @details Reads the objects from the file and appends them to the shapes
 	 * vector.
-	 * 
+	 *
 	 * @param fname File name to read from.
 	 */
 	void read(std::string fname) {
@@ -101,7 +101,7 @@ public:
 		bool ret = tinyobj::LoadObj(&attrib, &shapes_tiny, &materials, &err, inputfile.c_str());
 
 		// `err` may contain warning message.
-		if (!err.empty()) { 
+		if (!err.empty()) {
 			std::cerr << err << std::endl;
 		}
 
@@ -112,7 +112,7 @@ public:
 		// Loop over shapes
 		for (size_t s = 0; s < shapes_tiny.size(); s++) {
 			const std::string shape_name = shapes_tiny[s].name;
-			std::vector<Polygon> polys;
+			std::vector<Shape*> polys;
 
 			// Loop over faces(polygon)
 			size_t index_offset = 0;
@@ -132,10 +132,10 @@ public:
 					points.push_back(Point(vx, vy, vz));
 				}
 
-				polys.push_back(Polygon(points));
+				polys.push_back(new Polygon(points));
 				index_offset += fv;
 			}
-			
+
 			// Add to display file
 			shapes.push_back(new Polyhedron(polys, shape_name));
 		}
@@ -282,7 +282,7 @@ protected:
 	// 			return new Dot(points[0], "dot");
 	// 		}
 	// 		case 2:
-	// 		{	
+	// 		{
 	// 			Point a = points[0];
 	// 			Point b = points[1];
 	// 			return new Line(a, b);
