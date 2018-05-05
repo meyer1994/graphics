@@ -16,6 +16,7 @@
 #include "../mode/shapes/base_shape.h"
 #include "../mode/shapes/bezier_curve.h"
 #include "../mode/shapes/surface_bezier.h"
+#include "../mode/shapes/surface_spline.h"
 
 #include "../mode/window.h"
 #include "../mode/viewport.h"
@@ -62,7 +63,7 @@ public:
         shapes.push_back(bc);
 
 		// Dummy polyhedron
-		SurfaceBezier* poly = new SurfaceBezier{
+		SurfaceSpline* poly = new SurfaceSpline{
 			{Point(0,  0,  0), Point(0,  0,  25),  Point(0,  0,  50), Point(0,  0,  75)},
 			{Point(25, 50, 0), Point(25, 25, 25),  Point(25, 25, 50), Point(25, 25, 75)},
 			{Point(50, 50, 0), Point(50, 50, 25),  Point(50, 50, 50), Point(50, 50, 75)},

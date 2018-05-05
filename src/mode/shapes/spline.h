@@ -86,22 +86,25 @@ protected:
 
 			const Vector gx{p0[0], p1[0], p2[0], p3[0]};
 			const Vector gy{p0[1], p1[1], p2[1], p3[1]};
+			const Vector gz{p0[1], p1[1], p2[1], p3[1]};
 
 			const Matrix t_mat = t_matrix(t);
 
 			const Vector cx = magic * gx;
 			const Vector cy = magic * gy;
+			const Vector cz = magic * gz;
 
 			const Vector fwdx = t_mat * cx;
 			const Vector fwdy = t_mat * cy;
+			const Vector fwdz = t_mat * cz;
 
-			fwd_diff(fwdx, fwdy);
+			fwd_diff(fwdx, fwdy, fwdz);
 		}
 
 		real.shrink_to_fit();
 	}
 
-	void fwd_diff(const Vector& fwdx, const Vector& fwdy) {
+	void fwd_diff(const Vector& fwdx, const Vector& fwdy, const Vector& fwdz) {
 		int n = 1 / t;
 
 		double x   = fwdx[0];
@@ -112,8 +115,12 @@ protected:
 		double dy  = fwdy[1];
 		double d2y = fwdy[2];
 		double d3y = fwdy[3];
+		double z   = fwdz[0];
+		double dz  = fwdz[1];
+		double d2z = fwdz[2];
+		double d3z = fwdz[3];
 
-		real.push_back(Point(x, y));
+		real.push_back(Point(x, y, z));
 
 		for (int i = 0; i < n; i++) {
 			x += dx;
@@ -124,7 +131,11 @@ protected:
 			dy += d2y;
 			d2y += d3y;
 
-			real.push_back(Point(x, y));
+			z += dz;
+			dz += d2z;
+			d2z += d3z;
+
+			real.push_back(Point(x, y, z));
 		}
 	}
 };
