@@ -23,6 +23,8 @@
 #include "../mode/shapes/polygon.h"
 #include "../mode/shapes/base_shape.h"
 #include "../mode/shapes/bezier_curve.h"
+#include "../mode/shapes/surface_bezier.h"
+#include "../mode/shapes/surface_spline.h"
 #include "../mode/viewport.h"
 
 namespace Control {
@@ -42,9 +44,15 @@ public:
         b->get_widget("button_cancel", button_cancel);
         b->get_widget("button_add_point", button_add_point);
         b->get_widget("checkbox_filled", checkbox_filled);
-        b->get_widget("radio_Bezier_curve", radio_Bezier_curve);
-        b->get_widget("radio_bspline_curve", radio_bspline_curve);
+
+        // Radio buttons
+        b->get_widget("radio_dot", radio_dot);
+        b->get_widget("radio_line", radio_line);
         b->get_widget("radio_polygon", radio_polygon);
+        b->get_widget("radio_bezier_curve", radio_bezier_curve);
+        b->get_widget("radio_bspline_curve", radio_bspline_curve);
+        b->get_widget("radio_bezier_surface", radio_bezier_surface);
+        b->get_widget("radio_spline_surface", radio_spline_surface);
 
         // Inputs
         b->get_widget("text_input_name", text_input_name);
@@ -91,9 +99,15 @@ protected:
     Gtk::Button* button_cancel = nullptr;
     Gtk::Button* button_add_point = nullptr;
     Gtk::CheckButton* checkbox_filled = nullptr;
+
+    // Radio buttons
+    Gtk::RadioButton* radio_dot = nullptr;
+    Gtk::RadioButton* radio_line = nullptr;
     Gtk::RadioButton* radio_polygon = nullptr;
-    Gtk::RadioButton* radio_Bezier_curve = nullptr;
+    Gtk::RadioButton* radio_bezier_curve = nullptr;
     Gtk::RadioButton* radio_bspline_curve = nullptr;
+    Gtk::RadioButton* radio_spline_surface = nullptr;
+    Gtk::RadioButton* radio_bezier_surface = nullptr;
 
     // Text entries
     Gtk::Entry* text_input_name = nullptr;
@@ -145,23 +159,30 @@ protected:
             return false;
         }
 
+        const int buff_size = points_buffer.size();
+
         // Dot
-        if (points_buffer.size() == 1) {
+        if (buff_size >= 1 && radio_dot->get_active()) {
             const Point p = points_buffer[0];
             viewport.shapes.push_back(new Dot(p, name));
         }
 
         // Line
-        if (points_buffer.size() == 2) {
+        if (buff_size >= 2 && radio_line->get_active()) {
             const Point a = points_buffer[0];
             const Point b = points_buffer[1];
             viewport.shapes.push_back(new Line(a, b, name));
         }
 
-        int buff_size = points_buffer.size();
+        // Polygon
+        if (buff_size > 2 && radio_polygon->get_active()) {
+            Polygon* p = new Polygon(points_buffer, name);
+            p->filled = checkbox_filled->get_active();
+            viewport.shapes.push_back(p);
+        }
 
         // Bezier curve
-        if (buff_size % 3 - 1 == 0 && radio_Bezier_curve->get_active()) {
+        if (buff_size % 3 - 1 == 0 && radio_bezier_curve->get_active()) {
             BezierCurve* bc = new BezierCurve(points_buffer, 0.05, name);
             viewport.shapes.push_back(bc);
         }
@@ -172,12 +193,23 @@ protected:
             viewport.shapes.push_back(bc);
         }
 
-        // Polygon
-        if (buff_size > 2 && radio_polygon->get_active()) {
-	        Polygon* p = new Polygon(points_buffer, name);
-	        p->filled = checkbox_filled->get_active();
-	        viewport.shapes.push_back(p);
+        // Bezier surface
+        if (buff_size == 16 && radio_bezier_curve->get_active()) {
+            std::vector<std::vector<Point>> v(4, std::vector<Point>());
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    v[i].push_back(points_buffer[(i*4)+j]);
+                }
+            }
+            SurfaceBezier* bc = new SurfaceBezier(v, 0.05, name);
+            viewport.shapes.push_back(bc);
         }
+
+        // Spline surface
+        // if (buff_size >= 16 && radio_bezier_curve->get_active()) {
+        //     BezierCurve* bc = new BezierCurve(points_buffer, 0.05, name);
+        //     viewport.shapes.push_back(bc);
+        // }
 
         // Add shape name to combo box
         combobox_shapes->append(name);

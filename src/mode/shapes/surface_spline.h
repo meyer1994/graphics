@@ -128,7 +128,7 @@ protected:
 					Matrix cy = t_matrix(s) * y_matrx * t_matrix_t(t);
 					Matrix cz = t_matrix(s) * z_matrx * t_matrix_t(t);
 
-					fwd_diff(cx[0], cy[0], cz[0]);
+					// fwd_diff(cx[0], cy[0], cz[0]);
 				}
 			}
 		}

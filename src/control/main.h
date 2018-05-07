@@ -63,7 +63,7 @@ public:
         shapes.push_back(bc);
 
 		// Dummy polyhedron
-		SurfaceSpline* poly = new SurfaceSpline{
+		SurfaceBezier* poly = new SurfaceBezier{
 			{Point(0,  0,  0), Point(0,  0,  25),  Point(0,  0,  50), Point(0,  0,  75)},
 			{Point(25, 50, 0), Point(25, 25, 25),  Point(25, 25, 50), Point(25, 25, 75)},
 			{Point(50, 50, 0), Point(50, 50, 25),  Point(50, 50, 50), Point(50, 50, 75)},
