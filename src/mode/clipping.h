@@ -55,6 +55,7 @@ public:
 
 			case ShapeType::Spline:
 			case ShapeType::BezierCurve:
+			case ShapeType::BezierSurface:
 				return curve(shape);
 
 			case ShapeType::Polygon:
