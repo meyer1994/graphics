@@ -133,7 +133,7 @@ protected:
 				viewport.window.set_perspective(value);
 				viewport.draw();
 			});
-		
+
 		// Rotation buttons
 		button_rotate_left->signal_clicked().connect(
 			[this]() {
