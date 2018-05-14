@@ -63,20 +63,30 @@ public:
         shapes.push_back(bc);
 
 		// Dummy polyhedron
-		SurfaceBezier* poly = new SurfaceBezier{
+		SurfaceBezier* bezier_surf = new SurfaceBezier{
 			{Point(0,  0,  0), Point(0,  0,  25),  Point(0,  0,  50), Point(0,  0,  75)},
 			{Point(25, 50, 0), Point(25, 25, 25),  Point(25, 25, 50), Point(25, 25, 75)},
 			{Point(50, 50, 0), Point(50, 50, 25),  Point(50, 50, 50), Point(50, 50, 75)},
 			{Point(75, 25, 0), Point(75, 0,  25),  Point(75, 0,  50), Point(75, 0,  75)}
 		};
-		shapes.push_back(poly);
+		shapes.push_back(bezier_surf);
+
+		// Dummy polyhedron
+		SurfaceSpline* spline_surf = new SurfaceSpline{
+			{Point(0,  0,  0), Point(0,  0,  25),  Point(0,  0,  50), Point(0,  0,  75)},
+			{Point(25, 50, 0), Point(25, 25, 25),  Point(25, 25, 50), Point(25, 25, 75)},
+			{Point(50, 50, 0), Point(50, 50, 25),  Point(50, 50, 50), Point(50, 50, 75)},
+			{Point(75, 25, 0), Point(75, 0,  25),  Point(75, 0,  50), Point(75, 0,  75)}
+		};		
+		shapes.push_back(spline_surf);
 
 		// Add text to combo box
 		Gtk::ComboBoxText* c = nullptr;
 		b->get_widget("combobox_shapes", c);
 		c->append("poligono");
 		c->append("curva");
-		c->append("cube");
+		c->append("Bezier Surface");
+		c->append("Spline Surface");
 
 		// Gets size to pass to window
 		Gtk::DrawingArea* drawing_area = nullptr;

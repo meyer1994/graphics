@@ -31,7 +31,9 @@ public:
 	  xmin(-0.9),
 	  ymin(-0.9) {
 		if (clip_region.real.size() != 4) {
-			throw std::invalid_argument("Clip region shape should be a rectangle. The sizes used will be the first point and the third point of it");
+			throw std::invalid_argument("Clip region shape should be a \
+				rectangle. The sizes used will be the first point and the third\
+				 point of it");
 		}
 
 		// Not used because the teacher wants to see the clipping working
@@ -243,7 +245,7 @@ protected:
 			double r1 = q1 / p1;
 			double r2 = q2 / p2;
 			if (p1 < 0) {
-				negarr[negind++] = r1; // for negative p1, add it to negative array
+				negarr[negind++] = r1; // for negative p1, add it to neg array
 				posarr[posind++] = r2; // and add p2 to positive array
 			} else {
 				negarr[negind++] = r2;

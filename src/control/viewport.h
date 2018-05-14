@@ -11,6 +11,7 @@
 #include <gtkmm/builder.h>
 
 #include "../mode/viewport.h"
+#include "../mode/transform.h" 
 
 namespace Control {
 
@@ -139,14 +140,18 @@ protected:
 			[this]() {
 				const double angle = get_angle_input();
 				const std::vector<double> axis = get_rotation_axis();
-				viewport.window.rotate(-angle, axis);
+				const Matrix t = Transform::rotate(-angle, axis);
+				viewport.window.transform(t);
+				viewport.window.proj.transform(t);
 				viewport.draw();
 			});
 		button_rotate_right->signal_clicked().connect(
 			[this]() {
 				const double angle = get_angle_input();
 				const std::vector<double> axis = get_rotation_axis();
-				viewport.window.rotate(angle, axis);
+				const Matrix t = Transform::rotate(angle, axis);
+				viewport.window.transform(t);
+				viewport.window.proj.transform(t);
 				viewport.draw();
 			});
 	}

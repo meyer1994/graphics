@@ -110,9 +110,9 @@ protected:
 		for (int i = 0; i < v.size() - 1; i += 3) {
 			for (int j = 0; j < v[i].size() - 1; j += 3) {
 				// Matrix
-				const Matrix x_matrx = x_matrix(i, j, v);
-				const Matrix y_matrx = y_matrix(i, j, v);
-				const Matrix z_matrx = z_matrix(i, j, v);
+				Matrix x_matrx = x_matrix(i, j, v);
+				Matrix y_matrx = y_matrix(i, j, v);
+				Matrix z_matrx = z_matrix(i, j, v);
 
 				// S
 				for (double temp_s = t; temp_s <= 1; temp_s += t) {
@@ -127,10 +127,58 @@ protected:
 						const double z = s_magic * z_matrx * t_magic;
 
 						real.push_back(Point(x, y, z));
+						
+					}
+				}
+				
+				transpose(x_matrx);
+				transpose(y_matrx);
+				transpose(z_matrx);
+
+				// S
+				for (double temp_s = t; temp_s <= 1; temp_s += t) {
+					const Vector s_magic = t_vector(temp_s) * magic;
+
+					// T
+					for (double temp_t = t; temp_t <= 1; temp_t += t) {
+						const Vector t_magic = magic * t_vector(temp_t);
+
+						const double x = s_magic * x_matrx * t_magic;
+						const double y = s_magic * y_matrx * t_magic;
+						const double z = s_magic * z_matrx * t_magic;
+
+						real.push_back(Point(x, y, z));
+						
 					}
 				}
 			}
 		}
+	}
+
+		/* =========================================== */
+	void transpose(Matrix& matr)
+	/* =========================================== */
+	{
+	  Matrix result = {
+	  	{0,0,0,0},
+	  	{0,0,0,0},
+	  	{0,0,0,0},
+	  	{0,0,0,0}
+		};
+	  for (int i = 0; i<4; i++)
+	    {
+	    for (int j=0; j<4; j++)
+	      {
+	         result[i][j] = matr[j][i];
+	      }
+	    }
+	  for (int i = 0; i<4; i++)
+	    {
+	    for (int j=0; j<4; j++)
+	      {
+	         matr[i][j] = result[i][j];
+	      }
+	  }
 	}
 };
 
