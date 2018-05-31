@@ -14,7 +14,8 @@ enum class ShapeType {
 	BezierCurve,
 	Spline,
 	Polyhedron,
-	BezierSurface
+	BezierSurface,
+	SplineSurface
 };
 
 class BaseShape {

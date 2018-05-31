@@ -3,22 +3,27 @@
 
 
 #include <string>
+#include <stdexcept>
 #include <vector>
 #include <initializer_list>
 
 #include "point.h"
-#include "base_shape.h"
+#include "shape_complex.h"
+#include "spline.h"
 
 
-class SurfaceSpline : public Shape {
+class SurfaceSpline : public ShapeComplex {
 public:
-	SurfaceSpline() : Shape("SurfaceSpline") {}
+	SurfaceSpline() : ShapeComplex("SurfaceSpline") {}
 
 	SurfaceSpline(std::initializer_list<std::vector<Point>> d)
 	: SurfaceSpline(std::vector<std::vector<Point>>(d)) {}
 
 	SurfaceSpline(std::vector<std::vector<Point>> v, double t = 0.05, std::string name = "SurfaceSpline")
-	: Shape(name) {
+	: ShapeComplex(name) {
+		if(v.size() < 4) {
+			throw std::invalid_argument("Points size must bigger than 3");
+		}
 		blending_function(v);
 		calculate_medium();
 	}
@@ -32,7 +37,7 @@ public:
 	}
 
 	virtual const ShapeType type() const override {
-		return ShapeType::BezierSurface;
+		return ShapeType::SplineSurface;
 	}
 
 	double t = 0.05;
@@ -164,7 +169,7 @@ protected:
 				transpose(DDy);
 				transpose(DDz);
 
-				for (int s = 0; s < 20; s += 1) {
+				for (int s = 0; s < n; s += 1) {
 					fwd_diff(DDx, DDy, DDz);
 					updateFwdDiffMatrices(DDx);
 					updateFwdDiffMatrices(DDy);
@@ -199,7 +204,9 @@ protected:
 		double D2z = fwdz[0][2];
 		double D3z = fwdz[0][3];
 
-		real.push_back(Point(x, y, z));
+		Spline* scurve = new Spline();
+
+		scurve->real.push_back(Point(x, y, z));
 
 		double oldx, oldy, oldz;
 		oldx = x;
@@ -214,8 +221,9 @@ protected:
 		  	oldy = y;
 		  	oldz = z;    
 	  
-			real.push_back(Point(x, y, z));
+			scurve->real.push_back(Point(x, y, z));
 		}
+		faces.push_back(scurve);
 	}
 
 	/* =========================================== */

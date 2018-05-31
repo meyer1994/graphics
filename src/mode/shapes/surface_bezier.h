@@ -6,18 +6,22 @@
 #include <initializer_list>
 
 #include "point.h"
-#include "base_shape.h"
+#include "shape_complex.h"
+#include "bezier_curve.h"
 
 
-class SurfaceBezier : public Shape {
+class SurfaceBezier : public ShapeComplex {
 public:
-	SurfaceBezier() : Shape("surfacebezier") {}
+	SurfaceBezier() : ShapeComplex("surfacebezier") {}
 
 	SurfaceBezier(std::initializer_list<std::vector<Point>> d)
 	: SurfaceBezier(std::vector<std::vector<Point>>(d)) {}
 
 	SurfaceBezier(std::vector<std::vector<Point>> v, double t = 0.05, std::string name = "surfacebezier")
-	: Shape(name) {
+	: ShapeComplex(name) {
+		if (v.size() < 4 || v.size() % 3 != 1) {
+			throw std::invalid_argument("Points size must obey { size % 3 == 1 }");
+		}		
 		blending_function(v);
 		calculate_medium();
 	}
@@ -117,7 +121,7 @@ protected:
 				// S
 				for (double temp_s = t; temp_s <= 1; temp_s += t) {
 					const Vector s_magic = t_vector(temp_s) * magic;
-
+					BezierCurve* bcurve = new BezierCurve();
 					// T
 					for (double temp_t = t; temp_t <= 1; temp_t += t) {
 						const Vector t_magic = magic * t_vector(temp_t);
@@ -126,11 +130,11 @@ protected:
 						const double y = s_magic * y_matrx * t_magic;
 						const double z = s_magic * z_matrx * t_magic;
 
-						real.push_back(Point(x, y, z));
-						
-					}
+						bcurve->real.push_back(Point(x, y, z));
+					}	
+					faces.push_back(bcurve);
 				}
-				
+
 				transpose(x_matrx);
 				transpose(y_matrx);
 				transpose(z_matrx);
@@ -138,7 +142,7 @@ protected:
 				// S
 				for (double temp_s = t; temp_s <= 1; temp_s += t) {
 					const Vector s_magic = t_vector(temp_s) * magic;
-
+					BezierCurve* bcurve = new BezierCurve();
 					// T
 					for (double temp_t = t; temp_t <= 1; temp_t += t) {
 						const Vector t_magic = magic * t_vector(temp_t);
@@ -147,9 +151,9 @@ protected:
 						const double y = s_magic * y_matrx * t_magic;
 						const double z = s_magic * z_matrx * t_magic;
 
-						real.push_back(Point(x, y, z));
-						
-					}
+						bcurve->real.push_back(Point(x, y, z));
+					}	
+					faces.push_back(bcurve);
 				}
 			}
 		}

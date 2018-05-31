@@ -57,13 +57,14 @@ public:
 
 			case ShapeType::Spline:
 			case ShapeType::BezierCurve:
-			case ShapeType::BezierSurface:
 				return curve(shape);
 
 			case ShapeType::Polygon:
 				return polygon(shape);
 
 			case ShapeType::Polyhedron:
+			case ShapeType::BezierSurface:
+			case ShapeType::SplineSurface:
 				return complex(shape);
 
 			default:
